@@ -120,7 +120,8 @@ class Recipe:
 		return json.dumps(self.data())
 
 	def to_file(self,file):
-		"""this takes a file already open()"""
-		file.write(self.json())
+		"""this takes a file path"""
+		with open(file) as output:
+			output.write(self.json())
 
 
