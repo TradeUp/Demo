@@ -10,8 +10,8 @@ This class models an expression (e.g. price('IBM')).
 ###RecipeRow
 A row in a recipe. Contains:
 	
-	* two expressions
-	* an operator (">","<", or "=")
+* two expressions
+* an operator (">","<", or "=")
 
 A row can be evaluated to return a boolean value using the eval() function.
 ###Recipe
@@ -24,7 +24,9 @@ That was probably a completely pointless usage example.
 
 ###RowParse
 This class parses one row of data in an algo file. It's passed a dictionary (data) by a recipebuilder.
+
 TODO:
+
 * is setting set_data really the best method here?
 
 ###RecipeBuilder
