@@ -2,6 +2,7 @@
 #	CS032 Final Project - TradeUp
 ###
 import json 
+from exprfuncs import ExpFuncs 
 
 class Expression:
 	"""
@@ -12,39 +13,41 @@ class Expression:
 	"""
 
 	# attributes of the object
-	self.func = None # the function used to evaluate the data
-	self.type = self.func # type = func, but could be changed; e.g. you have one negated..?
-	self.val = None # the value to be evaluated by the function
 
-	def __init__(self):
+	def __init__(self,func=None,val=None,typ=None):
 		# TODO: override in subclass (assign attributes)
+		self.func = func
+		self.val = val 
+		self.typ = typ or func 
 
-	def __eq__(self,other):
-		return self.type == other.type
+		def __eq__(self,other):
+			return self.typ == other.typ
 
 
-	def __setattr__(self,name,value):
-		"""
-		Modifies the standard attribute access so that changing .func updates
-		type if they're already the same.
-		"""
-		if name is 'func' and self.func == self.type:
-			self.__dict__['func'],self.__dict__['type'] = value,value
 
 	# these are just for debugging
 	def __unicode__(self):
-		return u'Type: %s\nFunc: %s\nValue: %s\n' (unicode(self.type),unicode(self.func),unicode(self.val))
+		return u'typ: %s\nFunc: %s\nValue: %s\n' (unicode(self.typ),unicode(self.func),unicode(self.val))
 	# debugging... str() or %s
 	def __str__(self):
-		return 'Type: %s\nFunc: %s\nValue: %s\n' (unicode(self.type),unicode(self.func),unicode(self.val))
+		return 'typ: %s\nFunc: %s\nValue: %s\n' (unicode(self.typ),unicode(self.func),unicode(self.val))
 
 	# this is for saving the object to a file
 	def json(self):
-		return json.dumps(self.__dict__)
+		return json.dumps(self.data())
+	def data(self):
+		return {
+			'func': self.func.func_name,
+			'val': self.val,
+			'typ': self.typ.func_name
+			}
 
 	def eval(self):
 		# this is just a hacked ternary operator: index is evaluated first
-		return (None,self.func(self.val))[(self.func and self.val)]
+		if self.func and self.val:
+			print self.func(self.val)
+			return self.func(self.val)
+		return None 
 
 class RecipeRow:
 	"""
@@ -68,8 +71,8 @@ class RecipeRow:
 	# returns a JSON dict of itself
 	def data(self):
 		data = {
-			'expr_a' : self.expr_a.__dict__,
-			'expr_b' : self.expr_b.__dict__,
+			'expr_a' : self.expr_a.data(),
+			'expr_b' : self.expr_b.data(),
 			'operator' : self.operator
 		}
 		return data
@@ -83,7 +86,7 @@ class RecipeRow:
 			return (self.expr_a.eval() > self.expr_b.eval())
 		elif self.operator is "<":
 			return (self.expr_a.eval() < self.expr_b.eval())
-		else
+		else:
 			return (self.expr_a.eval() == self.expr_b.eval()) 
 
 	def __str__(self):
@@ -124,4 +127,52 @@ class Recipe:
 		with open(file) as output:
 			output.write(self.json())
 
+
+class RowParse:
+	"""
+	Reads and parses a .algo file
+	"""
+	def __init__(self):
+		self.data = {}
+
+	def set_data(self,data):
+		self.data = data 
+
+	def expr_a(self):
+		return Expression(func=getattr(ExpFuncs,self.data['expr_a']['funct']),
+		val=self.data['expr_a']['val'])
+
+	def expr_b(self):
+		return Expression(func=getattr(ExpFuncs,self.data['expr_b']['funct']),
+		val=self.data['expr_b']['val'])
+
+	def operator(self):
+		return self.data['operator']
+
+	def getrow(self):
+		return RecipeRow(a=self.expr_a(),b=self.expr_b(),c=self.operator())
+
+class RecipeBuilder:
+
+	def __init__(self,path):
+		rowparser = RowParse()
+		self.recipe = Recipe() 
+
+		with open(path) as f:
+			data = json.loads(f.read())
+			for row in data:
+				rowparser.set_data(row)
+				self.recipe.add_row(getrow())
+
+class Evaluator:
+	"""
+	Evaluates a recipe
+	"""
+	def __init__(self,path):
+		rb = RecipeBuilder(path)
+		self.recipe = rb.recipe 
+
+	def eval():
+		for row in self.recipe.rows:
+			row.eval() 
 
