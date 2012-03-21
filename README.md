@@ -22,4 +22,14 @@ Represents a complete recipe; basically just a wrapper around a list of rows. Pr
 
 That was probably a completely pointless usage example.
 
+###RowParse
+This class parses one row of data in an algo file. It's passed a dictionary (data) by a recipebuilder.
+TODO:
+* is setting set_data really the best method here?
 
+###RecipeBuilder
+Builds a recipe object from a given filepath (to an algo file).
+Access the recipe by recipebuilder.recipe
+
+###Evaluator
+Not complete (as of this commit). Evaluates a recipe. This should be called every time you look at a piece of data.
