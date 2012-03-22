@@ -42,10 +42,9 @@ class Expression:
 			'typ': self.typ.func_name
 			}
 
-	def eval(self):
-		# this is just a hacked ternary operator: index is evaluated first
+	def eval(self,data):
 		if self.func and self.val:
-			return self.func(self.val)
+			return self.func(self.val,data)
 		return None 
 
 class RecipeRow:
@@ -79,14 +78,14 @@ class RecipeRow:
 	def dump(self):
 		return json.dumps(self.data())
 
-	def eval(self):
+	def eval(self,data):
 		""" evaluates the row """
 		if self.operator is ">":
-			return (self.expr_a.eval() > self.expr_b.eval())
+			return (self.expr_a.eval(data) > self.expr_b.eval(data))
 		elif self.operator is "<":
-			return (self.expr_a.eval() < self.expr_b.eval())
+			return (self.expr_a.eval(data) < self.expr_b.eval(data))
 		else:
-			return (self.expr_a.eval() == self.expr_b.eval()) 
+			return (self.expr_a.eval(data) == self.expr_b.eval(data)) 
 
 	def __str__(self):
 		# for debugging
@@ -166,16 +165,16 @@ class RecipeBuilder:
 
 class Evaluator:
 	"""
-	Evaluates a recipe
+	Evaluates a .algo file on every eval() 
 	"""
 	def __init__(self,path):
 		rb = RecipeBuilder(path)
 		self.recipe = rb.recipe 
 		self.triggered = False 
 
-	def eval():
+	def eval(data):
 		for row in self.recipe.rows:
-			if(row.eval() and not self.triggered):
+			if(row.eval(data) and not self.triggered):
 				if not self.triggered:
 					self.recipe.trigger()
 					self.triggered = True

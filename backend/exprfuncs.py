@@ -3,7 +3,7 @@
 ##
 
 
-def expr_test_b(x):
-	return x**x
-def expr_test_a(x):
-	return x**0.5
+def expr_test_b(x,d):
+	return x*d
+def expr_test_a(x,d):
+	return x/d
