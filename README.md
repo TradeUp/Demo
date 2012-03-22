@@ -4,4 +4,5 @@
 ## Description
 This contains the code for our c-level demo of our application, an algorithmic trading simulator. 
 
-## Backend
+## Documentation
+See the wiki for documentation pages for specific packages
