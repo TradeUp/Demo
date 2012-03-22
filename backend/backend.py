@@ -126,7 +126,11 @@ class Recipe:
 		with open(path,'w') as output:
 			output.write(self.json())
 
-
+class Portfolio:
+	
+########
+#### Parsing/Evaluating Code
+########
 class RowParse:
 	"""
 	Reads and parses a .algo file
