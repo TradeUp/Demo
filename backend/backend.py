@@ -2,7 +2,7 @@
 #	CS032 Final Project - TradeUp
 ###
 import json 
-from exprfuncs import ExpFuncs 
+import exprfuncs
 
 class Expression:
 	"""
@@ -45,7 +45,6 @@ class Expression:
 	def eval(self):
 		# this is just a hacked ternary operator: index is evaluated first
 		if self.func and self.val:
-			print self.func(self.val)
 			return self.func(self.val)
 		return None 
 
@@ -100,8 +99,9 @@ class Recipe:
 	"""
 
 
-	def __init__(self):
+	def __init__(self,trigger=None):
 		self.rows = []
+		self.trigger = trigger 
 
 	def __eq__(self,other):
 		# don't really knwo why I wrote this
@@ -122,9 +122,9 @@ class Recipe:
 	def json(self):
 		return json.dumps(self.data())
 
-	def to_file(self,file):
-		"""this takes a file path"""
-		with open(file) as output:
+	def to_file(self,path):
+		"""this takes a path """
+		with open(path,'w') as output:
 			output.write(self.json())
 
 
@@ -139,11 +139,11 @@ class RowParse:
 		self.data = data 
 
 	def expr_a(self):
-		return Expression(func=getattr(ExpFuncs,self.data['expr_a']['funct']),
+		return Expression(func=getattr(exprfuncs,self.data['expr_a']['func']),
 		val=self.data['expr_a']['val'])
 
 	def expr_b(self):
-		return Expression(func=getattr(ExpFuncs,self.data['expr_b']['funct']),
+		return Expression(func=getattr(exprfuncs,self.data['expr_b']['func']),
 		val=self.data['expr_b']['val'])
 
 	def operator(self):
@@ -162,7 +162,7 @@ class RecipeBuilder:
 			data = json.loads(f.read())
 			for row in data:
 				rowparser.set_data(row)
-				self.recipe.add_row(getrow())
+				self.recipe.add_row(rowparser.getrow())
 
 class Evaluator:
 	"""
@@ -171,8 +171,15 @@ class Evaluator:
 	def __init__(self,path):
 		rb = RecipeBuilder(path)
 		self.recipe = rb.recipe 
+		self.triggered = False 
 
 	def eval():
 		for row in self.recipe.rows:
-			row.eval() 
+			if(row.eval() and not self.triggered):
+				if not self.triggered:
+					self.recipe.trigger()
+					self.triggered = True
+				else:
+					self.triggered = False 
+
 
