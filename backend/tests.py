@@ -3,7 +3,7 @@
 ####
 import math
 import exprfuncs
-from backend import Expression, RecipeRow, Recipe,RecipeBuilder
+from backend import Expression, RecipeRow, Recipe,Portfolio, Parser,Trigger
 
 def test_save(path):
 	expr = Expression(func=getattr(exprfuncs,'expr_test_a'),val=8)
@@ -14,17 +14,26 @@ def test_save(path):
 
 	assert (row.eval(2))
 
-	recipe = Recipe()
+	recipe = Recipe(trigger=Trigger(oncall='test_trigger_a'))
 	recipe.add_row(row)
-
-	recipe.to_file(path)
+	# portfolio
+	portfolio = Portfolio()
+	portfolio.add_recipe(recipe)
+	portfolio.to_file(path)
 
 def test_load(path):
-	rb = RecipeBuilder(path)
-	assert len(rb.recipe.rows) is 1 
-	
-	for row in rb.recipe.rows:
-		assert(row.eval(2))
+	parser = Parser(path)
+	portfolio = parser.build_portfolio()
+
+	assert(portfolio)
+	assert(len(portfolio.recipes)==1)
+	assert(len(portfolio.recipes[0].rows)==1)
+	print portfolio.eval(2) # 99
+	print portfolio.eval(2) # 99
+	print portfolio.eval(1) # 99
+	print portfolio.eval(2) # 98
+	print portfolio.eval(2) # 98 
+	print portfolio.get_performance()
 
 if __name__ == "__main__":
 	test_save("test.algo")

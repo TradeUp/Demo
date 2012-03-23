@@ -5,20 +5,28 @@ import json
 import exprfuncs
 import triggerfuncs
 
-class BackendObj:
-	def __init__(self,color=None):
-		self.color = color or "red"
-		self.performance = { self.color : []}
-
+class BackendObj(object):
+	def __init__(self,color):
+		self.color = color
+		self.performance = { self.color : [100]} # decide initial amount of portfolio
 	def json(self):
 		return json.dumps(self.data())
 
 	def performance_update(self,point):
-		point = point or 0
+		point = point or 0 # protects against being passed None 
 		self.performance[self.color].append((self.performance[self.color][-1]+point))
 		return self.performance[self.color][-1] 
 
-class Expression(BackendObj):
+	def performance_static(self,point):
+		if point:
+			self.performance[self.color].append(point)
+		else:
+			self.performance[self.color].append(self.performance[self.color][-1])
+		return self.performance[self.color][-1]
+
+	def get_performance(self):
+		return self.performance[self.color]
+class Expression:
 	"""
 	Models an expression used when building a recipe.
 	For example: represents a moving average.
@@ -30,8 +38,6 @@ class Expression(BackendObj):
 
 	def __init__(self,func=None,val=None,typ=None):
 		# TODO: override in subclass (assign attributes)
-		super(Expression).__init__(self)
-
 		self.func = func
 		self.val = val 
 		self.typ = typ or func 
@@ -49,7 +55,9 @@ class Expression(BackendObj):
 		return 'typ: %s\nFunc: %s\nValue: %s\n' (unicode(self.typ),unicode(self.func),unicode(self.val))
 
 	# this is for saving the object to a file
-	
+	def json(self):
+		return json.dumps(self.data())
+
 	def data(self):
 		return {
 			'func': self.func.func_name,
@@ -62,7 +70,7 @@ class Expression(BackendObj):
 			return self.func(self.val,data)
 		return None 
 
-class RecipeRow(BackendObj):
+class RecipeRow:
 	"""
 	Models a row in the recipe, consists of:
 		expr_a, operator, expr_b
@@ -73,7 +81,6 @@ class RecipeRow(BackendObj):
 	"""
 
 	def __init__(self,a=None,b=None,c=None):
-		super(RecipeRow).__init__(self)
 		self.expr_a = a or None
 		self.expr_b = b or None
 		self.operator = c or None
@@ -81,6 +88,8 @@ class RecipeRow(BackendObj):
 
 	def __eq__(self,other):
 		return (self.expr_a == other.expr_a) and (self.expr_b==other.expr_b) and (self.operator==other.operator)
+	def json(self):
+		return json.dumps(self.data())
 
 	# returns a JSON dict of itself
 	def data(self):
@@ -111,12 +120,10 @@ class Recipe(BackendObj):
 	"""
 
 
-	def __init__(self,trigger=None,color=None,rows=None):
-		super(Recipe).__init__(self)
-		self.rows = rows or []
-		self.color = color or "green";
+	def __init__(self,trigger=None,color="green",rows=[]):
+		super(Recipe,self).__init__(color)
+		self.rows = rows
 		self.trigger = trigger
-		self.performance = { self.color : []} 
 
 	def __eq__(self,other):
 		# don't really knwo why I wrote this
@@ -133,7 +140,7 @@ class Recipe(BackendObj):
 		for row in self.rows:
 			data.append(row.data())
 		out = {
-			'trigger' : self.trigger.data(),
+			'trigger' : self.trigger.func.func_name,
 			'rows' : data
 		}
 		return out
@@ -145,27 +152,18 @@ class Recipe(BackendObj):
 
 	def eval(self,data):
 		""" evalutes against the piece of data, triggers trigger if appropriate. trigger will return data """
-		run = 0
 		for row in self.rows:
-
-			point = None 
-			if row.eval():
-				point = self.trigger.activate()
-
-			run += row.performance_update(point) # add it to the sum
-		
-		run /= len(self.rows)
-		return self.performance_update(run)
+			if not row.eval(data): 
+				return self.performance_update(self.trigger.reset()) 
+		return self.performance_update(self.trigger.activate())
 
 class Portfolio(BackendObj):
 	"""
 	Represents a portfolio; a collection of recipes
 	""" 
-	def __init__(self,color=None):
-		super(Portfolio).__init__(self)
-		self.color = color or "red" # TODO: what kind of color data is needed here?
+	def __init__(self,color="red"):
+		super(Portfolio,self).__init__(color)
 		self.recipes = []
-		self.performance = { self.color : [] }
 
 	def add_recipe(self,recipe):
 		self.recipes.append(recipe)
@@ -173,10 +171,9 @@ class Portfolio(BackendObj):
 	def eval(self,data):
 		run = 0
 		for recipe in self.recipes:
-			run += recipe.eval()
+			run += recipe.eval(data)
 		run /= len(self.recipes)
-
-		return self.performance_update(run)
+		return self.performance_static(run)
 
 	def data(self):
 		out = []
@@ -203,10 +200,14 @@ class Trigger:
 	
 	def activate(self):
 		if self.tripped:
-			self.tripped = False
 			return None 
 		else:
+			self.tripped = True 
 			return self.func() # returns a positive or negative numebr representign the outcome 
+
+	def reset(self):
+		self.tripped = False 
+		return None 
 
 	def data(self):
 		return self.func.func_name
