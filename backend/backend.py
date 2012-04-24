@@ -1,7 +1,7 @@
 # Backend code
 #	CS032 Final Project - TradeUp
 ###
-import json 
+import json
 import exprfuncs
 import triggerfuncs
 
