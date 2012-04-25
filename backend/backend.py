@@ -120,10 +120,11 @@ class Recipe(BackendObj):
 	"""
 
 
-	def __init__(self,trigger=None,color="green",rows=[]):
+	def __init__(self,trigger=None,color="green",rows=[],name="Default"):
 		super(Recipe,self).__init__(color)
 		self.rows = rows
 		self.trigger = trigger
+		self.name = name 
 
 	def __eq__(self,other):
 		# don't really knwo why I wrote this
@@ -233,6 +234,18 @@ class Parser:
 				rows.append(self.getrow(row))
 			self.portfolio.add_recipe(Recipe(trigger=Trigger(oncall=recipe_data['trigger']),rows=rows)) # you should add color here
 		return self.portfolio
+
+	def parse_recipe(self,path):
+		""" returns a recipe from the specified path"""
+		with open(path) as f:
+			self.data = json.loads(f.read())
+			if not self.data: return None 
+			# build the recipe from the data
+			rows = []
+			for row in self.data['rows']:
+				rows.append(self.getrow(row))
+			return Recipe(trigger=Trigger(oncall=self.data['trigger'],rows=rows))
+
 
 	def expr_a(self,data):
 		return Expression(func=getattr(exprfuncs,data['expr_a']['func']),

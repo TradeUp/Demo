@@ -1,5 +1,6 @@
 import sys
 from PySide.QtCore import *
+from backend import Parser,Recipe 
 from PySide.QtGui import *
 
 #window width and height constants (change, if you please)
@@ -25,13 +26,11 @@ class AddButton(QPushButton):
         print fileName
         #add some method to send file name to backend here!!
         """ADD FUNCTION HERE...LET IT RETURN TRUE IF VALID FILE"""
-        valid = True
-        if valid:
-            """get actual name later-->probably should be a JSON field"""
-            name = "Name %s" % self.table.rowCount()
-            self.table.addRecipe(name)
+        parser = Parser(None) # don't need a path to recipe
+        recipe = parser.parse_recipe(fileName)
+        if recipe:
+            self.table.addRecipe(recipe.name)
             
-    
 
 class RemoveButton(QPushButton):
     
@@ -57,88 +56,99 @@ class Table(QTableWidget):
     
     def __init__(self):
         super(Table, self).__init__(1, 5) #init with one row, 5 columns
+        self.rows = {} # contains all of the rows
+        self.initgui()
         
-        #set horizontal headers
+
+    def initgui(self):
+        # add the headers
         headers = ["Recipe", "Value", "P/L", "% Return", "Remove?"]
-        self.setHorizontalHeaderLabels(headers)
-        
-        #add total row
-        for col in xrange(0,5):                
-            grayItem = QTableWidgetItem()
-            grayItem.setBackground(QBrush(QColor("lightgray")))
-            grayItem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-            if col is 0:
-                grayItem.setFont(QFont("Arial", 15, QFont.Bold))
-                grayItem.setText("Total:")
-            elif col is 3:
-                grayItem.setText("0.000%")
-            elif col < 4:
-                grayItem.setText("$0")
-            self.setItem(0, col, grayItem)
-        
-        #hide vertical header
+        self.setHorizontalHeaderLabels(headers)  
+        # add the total row
+        self.rows['total'] = TotalRow(self,data={
+            'value':0,
+            'pli':0,
+            'percent':0
+            })
         self.verticalHeader().hide()
         
-        
-    def addRecipe(self, name):
+    def addRecipe(self, name,data):
         #TODO: add color!!!
-        rows = self.rowCount()
-        #expand the table by one row
-        self.setRowCount(rows + 1)
-        
-        #add name cell with checkbox
-        nameItem = QTableWidgetItem(name)
-        nameItem.setCheckState(Qt.Checked)
-        nameItem.setFlags(Qt.ItemIsEnabled | Qt.ItemIsUserCheckable | Qt.ItemIsSelectable)
-        self.setItem(rows, 0, nameItem)
-        
-        #set default values for other cells:
-        defaultValueItem = QTableWidgetItem("$0")
-        self.setItem(rows, 1, defaultValueItem)
-        defaultPLItem = QTableWidgetItem("$0")
-        self.setItem(rows, 2, defaultPLItem)
-        defaultPercentItem = QTableWidgetItem("%0")
-        self.setItem(rows, 3, defaultPercentItem)
-            
-        
-        #add in remove button
-        rmButton = RemoveButton(self, rows)
-        self.setCellWidget(rows, 4, rmButton)
-        
+        data = data or {
+            'value':0,
+            'pli':0,
+            'percent':0
+        }
+        self.setRowCount(self.rowCount() + 1)
+        self.rows[name] = Row(self,name,data)
+
+    def updateRows(self,recipe_data):
+        """ data is a dictionary of dictionaries indexed by name of row """
+        for name,row in self.rows:
+            row.updateRow(recipe_data[name]) # update each row by name
+
     def notifyRows(self, rowRemoved):
         for row in xrange(rowRemoved, self.rowCount()):
             button = self.cellWidget(row, 4)
             button.updateRow(button.row - 1)
-    
-    def setTotalRowValue(self, value):
-        """sets the total row's value cell"""
-        pass
-        
-    def setTotalRowPL(self, value):
-        """sets the total row's P/L cell"""
-        pass
-    
-    def setTotalRowPercent(self, name, value):
-        """sets the total row's percent cell"""
-        pass
-    
-    def setRecipeValue(self, name, value):
-        """sets the recipe's value cell 
-        to the given value"""
-        pass
-    
-    def setRecipePL(self, name, value):
-        """sets the recipe's P/L cell 
-        to the given value"""
-        pass
-    
-    def setRecipePercent(self, name, value):
-        """sets the recipe's percent cell
-        to the given value (Note: value should
-        be expressed in basis point form.  I.e.
-        passing in .37 will render 0.37%)"""
-        pass
 
+class Row:
+    """ models a row in the table """
+    def __init__(self,table,name,data={}):
+        self.name = name
+        self.data = data
+        self.table = table
+        self.gui = {}
+        # set the QT bullshit
+        self.init_gui()
+        self.formats = {
+            'value' : (lambda x: '$'+x),
+            'pli' : (lambda x: '$'+x),
+            'percent': (lambda x: x+'%')
+        }
+
+    def initgui():
+        rows = table.rowCount()
+        #expand the table by one row
+        table.setRowCount(rows + 1)
+        #add name cell with checkbox
+        self.gui['name'] = QTableWidgetItem(name)
+        self.gui['name'].setCheckState(Qt.Checked)
+        self.gui['name'].setFlags(Qt.ItemIsEnabled | Qt.ItemIsUserCheckable | Qt.ItemIsSelectable)
+        table.setItem(rows, 0, self.gui['name'])
+        
+        #set default values for other cells:
+        self.gui['value'] = QTableWidgetItem("$0")
+        self.setItem(rows, 1, self.gui['value'])
+        ## PLI
+        self.gui['pli'] = QTableWidgetItem("$0")
+        self.setItem(rows, 2, self.gui['pli'])
+        ## Percent
+        self.gui['percent'] = QTableWidgetItem("%0")
+        self.setItem(rows, 3, self.gui['percent'])       
+        #add in remove button
+        self.gui['remove'] = RemoveButton(self.table, rows)
+        self.setCellWidget(rows, 4, self.gui['remove'])
+        
+    def updateRow(data):
+        """
+        data has the same variables as our gui:
+        - value
+        - PLI
+        - percent
+        """
+        for key, value in data:
+            self.gui[key].setText(self.formats[key](value)) # returns a formatted version of the data
+
+
+class TotalRow(Row):
+    """ subclass or row that just has GUI differences """
+    def __init__(self,table,name="Total:",data={}):
+        super(TotalRow,self).__init__()
+        for guiElem in self.gui:
+                guiElem.setBackground(QBrush(QColor("lightgray")))
+                guiElem.setFont(QFont("Arial", 15, QFont.Bold))
+        self.gui['remove'] = None # you can't remove the total!
 
 class Window(QWidget):
     
