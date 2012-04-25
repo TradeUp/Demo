@@ -124,7 +124,7 @@ class Recipe(BackendObj):
 		super(Recipe,self).__init__(color)
 		self.rows = rows
 		self.trigger = trigger
-		self.name = name 
+		self.name = name
 
 	def __eq__(self,other):
 		# don't really knwo why I wrote this
@@ -142,7 +142,8 @@ class Recipe(BackendObj):
 			data.append(row.data())
 		out = {
 			'trigger' : self.trigger.func.func_name,
-			'rows' : data
+			'rows' : data,
+			'name' : self.name
 		}
 		return out
 
@@ -220,8 +221,9 @@ class Parser:
 	Reads and parses a .algo file
 	"""
 	def __init__(self,path):
-		with open(path) as f:
-			self.data = json.loads(f.read())
+		if path:
+			with open(path) as f:
+				self.data = json.loads(f.read())
 		"""
 		self.data will be a list of recipes, which are a dict of: trigger, rows """
 
@@ -244,7 +246,7 @@ class Parser:
 			rows = []
 			for row in self.data['rows']:
 				rows.append(self.getrow(row))
-			return Recipe(trigger=Trigger(oncall=self.data['trigger'],rows=rows))
+			return Recipe(trigger=Trigger(oncall=self.data['trigger']),rows=rows,name=self.data['name'])
 
 
 	def expr_a(self,data):
