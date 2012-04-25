@@ -303,18 +303,26 @@ class Controller:
 	def __init__(self,table,graph):
 		self.table = table
 		self.graph = graph
+		self.parser = Parser(None)
 		self.graphed = []
 		self.portfolio = Portfolio() 
 
-	def add_recipe(self,filename):
-		""" called by the table; adds a table, which in turn updates graph & table.
-			flow is: table->controller.add_recipe(), controller->table.add_recipe(), controller->graph.add_recipe()
-		"""
-		parser = Parser(None) # don't need a path to recipe
-        recipe = parser.parse_recipe(str(fileName[0]))
-        if recipe:
-		    self.table.addRecipe(recipe.name) #TODO: add data also
-		    self.portfolio.add_recipe(recipe)
+	def add_recipe(self,filename):	
+		recipe = self.parser.parse_recipe(str(fileName[0]))
+		if recipe:
+			self.table.addRecipe(recipe.name) #TODO: add data also
+			self.portfolio.add_recipe(recipe)
+			# self.graph.add_recipe(recipe)
+
+	def remove_recipe(self,recipeName,rowNum):
+		""" see above"""
+		self.portfolio.remove_recipe(recipeName)
+		self.table.removeRow(self.row,rowNum)
+		self.table.notifyRows(self.row,rowNum)
+		# update the graph
+		self.graph.remove_recipe(recipeName)
+		self.table.addRecipe(recipe.name) #TODO: add data also
+		self.portfolio.add_recipe(recipe)
 		    # self.graph.add_recipe(recipe)
 
 	def remove_recipe(self,recipeName,rowNum):
@@ -324,17 +332,6 @@ class Controller:
 		self.table.notifyRows(self.row,rowNum)
 		# update the graph
 		self.graph.remove_recipe(recipeName)
-        self.table.addRecipe(recipe.name) #TODO: add data also
-        self.portfolio.add_recipe(recipe)
-            # self.graph.add_recipe(recipe)
-
-	def remove_recipe(self,recipeName,rowNum):
-		""" see above"""
-    	self.portfolio.remove_recipe(recipeName)
-        self.table.removeRow(self.row,rowNum)
-        self.table.notifyRows(self.row,rowNum)
-        # update the graph
-        self.graph.remove_recipe(recipeName)
 
 	def add_recipe_graph(self,recipeName):
 		self.graphed.append(recipeName)
