@@ -1,1 +1,0 @@
-{"rows": [{"operator": "=", "expr_b": {"typ": "expr_test_b", "val": 2, "func": "expr_test_b"}, "expr_a": {"typ": "expr_test_a", "val": 8, "func": "expr_test_a"}}], "trigger": "test_trigger_a", "name": "Dylan"}
