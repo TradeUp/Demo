@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # TradeUp :: Demo
 =======
 # Readme

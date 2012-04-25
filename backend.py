@@ -313,7 +313,6 @@ class Controller:
 		parser = Parser(None) # don't need a path to recipe
         recipe = parser.parse_recipe(str(fileName[0]))
         if recipe:
-<<<<<<< HEAD
 		    self.table.addRecipe(recipe.name) #TODO: add data also
 		    self.portfolio.add_recipe(recipe)
 		    # self.graph.add_recipe(recipe)
@@ -325,9 +324,8 @@ class Controller:
 		self.table.notifyRows(self.row,rowNum)
 		# update the graph
 		self.graph.remove_recipe(recipeName)
-=======
-            self.table.addRecipe(recipe.name) #TODO: add data also
-            self.portfolio.add_recipe(recipe)
+        self.table.addRecipe(recipe.name) #TODO: add data also
+        self.portfolio.add_recipe(recipe)
             # self.graph.add_recipe(recipe)
 
 	def remove_recipe(self,recipeName,rowNum):
@@ -337,7 +335,6 @@ class Controller:
         self.table.notifyRows(self.row,rowNum)
         # update the graph
         self.graph.remove_recipe(recipeName)
->>>>>>> 8c70772d84fd1e901c79c4b5a49ee1963f72c8b5
 
 	def add_recipe_graph(self,recipeName):
 		self.graphed.append(recipeName)
@@ -347,22 +344,15 @@ class Controller:
 
 	def pl_cacl(self,recipe):
 		l_quan,l_val = recipe.last_point()
-<<<<<<< HEAD
 		f_quan,f_val = recipe.first 
 		# multiply/subtract
 		return (l_quan*_val - f_quan*f_val) 
-=======
-    	f_quan,f_val = recipe.first 
-    	# multiply/subtract
-    	return (l_quan*_val - f_quan*f_val) 
->>>>>>> 8c70772d84fd1e901c79c4b5a49ee1963f72c8b5
 
 	def per_calc(self,recipe,pl):
 		return (pl/recipe.first)
 
 	def eval(self,time):
 		"""
-<<<<<<< HEAD
 		output to graph:
 
 		{ name_of_recipe: [(a,b)...], other_recipe: [(a,b)...]} <-- where a*b is the thing you want to graph
@@ -387,32 +377,6 @@ class Controller:
 		# send the output to the table
 		self.table.update(table_output)
 		self.graph.update(graph_output)
-=======
-    	output to graph:
-
-    	{ name_of_recipe: [(a,b)...], other_recipe: [(a,b)...]} <-- where a*b is the thing you want to graph
-
-    	"""
-    	table_output = {}
-    	graph_output = {}
-
-    	self.portfolio.eval(time)
-    	for key,recipe in self.portfolio.recipes:
-    		# create a data object out of the recipe
-    		l_v,l_p = recipe.last_point()
-    		pl = pl_cal(recipe)
-    		result = {
-				'value' = (l_v*l_p),
-    			'pli' = pl,
-    			'percent' = per_cal(recipe,pl)
-    		}
-    		if recipe.name in self.graphed:
-    			graph_output[recipe.name] = recipe.get_performance() 
-    		table_output[recipe.name] = result 
-    	# send the output to the table
-    	self.table.update(table_output)
-    	self.graph.update(graph_output)
->>>>>>> 8c70772d84fd1e901c79c4b5a49ee1963f72c8b5
 
 
         
