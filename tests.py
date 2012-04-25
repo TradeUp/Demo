@@ -20,6 +20,7 @@ def test_save(path):
 	portfolio = Portfolio()
 	portfolio.add_recipe(recipe)
 	portfolio.to_file(path)
+	print "file saved"
 
 def test_load(path):
 	parser = Parser(path)
@@ -28,6 +29,7 @@ def test_load(path):
 	assert(portfolio)
 	assert(len(portfolio.recipes)==1)
 	assert(len(portfolio.recipes[0].rows)==1)
+	print "portfolio loaded"
 	print portfolio.eval(2) # 99
 	print portfolio.eval(2) # 99
 	print portfolio.eval(1) # 99
@@ -36,5 +38,6 @@ def test_load(path):
 	print portfolio.get_performance()
 
 if __name__ == "__main__":
-	test_save("test.algo")
-	test_load("test.algo")
+    app = QApplication(sys.argv)
+    w = Window()
+    sys.exit(app.exec_())
