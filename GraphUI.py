@@ -53,6 +53,8 @@ class MainWindow(QMainWindow):
         self.canvas.draw()
         
 
+
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     testingDates1 = [datetime.date(2006, 1, 3), datetime.date(2006, 1, 4),datetime.date(2006, 1, 5),datetime.date(2006, 1, 6),datetime.date(2006, 1, 7)]

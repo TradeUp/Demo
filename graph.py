@@ -26,7 +26,7 @@ def addPoint(name, date, money):
     except KeyError:
         print name + " was not found!"
         
-
+#removeline
     
 '''
 Colors
