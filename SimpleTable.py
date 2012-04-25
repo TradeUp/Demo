@@ -18,19 +18,19 @@ class AddButton(QPushButton):
         self.setText("Add Recipe")
         self.setFixedSize(ADD_BUTTON_W, ADD_BUTTON_H)
         self.clicked.connect(self.chooseFile)
-        self.table = table
+        self.controller = table.controller
 
         
     def chooseFile(self):
         fileName = QFileDialog.getOpenFileName(self, dir="/home/dylan/mock_algo/", filter="*.algo")
         #add some method to send file name to backend here!!
-        print fileName 
-        """ADD FUNCTION HERE...LET IT RETURN TRUE IF VALID FILE"""
-        parser = Parser(None) # don't need a path to recipe
-        recipe = parser.parse_recipe(str(fileName[0]))
-        if recipe:
-            self.table.addRecipe(recipe.name,)
-            
+        # print fileName 
+        # """ADD FUNCTION HERE...LET IT RETURN TRUE IF VALID FILE"""
+        # parser = Parser(None) # don't need a path to recipe
+        # recipe = parser.parse_recipe(str(fileName[0]))
+        # if recipe:
+        #     self.table.addRecipe(recipe.name)
+        self.controller.add_recipe(fileName)
 
 class RemoveButton(QPushButton):
     
@@ -47,9 +47,7 @@ class RemoveButton(QPushButton):
     
     def remove(self):
         print "removing recipe " + str(self.row)
-        self.table.removeRow(self.row)
-        self.table.notifyRows(self.row)
-        
+        self.table.controller.remove_recipe(self.table.rowNums[self.row],self.row) # sends the name to the controller
 
 
 class Table(QTableWidget):
@@ -57,6 +55,7 @@ class Table(QTableWidget):
     def __init__(self):
         super(Table, self).__init__(0, 5) #init with one row, 5 columns
         self.rows = {} # contains all of the rows
+        self.rowNums = {}
         self.initgui()
         
 
@@ -82,10 +81,9 @@ class Table(QTableWidget):
        # self.setRowCount(self.rowCount() + 1)
         self.rows[name] = Row(self,name,data)
 
-    def updateRows(self,recipe_data):
-        """ data is a dictionary of dictionaries indexed by name of row """
-        for name,row in self.rows:
-            row.updateRow(recipe_data[name]) # update each row by name
+    def update(self,update_data):
+        for name,data in update_data:
+            self.rows[name].updateRow(data)
 
     def notifyRows(self, rowRemoved):
         for row in xrange(rowRemoved, self.rowCount()):
@@ -112,6 +110,7 @@ class Row(object):
         rows = self.table.rowCount()
         #expand the table by one row
         self.table.setRowCount(rows + 1)
+        self.table.rowNums[self.table.rowCount()] = self.name # set the name for removal
         #add name cell with checkbox
         self.gui['name'] = QTableWidgetItem(self.name)
         self.gui['name'].setCheckState(Qt.Checked)

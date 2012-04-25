@@ -8,24 +8,33 @@ import triggerfuncs
 class BackendObj(object):
 	def __init__(self,color):
 		self.color = color
-		self.performance = { self.color : [100]} # decide initial amount of portfolio
+		self.first = None 
+		self.performance = { self.color : [(0,0)]} # decide initial amount of portfolio
 	def json(self):
 		return json.dumps(self.data())
 
-	def performance_update(self,point):
-		point = point or 0 # protects against being passed None 
-		self.performance[self.color].append((self.performance[self.color][-1]+point))
-		return self.performance[self.color][-1] 
+	def update_value(self,new_price):
+		quantity,price = self.performance[self.color][-1] # get last tuple
+		self.performance[self.color].append((quantity,new_price))
 
-	def performance_static(self,point):
-		if point:
-			self.performance[self.color].append(point)
-		else:
-			self.performance[self.color].append(self.performance[self.color][-1])
+	def last_point(self):
 		return self.performance[self.color][-1]
+	def add_point(self,point):
+		self.performance[self.color][-1] = point 
+		return self.performance[self.color][-1]
+
+	def performance_update(self,point):
+		""" triggered when your trigger goes off """
+		quantity, price = self.performance[self.color][-1] 
+		if quantity == 0 and price == 0:
+			first = len(self.performance[self.color]) -1 # the most recent point is now saved
+
+		self.performance[self.color][-1] = (point[0]+quantity,point[1]+price) # add the change
+		return self.performance[self.color][-1] 
 
 	def get_performance(self):
 		return self.performance[self.color]
+
 class Expression:
 	"""
 	Models an expression used when building a recipe.
@@ -152,34 +161,42 @@ class Recipe(BackendObj):
 		with open(path,'w') as output:
 			output.write(self.json())
 
-	def eval(self,data):
+	def eval(self,cash,data):
 		""" evalutes against the piece of data, triggers trigger if appropriate. trigger will return data """
+		self.update_value(self.trigger.get_price(data)) # gets the most recent price
 		for row in self.rows:
-			if not row.eval(data): 
-				return self.performance_update(self.trigger.reset()) 
-		return self.performance_update(self.trigger.activate())
+			if not row.eval(data):
+				self.trigger.reset() 
+				return self.last_point()
+		return self.performance_update(self.trigger.activate(cash))
 
 class Portfolio(BackendObj):
 	"""
 	Represents a portfolio; a collection of recipes
 	""" 
-	def __init__(self,color="red"):
+	def __init__(self,color="red",cash="10000"):
 		super(Portfolio,self).__init__(color)
-		self.recipes = []
+		self.recipes = {}
+		self.cash = cash
 
 	def add_recipe(self,recipe):
-		self.recipes.append(recipe)
+		self.recipes[recipe.name] = recipe
+
+	def remove_recipe(self,recipe):
+		self.recipes[recipe.name] = None 
 
 	def eval(self,data):
-		run = 0
+		run = (0,0)
 		for recipe in self.recipes:
-			run += recipe.eval(data)
-		run /= len(self.recipes)
-		return self.performance_static(run)
+			a,b = recipe.eval(self.cash,data)
+			run[0] += a
+			run[1] += b 
+			# nice
+		return self.add_point(run)
 
 	def data(self):
 		out = []
-		for recipe in self.recipes:
+		for key,recipe in self.recipes:
 			out.append(recipe.data())
 		return out
 
@@ -200,12 +217,12 @@ class Trigger:
 		self.tripped = False 
 		self.func = getattr(triggerfuncs,oncall) or (lambda: 1)
 	
-	def activate(self):
+	def activate(self,cash):
 		if self.tripped:
 			return None 
 		else:
 			self.tripped = True 
-			return self.func() # returns a positive or negative numebr representign the outcome 
+			return self.func(cash) # returns a positive or negative numebr representign the outcome 
 
 	def reset(self):
 		self.tripped = False 
@@ -277,3 +294,78 @@ class Evaluator:
 		self.portfoliio.eval(data)
 
 
+####
+# Controller
+#	updates the graph & table, receives drop/adds for recipes from the table
+##
+class Controller:
+
+	def __init__(self,table,graph):
+		self.table = table
+		self.graph = graph
+		self.graphed = []
+		self.portfolio = Portfolio() 
+
+	def add_recipe(self,filename):
+		""" called by the table; adds a table, which in turn updates graph & table.
+			flow is: table->controller.add_recipe(), controller->table.add_recipe(), controller->graph.add_recipe()
+		"""
+		parser = Parser(None) # don't need a path to recipe
+        recipe = parser.parse_recipe(str(fileName[0]))
+        if recipe:
+            self.table.addRecipe(recipe.name) #TODO: add data also
+            self.portfolio.add_recipe(recipe)
+            # self.graph.add_recipe(recipe)
+
+    def remove_recipe(self,recipeName,rowNum):
+    	""" see above"""
+    	self.portfolio.remove_recipe(recipeName)
+        self.table.removeRow(self.row,rowNum)
+        self.table.notifyRows(self.row,rowNum)
+        # update the graph
+        self.graph.remove_recipe(recipeName)
+
+    def add_recipe_graph(self,recipeName):
+    	self.graphed.append(recipeName)
+
+    def remove_recipe_graph(self,recipeName):
+    	self.graphed.remove(recipeName)
+
+    def pl_cacl(self,recipe):
+    	l_quan,l_val = recipe.last_point()
+    	f_quan,f_val = recipe.first 
+    	# multiply/subtract
+    	return (l_quan*_val - f_quan*f_val) 
+
+    def per_calc(self,recipe,pl):
+    	return (pl/recipe.first)
+
+    def eval(self,time):
+    	"""
+    	output to graph:
+
+    	{ name_of_recipe: [(a,b)...], other_recipe: [(a,b)...]} <-- where a*b is the thing you want to graph
+
+    	"""
+    	table_output = {}
+    	graph_output = {}
+
+    	self.portfolio.eval(time)
+    	for key,recipe in self.portfolio.recipes:
+    		# create a data object out of the recipe
+    		l_v,l_p = recipe.last_point()
+    		pl = pl_cal(recipe)
+    		result = {
+    			'value' = (l_v*l_p),
+    			'pli' = pl,
+    			'percent' = per_cal(recipe,pl)
+    		}
+    		if recipe.name in self.graphed:
+    			graph_output[recipe.name] = recipe.get_performance() 
+    		table_output[recipe.name] = result 
+    	# send the output to the table
+    	self.table.update(table_output)
+    	self.graph.update(graph_output)
+
+
+        
