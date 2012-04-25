@@ -12,6 +12,11 @@ import GraphUI
 import graph
 import datetime
 from PySide import QtGui, QtCore
+from PySide.QtCore import *
+from backend import Parser,Recipe 
+from PySide.QtGui import *
+from SimpleTable import AddButton,Table
+
 
 class GUI(QtGui.QWidget):
     
@@ -26,10 +31,20 @@ class GUI(QtGui.QWidget):
 
         bottom = QtGui.QFrame(self)
         bottom.setFrameShape(QtGui.QFrame.StyledPanel)
+        table = Table()
+        addButton = AddButton(table)
+        buttonTable = QVBoxLayout
+        layout = QVBoxLayout()
+        layout.addWidget(table)
+        layout.addWidget(addButton)
+        #buttonTable.addWidget(table)
+        #buttonTable.addWidget(addButton)
+        bottom.setLayout(layout)
+
 
         splitter = QtGui.QSplitter(QtCore.Qt.Vertical)
         splitter.addWidget(frame)
-        splitter.addWidget(bottom)
+        splitter.addWidget(bottom)  
 
         hbox.addWidget(splitter)
         self.setLayout(hbox)
