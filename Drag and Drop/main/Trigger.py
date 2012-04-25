@@ -8,7 +8,7 @@ import PySide
 import sys
 from PySide import QtCore
 from PySide import QtGui
-import Function
+from Function import Function
 
 class TriggerWidget(QtGui.QFrame):
     
@@ -84,12 +84,22 @@ class FunctionDropTarget(QtGui.QLabel):
     def dropEvent(self, e):
         print "DROPPED"
         #parse the data into a function object
-        self.func = Function();
+        if e.mimeData().hasFormat('text/plain'):
+            tokens = e.mimeData().text().split('/');
+
+            self.setText(tokens[0])
+            self.func = Function.getFunction(tokens[1])
+
+            #send the request selection signal
+            self.request_selection.emit(FunctionSelectionEvent(self, self.func, self.onSelected));
+
+            e.setDropAction(QtCore.Qt.CopyAction);
+            e.accept()
+        else:
+            e.ignore() 
         
-        self.request_selection.emit(FunctionSelectionEvent(self, self.func, self.onSelected));
         
-        e.setDropAction(QtCore.Qt.CopyAction);
-        e.accept();
+
         
     def mousePressEvent(self, e):
         if e.button() == QtCore.Qt.LeftButton:
