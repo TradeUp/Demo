@@ -12,6 +12,7 @@ class Function(object):
     """
     def __init__(self, func):
         self.func = func;
+        self.values = [];
 
     """
     Figure out what function object best fits the string and return a new

@@ -9,6 +9,7 @@ import sys
 from PySide import QtCore
 from PySide import QtGui
 from Function import Function
+from Demo.backend import *
 
 class TriggerWidget(QtGui.QFrame):
     
@@ -31,10 +32,10 @@ class TriggerWidget(QtGui.QFrame):
         self.rightTarget.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter);
         self.rightTarget.setStyleSheet("QLabel { padding-top:5px; }")
         
-        combobox = ComparisonComboBox(self);
+        self.combobox = ComparisonComboBox(self);
         
         self._mainTriggerLayout.addWidget(self.leftTarget,5);
-        self._mainTriggerLayout.addWidget(combobox,1);
+        self._mainTriggerLayout.addWidget(self.combobox,1);
         self._mainTriggerLayout.addWidget(self.rightTarget,5);
         
         
@@ -43,6 +44,21 @@ class TriggerWidget(QtGui.QFrame):
         self.setLayout(self._layout);
         
         self.setAcceptDrops(True);
+    
+    """
+    Convert this trigger into a recipe row object.
+    Returns None if invalid row (one or both functions None).
+    """
+    def getRecipeRow(self):
+        if(self.leftTarget.function() == None or self.rightTarget.function() == None):
+            return None;
+        
+        exprLeft = self.leftTarget.function().getExpression();
+        exprRight = self.rightTarget.function().getExpression();
+        comparison = self.combobox.currentText()
+        
+        return RecipeRow(exprLeft, exprRight, comparison);
+        
         
     """Connected to request_selection signal of FunctionDropTarget class"""
     @QtCore.Slot(object)
@@ -72,6 +88,9 @@ class FunctionDropTarget(QtGui.QLabel):
         palette.setColor(QtGui.QPalette.ColorRole.Highlight, QtGui.QColor(0,0,255));
         self.setPalette(palette);
         self.setAutoFillBackground(True);
+        
+    def function(self):
+        return self.func;
             
     def dragEnterEvent(self, e):
         print "DRAG ENTER"

@@ -38,3 +38,4 @@ class ActionPanel(QtGui.QScrollArea):
         root.setLayout(self._layout);
         self.setWidget(root);
         root.show();
+        
