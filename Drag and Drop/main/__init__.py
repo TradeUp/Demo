@@ -7,66 +7,6 @@ from Inspector import *
 from ActionPanel import *
 from FunctionSelector import *
 
-class Button(QLabel):
-    def __init__(self, title, parent, data):
-        super(Button, self).__init__(title, parent);
-        self.data = data;
-        
-    def mouseMoveEvent(self, e):
-        #don't drag if left cick
-        if e.buttons() == Qt.RightButton:
-            return
-        
-        mimeData = QMimeData()
-        
-        drag = QDrag(self);
-        
-        mimeData.setText(self.data);
-        drag.setMimeData(mimeData)
-        drag.setHotSpot(e.pos()-self.rect().topLeft());
-        
-        #draw the right pixmap
-        pixmap = QPixmap()
-        pixmap = pixmap.grabWidget(self);
-        
-        drag.setPixmap(pixmap);
-        
-        drag.start(Qt.MoveAction);
-        
-class Label(QLabel):
-    def __init__(self, title, parent):
-        super(Label, self).__init__(title, parent);
-        self.setMinimumWidth(50);
-        self.setAcceptDrops(True)
-        
-    
-    def dragEnterEvent(self, e):
-        if(e.mimeData().hasFormat("text/plain")):
-            e.accept();
-    
-    def dragLeaveEvent(self, e):
-        self.setStyleSheet("");
-        self.repaint()
-            
-    def dragMoveEvent(self, e):
-        e.accept()
-        if(e.mimeData().text() == "Accept"):
-            self.setStyleSheet("QLabel { background-color:#00FF00 }")
-            self.repaint();
-        else:
-            self.setStyleSheet("QLabel { background-color:#FF0000 }")
-            self.repaint();
-        
-    def dropEvent(self, e):
-        if(e.mimeData().text() == "Accept"):
-            self.setText("Accepted!");
-            e.accept();
-        else: 
-            e.ignore();
-            self.setText("Rejected!");
-        self.setStyleSheet("");
-        self.repaint();
-
 class RecipeWindow(QWidget):
     def __init__(self, portfolio=None):
         super(RecipeWindow, self).__init__();
