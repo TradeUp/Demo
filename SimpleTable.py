@@ -57,8 +57,8 @@ class Table(QTableWidget):
         self.rows = {} # contains all of the rows
         self.rowNums = {}
         self.initgui()
+        self.controller = None 
         
-
     def initgui(self):
         # add the headers
         headers = ["Recipe", "Value", "P/L", "% Return", "Remove?"]
