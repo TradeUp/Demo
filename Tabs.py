@@ -34,6 +34,7 @@ from PySide.QtCore import *
 from backend import Parser,Recipe 
 from PySide.QtGui import *
 from SimpleTable import AddButton,Table
+import DragAndDrop
 
 
 
@@ -57,7 +58,7 @@ class Tabs(QtGui.QDialog):
 
         tabWidget = QtGui.QTabWidget()
         tabWidget.addTab(ex,"Graph")
-        tabWidget.addTab(GeneralTab(), "Kitchen") 
+        tabWidget.addTab(DragAndDrop.RecipeWindow(), "Kitchen") 
       
         okButton = QtGui.QPushButton(self.tr("OK"))
         cancelButton = QtGui.QPushButton(self.tr("Cancel"))
