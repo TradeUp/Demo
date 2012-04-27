@@ -47,10 +47,13 @@ class TriggerWidget(QtGui.QFrame):
     
     """
     Convert this trigger into a recipe row object.
-    Returns None if invalid row (one or both functions None).
+    Returns None if invalid row.
     """
     def getRecipeRow(self):
-        if(self.leftTarget.function() == None or self.rightTarget.function() == None):
+        #If one of the functions are None or the units don't match, return None
+        if(self.leftTarget.function() == None or self.rightTarget.function() == None
+           or self.leftTarget.function().getUnits() != self.rightTarget.function().getUnits()):
+            self.setInvalid();
             return None;
         
         exprLeft = self.leftTarget.function().getExpression();
@@ -58,11 +61,18 @@ class TriggerWidget(QtGui.QFrame):
         comparison = self.combobox.currentText()
         
         return RecipeRow(exprLeft, exprRight, comparison);
-        
+    
+    """
+    Mark as invalid: make red
+    """
+    def setInvalid(self):
+            self.setStyleSheet("background-color:#FF0000;"); 
         
     """Connected to request_selection signal of FunctionDropTarget class"""
     @QtCore.Slot(object)
     def selectionRequested(self, e):
+        #undo marking invalid
+        self.setStyleSheet("");
         e._target = self;
         self.request_selection.emit(e);
         
