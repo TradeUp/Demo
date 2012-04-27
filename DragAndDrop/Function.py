@@ -7,11 +7,20 @@ from Demo import exprfuncs
 from Demo.backend import Expression
 
 class Function(object):
+    NO_UNITS=0
+    DOLLARS=1
+    PERCENT=2
     """
     Init a function with the string representation of the function we want to call in exprfuncs.py
+    For units, use enums defined above
     """
-    def __init__(self, func):
+    def __init__(self, func, units):
         self.func = func;
+        self.values = [];
+        self.units = units
+        
+    def getUnits(self):
+        return self.units;
 
     """
     Figure out what function object best fits the string and return a new
@@ -20,12 +29,12 @@ class Function(object):
     @staticmethod
     def getFunction(func):
         if func.lower() == "stockquote":
-            return SimpleFunction(func.lower())
+            return SimpleFunction(func.lower(), Function.DOLLARS)
     
 """A simple function which only has a stock name parameter"""
 class SimpleFunction(Function):
-    def __init__(self, func):
-        super(SimpleFunction, self).__init__(func);
+    def __init__(self, func, units):
+        super(SimpleFunction, self).__init__(func, units);
         
         self.stock = ""
     
@@ -40,7 +49,7 @@ class SimpleFunction(Function):
     
 """A function that takes date and stock parameters"""
 class DateFunction(SimpleFunction):
-    def __init__(self, func):
-        super(DateFunction, self).__init__(func);
+    def __init__(self, func, units):
+        super(DateFunction, self).__init__(func, units);
         
         self.date = "";

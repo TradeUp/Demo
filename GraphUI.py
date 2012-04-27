@@ -52,8 +52,8 @@ class MainWindow(QMainWindow):
     def reDraw(self):
         self.canvas.draw()
         
-
-
+    def testing(self):
+        print 'hi'
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

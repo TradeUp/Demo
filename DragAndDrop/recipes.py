@@ -9,6 +9,7 @@ from PySide import QtCore
 from PySide import QtGui
 import Function
 from Trigger import *
+from Demo.backend import *
 
 class RecipeList(QtGui.QScrollArea):
     
@@ -44,6 +45,21 @@ class RecipeList(QtGui.QScrollArea):
         root.setLayout(self._layout);
         self.setWidget(root);
         root.show();
+    
+    """
+    Create a Recipe object with rows
+    """
+    def createRecipe(self):
+        recipe = Recipe();
+        
+        #add all the triggers
+        for trigger in self._triggers:
+            row = trigger.getRecipeRow();
+            
+            if(row != None):
+                recipe.add_row(trigger.getRecipeRow())
+            
+        return recipe
                 
     @QtCore.Slot(object)
     def selectionRequested(self, e):

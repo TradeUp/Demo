@@ -14,10 +14,12 @@ class Inspector(QtGui.QFrame):
         super(Inspector, self).__init__();
         
         #default message.
-        self.lblEmpty = QtGui.QLabel("No function selected.");
+        lblEmpty = QtGui.QLabel("No function selected.");
         
         layout = QtGui.QVBoxLayout();
-        layout.addWidget(self.lblEmpty);
+        layout.addWidget(lblEmpty);
+        
+        layout.setContentsMargins(0,0,0,0);
         
         self.setLayout(layout);
         
@@ -25,8 +27,13 @@ class Inspector(QtGui.QFrame):
     @QtCore.Slot(object)
     def setEditor(self, func):
         print "SETTING EDITOR FOR FUNCTION"
-        if(isinstance(func, SimpleFunction)):
-            print "EDITOR CHOSEN: SIMPLEFUNCTION"
+        if(func == None):
+            layout = self.layout()
+            w = layout.takeAt(0)
+            w.widget().deleteLater();
+            layout.addWidget(QtGui.QLabel("No function selected."))
+            self.setLayout(layout)
+        elif(isinstance(func, SimpleFunction)):
             layout = self.layout()
             w = layout.takeAt(0)
             w.widget().deleteLater();
