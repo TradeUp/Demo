@@ -5,6 +5,7 @@ from PySide.QtGui import *
 from recipes import  *
 from Inspector import *
 from ActionPanel import *
+from FunctionSelector import *
 
 class Button(QLabel):
     def __init__(self, title, parent, data):
@@ -76,6 +77,10 @@ class Example(QWidget):
         
         rootHLayout = QtGui.QHBoxLayout();
         vLayout1 = QtGui.QVBoxLayout();
+        
+        self.functionList = FunctionScrollWidget()
+        self.functionList.setMaximumHeight(150);
+        vLayout1.addWidget(self.functionList)
         
         self.inspector = Inspector()
         vLayout1.addWidget(self.inspector);

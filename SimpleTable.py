@@ -57,7 +57,7 @@ class Table(QTableWidget):
         self.rows = {} # contains all of the rows
         self.rowNums = {}
         self.initgui()
-        self.controller = None 
+        self.controller = None
         
     def initgui(self):
         # add the headers
@@ -156,26 +156,26 @@ class TotalRow(Row):
             v.setBackground(QBrush(QColor("lightgray")))
             v.setFont(QFont("Arial", 15, QFont.Bold))
 
-class Window(QWidget):
-    
-    def __init__(self):
-        super(Window, self).__init__()
-        self.setGeometry(50, 50, WINDOW_W, WINDOW_H)
-        self.setWindowTitle("Recipes")
-        table = Table()
-        addButton = AddButton(table)
-        print table.rows 
-        
-        layout = QVBoxLayout()
-        layout.addWidget(table)
-        layout.addWidget(addButton)        
-        
-        self.setLayout(layout)
-        self.show()
-
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    w = Window()
-    sys.exit(app.exec_())
+#class Window(QWidget):
+#    
+#    def __init__(self):
+#        super(Window, self).__init__()
+#        self.setGeometry(50, 50, WINDOW_W, WINDOW_H)
+#        self.setWindowTitle("Recipes")
+#        table = Table()
+#        addButton = AddButton(table)
+#        print table.rows 
+#        
+#        layout = QVBoxLayout()
+#        layout.addWidget(table)
+#        layout.addWidget(addButton)        
+#        
+#        self.setLayout(layout)
+#        self.show()
+#
+#
+#if __name__ == '__main__':
+#    app = QApplication(sys.argv)
+#    w = Window()
+#    sys.exit(app.exec_())
 

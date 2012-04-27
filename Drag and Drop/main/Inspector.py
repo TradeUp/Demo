@@ -7,6 +7,7 @@ import PySide
 import sys
 from PySide import QtCore
 from PySide import QtGui
+from Function import *
 
 class Inspector(QtGui.QFrame):
     def __init__(self):
@@ -24,4 +25,46 @@ class Inspector(QtGui.QFrame):
     @QtCore.Slot(object)
     def setEditor(self, func):
         print "SETTING EDITOR FOR FUNCTION"
-        pass
+        if(isinstance(func, SimpleFunction)):
+            print "EDITOR CHOSEN: SIMPLEFUNCTION"
+            layout = self.layout()
+            w = layout.takeAt(0)
+            w.widget().deleteLater();
+            layout.addWidget(SimpleEditor(func))
+            self.setLayout(layout)
+
+class Editor(QtGui.QWidget):
+    def __init__(self):
+        super(Editor, self).__init__()
+
+"""
+Editor for a SimpleFunction object
+"""
+class SimpleEditor(Editor):
+    def __init__(self, func):
+        super(SimpleEditor, self).__init__()
+        
+        self.func = func;
+        
+        rootVLayout = QtGui.QVBoxLayout()
+        
+        layout = QtGui.QHBoxLayout()
+        
+        label = QtGui.QLabel("Stock: ")
+        label.setMaximumHeight(45)
+        
+        self.txtStock = QtGui.QTextEdit()
+        self.txtStock.setMaximumHeight(25)
+        self.txtStock.textChanged.connect(self.updateFunc)
+        
+        layout.addWidget(label)
+        layout.addWidget(self.txtStock)
+        
+        rootVLayout.addLayout(layout);
+        
+        self.setLayout(rootVLayout);
+        
+    @QtCore.Slot()
+    def updateFunc(self):
+        self.func.setStock(self.txtStock.toPlainText())
+        print "Updated func.stock to: " + self.txtStock.toPlainText()

@@ -213,10 +213,11 @@ class Portfolio(BackendObj):
 ###
 class Trigger:
 
-	def __init__(self,oncall=None):
+	def __init__(self,oncall=None,getPrice=None):
 		self.tripped = False 
 		self.func = getattr(triggerfuncs,oncall) or (lambda: 1)
-	
+		self.get_price = getattr(triggerfuncs,getPrice) or (lambda: 1)
+		
 	def activate(self,cash):
 		if self.tripped:
 			return None 

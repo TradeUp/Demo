@@ -3,16 +3,24 @@ Created on Apr 14, 2012
 
 @author: Paavan
 '''
-from ...backend import exprfuncs
-from ...backend.backend import Expression
+from Demo import exprfuncs
+from Demo.backend import Expression
 
-class Function():
+class Function(object):
     """
     Init a function with the string representation of the function we want to call in exprfuncs.py
     """
     def __init__(self, func):
-        self.func;
-        pass
+        self.func = func;
+
+    """
+    Figure out what function object best fits the string and return a new
+    instance of it
+    """
+    @staticmethod
+    def getFunction(func):
+        if func.lower() == "stockquote":
+            return SimpleFunction(func.lower())
     
 """A simple function which only has a stock name parameter"""
 class SimpleFunction(Function):
@@ -23,6 +31,9 @@ class SimpleFunction(Function):
     
     def setStock(self, stock):
         self.stock = stock
+    
+    def stock(self):
+        return self.stock;
         
     def getExpression(self):
         return Expression(self.func, self.stock);
