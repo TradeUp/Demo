@@ -9,7 +9,7 @@ from PySide import QtCore
 from PySide import QtGui
 import Function
 from Trigger import *
-from Demo.backend import *
+from backend import *
 
 class RecipeList(QtGui.QScrollArea):
     
