@@ -25,8 +25,8 @@ class GUI(QtGui.QMainWindow):
         fileMenu = menubar.addMenu('&File')
         fileMenu.addAction(exitAction)
 
-#        toolbar = self.addToolBar('Exit')
-#        toolbar.addAction(exitAction)
+        toolbar = self.addToolBar('Exit')
+        toolbar.addAction(exitAction)
 
         self.setWindowTitle('TradeUp')    
         self.show()
