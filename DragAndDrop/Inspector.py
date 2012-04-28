@@ -27,13 +27,13 @@ class Inspector(QtGui.QFrame):
     @QtCore.Slot(object)
     def setEditor(self, func):
         print "SETTING EDITOR FOR FUNCTION"
-        if(func == None):
+        if not func:
             layout = self.layout()
             w = layout.takeAt(0)
-            w.widget().deleteLater();
+            w.widget().deleteLater()
             layout.addWidget(QtGui.QLabel("No function selected."))
             self.setLayout(layout)
-        elif(isinstance(func, SimpleFunction)):
+        elif isinstance(func, SimpleFunction):
             layout = self.layout()
             w = layout.takeAt(0)
             w.widget().deleteLater();
@@ -52,11 +52,9 @@ class SimpleEditor(Editor):
         super(SimpleEditor, self).__init__()
         
         self.func = func;
-        
         rootVLayout = QtGui.QVBoxLayout()
         
         layout = QtGui.QHBoxLayout()
-        
         label = QtGui.QLabel("Stock: ")
         label.setMaximumHeight(45)
         
@@ -67,8 +65,7 @@ class SimpleEditor(Editor):
         layout.addWidget(label)
         layout.addWidget(self.txtStock)
         
-        rootVLayout.addLayout(layout);
-        
+        rootVLayout.addLayout(layout);   
         self.setLayout(rootVLayout);
         
     @QtCore.Slot()

@@ -1,4 +1,3 @@
-
 import sys
 import Tabs
 from PySide import QtGui
@@ -40,4 +39,5 @@ def main():
 
 
 if __name__ == '__main__':
+    sys.path.append(os.path.realpath(__file__)) 
     main()

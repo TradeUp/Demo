@@ -1,4 +1,4 @@
-import PySide
+#import PySide
 import sys
 from PySide.QtCore import *
 from PySide.QtGui import *
@@ -10,33 +10,30 @@ from FunctionSelector import *
 class RecipeWindow(QWidget):
     def __init__(self, portfolio=None):
         super(RecipeWindow, self).__init__();
-        self.initUI();
-        
-        self.portfolio = portfolio;
-        if(self.portfolio == None):
-            self.portfolio = Portfolio();
+        self.initUI()
+        self.portfolio = portfolio or Portfolio()
+
         
     def initUI(self):
         self.setAcceptDrops(True)
-        
-        rootHLayout = QtGui.QHBoxLayout();
-        vLayout1 = QtGui.QVBoxLayout();
-        
+        # establish layout
+        rootHLayout = QtGui.QHBoxLayout()
+        vLayout1 = QtGui.QVBoxLayout()
+        # functions
         self.functionList = FunctionScrollWidget()
         vLayout1.addWidget(self.functionList)
-        
+        # create the inspector
         self.inspector = Inspector()
-        self.inspector.setMinimumHeight(150);
-        vLayout1.addWidget(self.inspector);
-        
+        self.inspector.setMinimumHeight(150)
+        vLayout1.addWidget(self.inspector)
+        # add the vLayout to the root
         rootHLayout.addLayout(vLayout1);
-        
+        # set up the bottons
         btnSave = QtGui.QPushButton("Save");
-        
         btnAddRow = QtGui.QPushButton("Add Row");
         
         self.list = RecipeList();
-        self.list.setBackgroundRole(QtGui.QPalette.ColorRole.Light);
+        self.list.setBackgroundRole(QtGui.QPalette.ColorRole.Light)
         self.list.setMinimumWidth(250)
         
         self.list.addEmptyTrigger();
@@ -66,18 +63,15 @@ class RecipeWindow(QWidget):
         #self.pnlBuyActions.setMaximumHeight(100);
         rootHLayout.addWidget(self.pnlBuyActions)
         
-        self.setLayout(rootHLayout);
-        
-        self.setGeometry(300,300,600,300);
-        
+        # window code
+        self.setLayout(rootHLayout); 
+        self.setGeometry(300,300,600,300);    
         self.setWindowTitle('Click or Move');
         self.show()
         
     def saveRecipe(self):
-        recipe = self.list.createRecipe()
-            
-        self.portfolio.add_recipe(recipe);
-        
+        recipe = self.list.createRecipe()            
+        self.portfolio.add_recipe(recipe)     
         return self.portfolio
     
 def main():
@@ -86,4 +80,5 @@ def main():
     sys.exit(app.exec_())
     
 if __name__ == '__main__':
-    main();
+    main()
+

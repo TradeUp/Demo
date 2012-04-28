@@ -3,10 +3,8 @@ Created on Mar 15, 2012
 
 @author: Paavan
 '''
-import PySide
 import sys
-from PySide import QtCore
-from PySide import QtGui
+from PySide import QtCore, QtGui
 import Function
 from Trigger import *
 from Demo.backend import *
@@ -14,19 +12,19 @@ from Demo.backend import *
 class RecipeList(QtGui.QScrollArea):
     
     #Create a signal to communicate the function selected
-    function_selected = QtCore.Signal(object);
+    function_selected = QtCore.Signal(object)
     
     def __init__(self):
-        super(RecipeList, self).__init__();
+        super(RecipeList, self).__init__()
         
-        self._triggers = [];
-        self._selectedTrigger = None;
+        self._triggers = []
+        self._selectedTrigger = None
         
         #dummy root widget to hold everything. QScrollArea needs this to be able to scroll
         root = QtGui.QWidget();
         
         #add a vertical box layout to order the recipes
-        self._layout = QtGui.QVBoxLayout();
+        self._layout = QtGui.QVBoxLayout()
         self._layout.setContentsMargins(0,0,0,0);
         root.setLayout(self._layout);
         

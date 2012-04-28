@@ -1,6 +1,4 @@
-import Function
-import PySide
-import sys
+import Function, sys
 from PySide import QtCore
 from PySide import QtGui
 
@@ -34,15 +32,11 @@ class FunctionItem(QtGui.QLabel):
 	Begin dragging this widget
 	"""
 	def mouseMoveEvent(self, e):
-		
 		#drag only on left click
-		if e.buttons() != QtCore.Qt.LeftButton:
-			return
+		if e.buttons() is not QtCore.Qt.LeftButton: return
 
 		mimedata = QtCore.QMimeData()
-		
 		drag = QtGui.QDrag(self)
-
 		#the MIME data will be text. It will be the text of this item + / + the function to call
 		mimedata.setText(self.text() + '/' + self.func)
 

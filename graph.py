@@ -23,7 +23,7 @@ this is called by eval in the controller class
 send in data in this form:
   {name_of_recipe: ([tuples of values],[dates]), ...}
   '''
-def makenew(data):
+def makenew(data,callback,table):
     print 'cheese'
     color = ''
     if(len(unusedColors) >= 1):
@@ -37,6 +37,8 @@ def makenew(data):
     
     for n in data:
         linedict.update({n:(data[n][1],(data[n][0][0][0] * data[n][0][0][1]),color)})
+
+    callback(table) # calls the update method on the table 
 
 '''assume the dates and money will be sorted already'''        
 def makeLine(name, dates, money, color):

@@ -47,7 +47,7 @@ class Expression:
 
 	def __init__(self,func=None,val=None,typ=None):
 		# TODO: override in subclass (assign attributes)
-		self.func = func
+		self.func = getAttr(exprfuncs,func)
 		self.val = val 
 		self.typ = typ or func 
 
