@@ -4,6 +4,7 @@
 import json
 import exprfuncs
 import triggerfuncs
+import datetime
 
 class BackendObj(object):
 	def __init__(self,color):
@@ -337,6 +338,7 @@ class Controller:
 		graph_output = {}
 
 		self.portfolio.eval(time)
+		print "hello5"
 		for key,recipe in self.portfolio.recipes.items():
 			# create a data object out of the recipe
 			l_v,l_p = recipe.last_point()
@@ -346,11 +348,13 @@ class Controller:
 				'pli' : pl,
 				'percent' : self.per_calc(recipe,pl)
 			}
+			print "hello6"
 			if recipe.name in self.graphed:
-				graph_output[recipe.name] = recipe.get_performance() 
+				graph_output[recipe.name] = (recipe.get_performance()[recipe.color], [datetime.datetime(2001, 3, x) for x in xrange(len(recipe.get_performance()[recipe.color]))])
 			table_output[recipe.name] = result 
+			print "hello7"
 		# send the output to the table
-		self.graph.update(graph_output,getattr('SimpleTable.py',self.update),self.table,table_output);
+		self.graph.update(graph_output,self.table,table_output);
 
 
         
