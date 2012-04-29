@@ -133,7 +133,7 @@ class Row(object):
         self.gui['remove'] = RemoveButton(self.table, rows)
         self.table.setCellWidget(rows, 4, self.gui['remove'])
     
-    def updateRow(data):
+    def updateRow(self, data):
         """
         data has the same variables as our gui:
         - value

@@ -3,10 +3,7 @@ Created on Apr 14, 2012
 
 @author: Paavan
 '''
-<<<<<<< HEAD
 from Demo.exprfuncs import *
-=======
->>>>>>> 3f047bdb9bdc0ea0e21e799dd9dbe7b33bc75c8a
 from Demo.backend import Expression
 
 class Function(object):

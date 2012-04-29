@@ -47,7 +47,7 @@ class Expression:
 
 	def __init__(self,func=None,val=None,typ=None):
 		# TODO: override in subclass (assign attributes)
-		self.func = getAttr(exprfuncs,func)
+		self.func = getattr(exprfuncs,func)
 		self.val = val 
 		self.typ = typ or func 
 
@@ -282,19 +282,6 @@ class Parser:
 		return RecipeRow(a=self.expr_a(data),b=self.expr_b(data),c=self.operator(data))
 
 
-class Evaluator:
-	"""
-	Evaluates a .algo file on every eval() 
-	"""
-	def __init__(self,path):
-		parser = Parser(path)
-		self.portfolio = parser.build_portfolio()
-
-
-	def eval(data):
-		self.portfoliio.eval(data)
-
-
 ####
 # Controller
 #	updates the graph & table, receives drop/adds for recipes from the table
@@ -310,7 +297,7 @@ class Controller:
 		self.portfolio = Portfolio() 
 
 	def add_recipe(self,filename):	
-		recipe = self.parser.parse_recipe(str(fileName[0]))
+		recipe = self.parser.parse_recipe(str(filename[0]))
 		if recipe:
 			self.table.addRecipe(recipe.name) #TODO: add data also
 			self.portfolio.add_recipe(recipe)
@@ -324,25 +311,17 @@ class Controller:
 		# update the graph
 	    # self.graph.add_recipe(recipe)
 
-	def remove_recipe(self,recipeName,rowNum):
-		""" see above"""
-		self.portfolio.remove_recipe(recipeName)
-		self.table.removeRow(self.row,rowNum)
-		self.table.notifyRows(self.row,rowNum)
-		# update the graph
-		self.graph.remove_recipe(recipeName)
-
 	def add_recipe_graph(self,recipeName):
 		self.graphed.append(recipeName)
 
 	def remove_recipe_graph(self,recipeName):
 		self.graphed.remove(recipeName)
 
-	def pl_cacl(self,recipe):
+	def pl_calc(self,recipe):
 		l_quan,l_val = recipe.last_point()
 		f_quan,f_val = recipe.first 
 		# multiply/subtract
-		return (l_quan*_val - f_quan*f_val) 
+		return (l_quan*l_val - f_quan*f_val) 
 
 	def per_calc(self,recipe,pl):
 		return (pl/recipe.first)
@@ -358,20 +337,20 @@ class Controller:
 		graph_output = {}
 
 		self.portfolio.eval(time)
-		for key,recipe in self.portfolio.recipes:
+		for key,recipe in self.portfolio.recipes.items():
 			# create a data object out of the recipe
 			l_v,l_p = recipe.last_point()
-			pl = pl_cal(recipe)
+			pl = self.pl_calc(recipe)
 			result = {
 				'value' : (l_v*l_p),
 				'pli' : pl,
-				'percent' : per_cal(recipe,pl)
+				'percent' : self.per_calc(recipe,pl)
 			}
 			if recipe.name in self.graphed:
 				graph_output[recipe.name] = recipe.get_performance() 
 			table_output[recipe.name] = result 
 		# send the output to the table
-		self.graph.update(graph_output,getattr('SimpleTable.py',update),self.table,table_output);
+		self.graph.update(graph_output,getattr('SimpleTable.py',self.update),self.table,table_output);
 
 
         
