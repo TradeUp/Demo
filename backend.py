@@ -4,6 +4,7 @@
 import json
 import exprfuncs
 import triggerfuncs
+import datetime
 
 class BackendObj(object):
 	def __init__(self,color):
@@ -18,6 +19,7 @@ class BackendObj(object):
 		self.performance[self.color].append((quantity,new_price))
 
 	def last_point(self):
+		print self.performance[self.color]
 		return self.performance[self.color][-1]
 	def add_point(self,point):
 		self.performance[self.color][-1] = point 
@@ -185,13 +187,14 @@ class Portfolio(BackendObj):
 		self.recipes[recipe.name] = None 
 
 	def eval(self,data):
-		run = (0,0)
-		for recipe in self.recipes:
-			a,b = recipe.eval(self.cash,data)
-			run[0] += a
-			run[1] += b 
+		run_a,run_b = 0,0
+		for recipe in self.recipes.values():
+			a = recipe.eval(self.cash,data)
+			print a
+			run_a += a[0]
+			run_b += a[1]
 			# nice
-		return self.add_point(run)
+		return self.add_point((run_a,run_b))
 
 	def data(self):
 		out = []
@@ -229,7 +232,10 @@ class Trigger:
 		return None 
 
 	def data(self):
-		return self.func.func_name
+		return {
+			'oncall': self.func.func_name,
+			'getPrice': self.get_price.func_name
+			}
 ########
 #### Parsing/Evaluating Code
 ########
@@ -241,6 +247,7 @@ class Parser:
 		if path:
 			with open(path) as f:
 				self.data = json.loads(f.read())
+				print self.data 
 		"""
 		self.data will be a list of recipes, which are a dict of: trigger, rows """
 
@@ -250,8 +257,9 @@ class Parser:
 		for recipe_data in self.data:
 			rows = []
 			for row in recipe_data['rows']:
+				print 'parsing row: ', row
 				rows.append(self.getrow(row))
-			self.portfolio.add_recipe(Recipe(trigger=Trigger(oncall=recipe_data['trigger']),rows=rows)) # you should add color here
+			self.portfolio.add_recipe(Recipe(trigger=Trigger(oncall=recipe_data['trigger']['oncall'],getPrice=recipe_data['trigger']['getPrice']),rows=rows)) # you should add color here
 		return self.portfolio
 
 	def parse_recipe(self,path):
@@ -267,11 +275,13 @@ class Parser:
 
 
 	def expr_a(self,data):
-		return Expression(func=getattr(exprfuncs,data['expr_a']['func']),
+		print 'expr a: ',data['expr_a']['func']
+		return Expression(func=str(data['expr_a']['func']),
 		val=data['expr_a']['val'])
 
 	def expr_b(self,data):
-		return Expression(func=getattr(exprfuncs,data['expr_b']['func']),
+		print data
+		return Expression(func=str(data['expr_b']['func']),
 		val=data['expr_b']['val'])
 
 	def operator(self,data):
@@ -318,11 +328,12 @@ class Controller:
 
 	def pl_calc(self,recipe):
 		l_quan,l_val = recipe.last_point()
-		f_quan,f_val = recipe.first 
+		f_quan,f_val = recipe.first or (0,0)
 		# multiply/subtract
 		return (l_quan*l_val - f_quan*f_val) 
 
 	def per_calc(self,recipe,pl):
+		if not recipe.first: return 0 
 		return (pl/recipe.first)
 
 	def eval(self,time):
@@ -336,6 +347,7 @@ class Controller:
 		graph_output = {}
 
 		self.portfolio.eval(time)
+		print "hello5"
 		for key,recipe in self.portfolio.recipes.items():
 			# create a data object out of the recipe
 			l_v,l_p = recipe.last_point()
@@ -346,10 +358,12 @@ class Controller:
 				'percent' : self.per_calc(recipe,pl)
 			}
 			if recipe.name in self.graphed:
-				graph_output[recipe.name] = recipe.get_performance() 
+				graph_axis = [datetime.datetime(2001,3,x) for x in xrange(1,len(recipe.get_performance()))]
+				graph_output[recipe.name] = (recipe.get_performance,graph_axis)
 			table_output[recipe.name] = result 
+			print "hello7"
 		# send the output to the table
-		self.graph.update(graph_output,getattr('SimpleTable.py',self.update),self.table,table_output);
+		self.graph.update(graph_output,self.table,table_output);
 
 
         
