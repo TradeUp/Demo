@@ -36,9 +36,8 @@ class FunctionItem(QtGui.QLabel):
 	Begin dragging this widget
 	"""
 	def mouseMoveEvent(self, e):
-		print "DRAGGING"
 		#drag only on left click
-		if e.buttons() is not QtCore.Qt.LeftButton: return
+		if e.buttons() != QtCore.Qt.LeftButton: return
 
 		mimedata = QtCore.QMimeData()
 		drag = QtGui.QDrag(self)
