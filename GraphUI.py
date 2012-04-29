@@ -30,7 +30,7 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None):
 
         super(MainWindow, self).__init__(parent)
-
+        self.controller = None # this is set in tabs
         self.main_frame = QWidget()
         self.figure = Figure()
         self.canvas = FigureCanvas(self.figure)
@@ -54,6 +54,10 @@ class MainWindow(QMainWindow):
         
     def testing(self):
         print 'hi'
+
+    def update(self,data,callback,table,table_data):
+        graph.makenew(data)
+        table.callback(table_data)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

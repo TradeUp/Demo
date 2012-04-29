@@ -53,8 +53,13 @@ class Tabs(QtGui.QDialog):
         print graph.linedict
        
         frame = GraphUI.MainWindow()
-        ex = GraphTable.GraphTable(frame)
-        
+        self.controller = Controller(None,None)
+        ex = GraphTable.GraphTable(frame,controller)
+        # set the graph too
+        self.controller.table = ex.table 
+        frame.controller = self.controller
+        # now the frame is the graph (i.e. has the method makenew)
+        self.controller.graph = frame 
 
         tabWidget = QtGui.QTabWidget()
         tabWidget.addTab(ex,"Graph")
@@ -78,6 +83,10 @@ class Tabs(QtGui.QDialog):
 
         self.setWindowTitle("TradeUp")
 
+    def run_test(self):
+        # run the controller evaluating in a loop
+        for x in xrange(100):
+            self.controller.eval(x) # every other one should be true (xing fingers)
 
 class GeneralTab(QtGui.QWidget):
     def __init__(self, parent=None):

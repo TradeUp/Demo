@@ -3,7 +3,10 @@ Created on Apr 14, 2012
 
 @author: Paavan
 '''
+<<<<<<< HEAD
 from Demo.exprfuncs import *
+=======
+>>>>>>> 3f047bdb9bdc0ea0e21e799dd9dbe7b33bc75c8a
 from Demo.backend import Expression
 
 class Function(object):
@@ -30,22 +33,44 @@ class Function(object):
     def getFunction(func):
         if func.lower() == "stockquote":
             return SimpleFunction(func.lower(), Function.DOLLARS)
+        elif func.lower() == "expr_test_a":
+            return DummyFunction(func.lower(), Function.NO_UNITS)
+        elif func.lower() == "expr_test_b":
+            return DummyFunction(func.lower(), Function.NO_UNITS)
     
 """A simple function which only has a stock name parameter"""
 class SimpleFunction(Function):
     def __init__(self, func, units):
         super(SimpleFunction, self).__init__(func, units);
         
-        self.stock = ""
+        self._stock = ""
     
     def setStock(self, stock):
-        self.stock = stock
+        self._stock = stock
     
     def stock(self):
-        return self.stock;
+        return self._stock;
         
     def getExpression(self):
-        return Expression(self.func, self.stock);
+        return Expression(self.func, self._stock);
+    
+"""
+Dummy function that has a Value parameter
+"""
+class DummyFunction(Function):
+    def __init__(self, func, units):
+        super(DummyFunction, self).__init__(func, units);
+        
+        self.val = ""
+    
+    def setValue(self, value):
+        self.val = value
+    
+    def value(self):
+        return self.val;
+        
+    def getExpression(self):
+        return Expression(self.func, self.val);
     
 """A function that takes date and stock parameters"""
 class DateFunction(SimpleFunction):

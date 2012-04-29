@@ -29,7 +29,7 @@ class BackendObj(object):
 		if quantity == 0 and price == 0:
 			first = len(self.performance[self.color]) -1 # the most recent point is now saved
 
-		self.performance[self.color][-1] = (point[0]+quantity,point[1]+price) # add the change
+		self.performance[self.color][-1] = (point[0]+quantity,price) # add the change
 		return self.performance[self.color][-1] 
 
 	def get_performance(self):
@@ -196,7 +196,7 @@ class Portfolio(BackendObj):
 
 	def data(self):
 		out = []
-		for key,recipe in self.recipes:
+		for key, recipe in self.recipes.items():
 			out.append(recipe.data())
 		return out
 
@@ -322,10 +322,7 @@ class Controller:
 		self.table.removeRow(self.row,rowNum)
 		self.table.notifyRows(self.row,rowNum)
 		# update the graph
-		self.graph.remove_recipe(recipeName)
-		self.table.addRecipe(recipe.name) #TODO: add data also
-		self.portfolio.add_recipe(recipe)
-		    # self.graph.add_recipe(recipe)
+	    # self.graph.add_recipe(recipe)
 
 	def remove_recipe(self,recipeName,rowNum):
 		""" see above"""
@@ -374,8 +371,7 @@ class Controller:
 				graph_output[recipe.name] = recipe.get_performance() 
 			table_output[recipe.name] = result 
 		# send the output to the table
-		self.table.update(table_output)
-		self.graph.update(graph_output)
+		self.graph.update(graph_output,getattr('SimpleTable.py',update),self.table,table_output);
 
 
         

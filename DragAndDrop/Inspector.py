@@ -39,6 +39,13 @@ class Inspector(QtGui.QFrame):
             w.widget().deleteLater();
             layout.addWidget(SimpleEditor(func))
             self.setLayout(layout)
+        elif(isinstance(func, DummyFunction)):
+            layout = self.layout()
+            w = layout.takeAt(0)
+            w.widget().deleteLater();
+            layout.addWidget(DummyEditor(func))
+            self.setLayout(layout)
+        
 
 class Editor(QtGui.QWidget):
     def __init__(self):
@@ -60,6 +67,7 @@ class SimpleEditor(Editor):
         
         self.txtStock = QtGui.QTextEdit()
         self.txtStock.setMaximumHeight(25)
+        self.txtStock.setText(func.stock());
         self.txtStock.textChanged.connect(self.updateFunc)
         
         layout.addWidget(label)
@@ -71,4 +79,37 @@ class SimpleEditor(Editor):
     @QtCore.Slot()
     def updateFunc(self):
         self.func.setStock(self.txtStock.toPlainText())
+        print "Updated func.stock to: " + self.txtStock.toPlainText()
+        
+"""
+Editor for a SimpleFunction object
+"""
+class DummyEditor(Editor):
+    def __init__(self, func):
+        super(DummyEditor, self).__init__()
+        
+        self.func = func;
+        
+        rootVLayout = QtGui.QVBoxLayout()
+        
+        layout = QtGui.QHBoxLayout()
+        
+        label = QtGui.QLabel("Value: ")
+        label.setMaximumHeight(45)
+        
+        self.txtStock = QtGui.QTextEdit()
+        self.txtStock.setMaximumHeight(25)
+        self.txtStock.setText(str(func.value()))
+        self.txtStock.textChanged.connect(self.updateFunc)
+        
+        layout.addWidget(label)
+        layout.addWidget(self.txtStock)
+        
+        rootVLayout.addLayout(layout);
+        
+        self.setLayout(rootVLayout);
+        
+    @QtCore.Slot()
+    def updateFunc(self):
+        self.func.setValue(int(self.txtStock.toPlainText()))
         print "Updated func.stock to: " + self.txtStock.toPlainText()

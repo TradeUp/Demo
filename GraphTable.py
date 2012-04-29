@@ -19,22 +19,24 @@ from SimpleTable import AddButton,Table
 
 class GraphTable(QtGui.QWidget):
     
-    def __init__(self, frame):
+    def __init__(self, frame,controller):
         super(GraphTable, self).__init__()
-        
+        self.controller = controller 
         self.initUI(frame)
         
     def initUI(self,frame):      
 
         hbox = QtGui.QHBoxLayout(self)   
-
+        # set a controller for the table/graph
         bottom = QtGui.QFrame(self)
         bottom.setFrameShape(QtGui.QFrame.StyledPanel)
-        table = Table()
+        self.table = Table()
+        # set the table's controller
+        self.table.controller = self.controller 
         addButton = AddButton(table)
         buttonTable = QVBoxLayout
         layout = QVBoxLayout()
-        layout.addWidget(table)
+        layout.addWidget(self.table)
         layout.addWidget(addButton)
         bottom.setLayout(layout)
 
