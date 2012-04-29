@@ -17,6 +17,7 @@ class FunctionScrollWidget(QtGui.QScrollArea):
 		
 		root.setLayout(layout)
 		
+		self.setAcceptDrops(True)
 		self.setWidget(root)
 		
 		
@@ -35,6 +36,7 @@ class FunctionItem(QtGui.QLabel):
 	Begin dragging this widget
 	"""
 	def mouseMoveEvent(self, e):
+		print "DRAGGING"
 		#drag only on left click
 		if e.buttons() is not QtCore.Qt.LeftButton: return
 

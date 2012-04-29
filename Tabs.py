@@ -31,7 +31,7 @@ import datetime
 from GraphTable import Testing
 from PySide import QtGui, QtCore
 from PySide.QtCore import *
-from backend import Parser,Recipe 
+from backend import Parser,Recipe , Controller
 from PySide.QtGui import *
 from SimpleTable import AddButton,Table
 import DragAndDrop
@@ -54,7 +54,7 @@ class Tabs(QtGui.QDialog):
        
         frame = GraphUI.MainWindow()
         self.controller = Controller(None,None)
-        ex = GraphTable.GraphTable(frame,controller)
+        ex = GraphTable.GraphTable(frame,self.controller)
         # set the graph too
         self.controller.table = ex.table 
         frame.controller = self.controller
@@ -81,6 +81,8 @@ class Tabs(QtGui.QDialog):
         mainLayout.addLayout(buttonLayout)
         self.setLayout(mainLayout)
 
+
+        self.setAcceptDrops(True)
         self.setWindowTitle("TradeUp")
 
     def run_test(self):

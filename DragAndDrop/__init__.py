@@ -11,6 +11,7 @@ class RecipeWindow(QWidget):
     def __init__(self, portfolio=None):
         super(RecipeWindow, self).__init__();
         self.initUI()
+        self.setAcceptDrops(True)
         self.portfolio = portfolio or Portfolio()
 
         

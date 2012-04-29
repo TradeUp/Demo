@@ -33,7 +33,7 @@ class GraphTable(QtGui.QWidget):
         self.table = Table()
         # set the table's controller
         self.table.controller = self.controller 
-        addButton = AddButton(table)
+        addButton = AddButton(self.table)
         buttonTable = QVBoxLayout
         layout = QVBoxLayout()
         layout.addWidget(self.table)

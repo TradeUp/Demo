@@ -290,7 +290,7 @@ class Controller:
 
 	def __init__(self,table,graph):
 		self.table = table
-		table.controller = self
+		#table.controller = self
 		self.graph = graph
 		self.parser = Parser(None)
 		self.graphed = []

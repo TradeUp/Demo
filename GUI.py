@@ -1,5 +1,6 @@
 import sys
 import Tabs
+import os
 from PySide import QtGui
 
 class GUI(QtGui.QMainWindow):
@@ -27,7 +28,9 @@ class GUI(QtGui.QMainWindow):
         toolbar = self.addToolBar('Exit')
         toolbar.addAction(exitAction)
 
-        self.setWindowTitle('TradeUp')    
+        self.setWindowTitle('TradeUp')
+        
+        self.setAcceptDrops(True)    
         self.show()
         
         
