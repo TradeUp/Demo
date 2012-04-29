@@ -70,8 +70,7 @@ class Expression:
 	def data(self):
 		return {
 			'func': self.func.func_name,
-			'val': self.val,
-			'typ': self.typ.func_name
+			'val': self.val     
 			}
 
 	def eval(self,data):

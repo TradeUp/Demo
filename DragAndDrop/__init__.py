@@ -73,7 +73,7 @@ class RecipeWindow(QWidget):
     def saveRecipe(self):
         recipe = self.list.createRecipe()
         
-        recipe.trigger = Trigger("test_oncall");
+        recipe.trigger = Trigger(oncall="test_oncall", getPrice="test_getPrice");
             
         self.portfolio.add_recipe(recipe);
         
