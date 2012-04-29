@@ -75,8 +75,12 @@ class RecipeWindow(QWidget):
         
     def saveRecipe(self):
         recipe = self.list.createRecipe()
+        
+        recipe.trigger = Trigger("test_oncall");
             
         self.portfolio.add_recipe(recipe);
+        
+        self.portfolio.to_file("test.algo");
         
         return self.portfolio
     

@@ -9,7 +9,7 @@ import sys
 from PySide import QtCore
 from PySide import QtGui
 from Function import Function
-from backend import *
+from Demo.backend import *
 
 class TriggerWidget(QtGui.QFrame):
     

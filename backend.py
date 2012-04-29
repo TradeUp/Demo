@@ -196,7 +196,7 @@ class Portfolio(BackendObj):
 
 	def data(self):
 		out = []
-		for key,recipe in self.recipes:
+		for key, recipe in self.recipes.items():
 			out.append(recipe.data())
 		return out
 
