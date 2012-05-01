@@ -9,7 +9,7 @@ import datetime
 class BackendObj(object):
 	def __init__(self,color):
 		self.color = color
-		self.first = None 
+		self.first = 0 
 		self.performance = { self.color : [(0,0)]} # decide initial amount of portfolio
 	def json(self):
 		return json.dumps(self.data())
@@ -27,10 +27,10 @@ class BackendObj(object):
 
 	def performance_update(self,point):
 		""" triggered when your trigger goes off """
-		quantity, price = self.performance[self.color][-1] 
-		if quantity == 0 and price == 0:
-			first = len(self.performance[self.color]) -1 # the most recent point is now saved
-
+		if not point:
+			print 'no change'
+			return self.last_point()
+		quantity, price = self.performance[self.color][-1]
 		self.performance[self.color][-1] = (point[0]+quantity,price) # add the change
 		return self.performance[self.color][-1] 
 
@@ -151,7 +151,7 @@ class Recipe(BackendObj):
 		for row in self.rows:
 			data.append(row.data())
 		out = {
-			'trigger' : self.trigger.func.func_name,
+			'trigger' : self.trigger.data(),
 			'rows' : data,
 			'name' : self.name
 		}
@@ -169,7 +169,10 @@ class Recipe(BackendObj):
 			if not row.eval(data):
 				self.trigger.reset() 
 				return self.last_point()
-		return self.performance_update(self.trigger.activate(cash))
+		new_val = self.trigger.activate(100)
+		print 'trigger activated, new value: ',new_val
+		if new_val: self.first += new_val[1]*new_val[0] # add the amnt of money spent
+		return self.performance_update(new_val)
 
 class Portfolio(BackendObj):
 	"""
@@ -225,7 +228,8 @@ class Trigger:
 			return None 
 		else:
 			self.tripped = True 
-			return self.func(cash) # returns a positive or negative numebr representign the outcome 
+			print 'activating trigger: ',self.func.func_name
+			return self.func() # returns a positive or negative numebr representign the outcome 
 
 	def reset(self):
 		self.tripped = False 
@@ -328,9 +332,9 @@ class Controller:
 
 	def pl_calc(self,recipe):
 		l_quan,l_val = recipe.last_point()
-		f_quan,f_val = recipe.first or (0,0)
 		# multiply/subtract
-		return (l_quan*l_val - f_quan*f_val) 
+		print 'recipe first: ',recipe.first
+		return (l_quan*l_val - recipe.first)
 
 	def per_calc(self,recipe,pl):
 		if not recipe.first: return 0 
@@ -358,8 +362,10 @@ class Controller:
 				'percent' : self.per_calc(recipe,pl)
 			}
 			if recipe.name in self.graphed:
-				graph_axis = [datetime.datetime(2001,3,x) for x in xrange(1,len(recipe.get_performance()))]
-				graph_output[recipe.name] = (recipe.get_performance,graph_axis)
+				graph_axis = [datetime.date(2001,3,x) for x in xrange(1,len(recipe.get_performance())+1)]
+				graph_data = [x*y for x,y in recipe.get_performance()]
+				print graph_data
+				graph_output[recipe.name] = (graph_data,graph_axis)
 			table_output[recipe.name] = result 
 			print "hello7"
 		# send the output to the table

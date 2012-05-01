@@ -16,8 +16,9 @@ send in data in this form:
   {name_of_recipe: ([tuples of values],[dates]), ...}
   '''
 def makenew(Parent, data):    
-    for n in data:
-        Parent.linedict.update({n:(data[n][1],(data[n][0][0][0] * data[n][0][0][1]),color)})
+    Parent.OOps(data)
+#    for n in data:
+#        Parent.linedict.update({n:(data[n][1],(data[n][0][0][0] * data[n][0][0][1]),color)})
 
 '''assume the dates and money will be sorted already'''        
 #def makeLine(name, dates, money, color):

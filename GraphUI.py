@@ -20,12 +20,13 @@ import matplotlib.font_manager as font_manager
 
 class MainWindow(QMainWindow):
 
+    linedict = {'cheese': ([(1,2), (2,3)], [datetime.date(2001, 3, 5), datetime.date(2001, 3, 6)])}
+    unusedColors = ['b', 'g', 'r','c','m','y','k']
+    usedColors = []
+
     def __init__(self, parent=None):
 
         super(MainWindow, self).__init__(parent)
-        self.linedict = {'cheese': ([(1,2), (2,3)], [datetime.date(2006, 1, 5), datetime.date(2006, 1, 6)])}
-        unusedColors = ['b', 'g', 'r','c','m','y','k']
-        usedColors = []
         self.controller = None # this is set in tabs
         self.main_frame = QWidget()
         self.figure = Figure()
@@ -33,28 +34,38 @@ class MainWindow(QMainWindow):
         self.canvas.setParent( self.main_frame )
 
         
+        self.reDraw()
+        #self.canvas.draw()
+        
+    def OOps(self, data):
+        self.linedict.clear()
+        for n in data:
+            # n = name/key
+            # need to take (amnt,price) -> amnt*price 
+            self.linedict[n] = data[n]
+        self.reDraw()
+        
+    def reDraw(self):
+        self.figure.clear()
         self.axes = self.figure.add_subplot(111)
         self.axes.grid(color='0.75', linestyle='-', linewidth=0.5)      
         color = ''
         for line in self.linedict.items():
-            if(len(unusedColors) >= 1):
-                color = unusedColors[0]
-                usedColors.append(unusedColors[0])
-                del unusedColors[0]
+            if(len(self.unusedColors) >= 1):
+                color = self.unusedColors[0]
+                self.usedColors.append(self.unusedColors[0])
+                del self.unusedColors[0]
             else:
-                color = usedColors[0]
-                unusedColors = usedColors[1:]
-                usedColors = usedColors[:1]
-            self.axes.plot(line[1][0],line[1][1], color=color, label=line[0])
+                color = self.usedColors[0]
+                unusedColors = self.usedColors[1:]
+                usedColors = self.usedColors[:1]
+            self.axes.plot(line[1][1],line[1][0], color=color, label=line[0])
         props = font_manager.FontProperties(size=10)
         self.axes.legend(loc='center left', shadow=True, fancybox=True, prop=props)
         vbox = QVBoxLayout( )
         vbox.addWidget( self.canvas )
         self.main_frame.setLayout( vbox )
         self.setCentralWidget( self.main_frame )
-        #self.canvas.draw()
-        
-    def reDraw(self):
         self.canvas.draw()
         
     def testing(self):
@@ -65,6 +76,9 @@ class MainWindow(QMainWindow):
         print data
         graph.makenew(self, data)
         table.update(table_data)
+    
+    def up(self):
+        frame.redraw();
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
@@ -80,8 +94,8 @@ if __name__ == '__main__':
 #    #frame.reDraw()
 #    graph.addPoint('Test Profile 1', datetime.date(2006, 1, 8), 12)
 #    print graph.linedict
-#    frame = MainWindow()
-#    frame.show()
+    frame = MainWindow()
+    frame.show()
     #frame.canvas.draw()
     #rame.show()
     app.exec_()

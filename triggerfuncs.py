@@ -3,6 +3,7 @@
 
 
 def test_oncall():
+	print 'trigger called'
 	return (10,1)  # every time it's triggered we get +10 shares
 
 def test_getPrice(data):

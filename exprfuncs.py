@@ -5,9 +5,9 @@ from matplotlib.finance import quotes_historical_yahoo
 import datetime
 
 def expr_test_b(x,d):
-	return x*(d%2) # starts with 5 
+	return x*((d%2)+1) # starts with 5 
 def expr_test_a(x,d):
-	return x/(d%2) # starts with 10
+	return x # starts with 10
 
 def stockquote(tick,d):
 	""" returns the avg price on a given day """
