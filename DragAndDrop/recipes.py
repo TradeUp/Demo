@@ -36,6 +36,7 @@ class RecipeList(QtGui.QScrollArea):
         trigger = TriggerWidget(self);
         trigger.request_selection.connect(self.selectionRequested);
         trigger.setMaximumWidth(self.size().width());
+        trigger.setMaximumHeight(50);
         self._triggers.append(trigger);
         self._layout.addWidget(trigger);
         
