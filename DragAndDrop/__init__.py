@@ -6,6 +6,7 @@ from recipes import  *
 from Inspector import *
 from ActionPanel import *
 from FunctionSelector import *
+from backend import *
 
 class RecipeWindow(QWidget):
     def __init__(self, portfolio=None):
@@ -73,7 +74,7 @@ class RecipeWindow(QWidget):
     def saveRecipe(self):
         recipe = self.list.createRecipe()
         
-        recipe.trigger = Trigger(oncall="test_oncall", getPrice="test_getPrice");
+        triggerFunc = self.pnlBuyActions.getTriggerFunc()
             
         self.portfolio.add_recipe(recipe);
         

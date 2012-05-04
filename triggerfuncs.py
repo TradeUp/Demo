@@ -1,6 +1,6 @@
 # trigger functions
 ##
-import yfinance
+import Demo.yfinance as yfinance
 
 def test_oncall():
 	print 'trigger called'
@@ -30,6 +30,7 @@ def sell_stock(ticker,amount,type,cash):
 	type: 'SHARES' or 'DOLLARS'
 	"""
 	value = yfinance.get_price(ticker)
+
 	if type == 'DOLLARS':
 		amount //= value # you can only sell amount many shares
 
@@ -38,5 +39,4 @@ def sell_stock(ticker,amount,type,cash):
 
 
 def sell_short(ticker,amount,type,cash):
-	"""
-	ticker 
+	pass
