@@ -229,13 +229,17 @@ class Trigger:
 		self.func = getattr(triggerfuncs,oncall) or (lambda: 1)
 		self.get_price = getattr(triggerfuncs,getPrice) or (lambda: 1)
 		
+		self.ticker = ticker
+		self.amount = amount
+		self.amount_type = amount_type
+		
 	def activate(self,cash):
 		if self.tripped:
 			return None 
 		else:
 			self.tripped = True 
 			print 'activating trigger: ',self.func.func_name
-			return self.func(ticker,amount,amount_type,cash) # returns a positive or negative numebr representign the outcome 
+			return self.func(self.ticker,self.amount,self.amount_type,cash) # returns a positive or negative numebr representign the outcome 
 
 	def reset(self):
 		self.tripped = False 
@@ -382,8 +386,6 @@ class Controller:
 		day = datetime.timedelta(days=1) # to add a day
 		end += day 
 
-		while(!same_date(curr,end)):
+		while(not same_date(curr,end)):
 			self.eval(curr)
 			curr += day 
-
-        

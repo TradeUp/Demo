@@ -182,6 +182,13 @@ class ActionTrigger(QtGui.QFrame):
         
         self.setMaximumHeight(43);
         
+    """
+    Convert this trigger into a trigger function
+    """
+    def convertToTriggerFunc(self):
+        pass
+        
+        
 class StockChooser(QtGui.QTextEdit):
     def __init__(self, parent):
         super(StockChooser, self).__init__(parent)
