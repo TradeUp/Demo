@@ -13,13 +13,14 @@ import graph
 import datetime
 from PySide import QtGui, QtCore
 from PySide.QtCore import *
-from backend import Parser,Recipe 
+from backend import Parser,Recipe , Controller
 from PySide.QtGui import *
 from SimpleTable import AddButton,Table
 
+
 class GraphTable(QtGui.QWidget):
     
-    def __init__(self, frame,controller):
+    def __init__(self, frame, controller):
         super(GraphTable, self).__init__()
         self.controller = controller 
         self.initUI(frame)
@@ -73,43 +74,48 @@ class GraphTable(QtGui.QWidget):
         self.setWindowTitle('TradeUp')
         self.show()
         
-def Testing():
-    
-#{ name_of_recipe: [(a,b)...], other_recipe: [(a,b)...]} <-- where a*b is the thing you want to graph
-    testingDates1 = [datetime.date(2006, 1, 3), datetime.date(2006, 1, 4),datetime.date(2006, 1, 5),datetime.date(2006, 1, 6),datetime.date(2006, 1, 7)]
-    testingValue1 = [1,2,3,10,7]
-    testingDates2 = [datetime.date(2006, 1, 5), datetime.date(2006, 1, 6),datetime.date(2006, 1, 7),datetime.date(2006, 1, 8),datetime.date(2006, 1, 9)]
-    testingValue2 = [10,20,30,15,7]
-    
-    graph.makeLine('Test Profile 1',testingDates1,testingValue1,'b')
-    graph.makeLine('Test Profile 2',testingDates2,testingValue2,'r')
-    print graph.linedict
-       
-    frame = GraphUI.MainWindow()
-    ex = GraphTable(frame)
-    
-    graph.addPoint('Test Profile 1', datetime.date(2006, 1, 8), 12)
-    print graph.linedict
+#def Testing():
+#    
+##{ name_of_recipe: [(a,b)...], other_recipe: [(a,b)...]} <-- where a*b is the thing you want to graph
+#    testingDates1 = [datetime.date(2006, 1, 3), datetime.date(2006, 1, 4),datetime.date(2006, 1, 5),datetime.date(2006, 1, 6),datetime.date(2006, 1, 7)]
+#    testingValue1 = [1,2,3,10,7]
+#    testingDates2 = [datetime.date(2006, 1, 5), datetime.date(2006, 1, 6),datetime.date(2006, 1, 7),datetime.date(2006, 1, 8),datetime.date(2006, 1, 9)]
+#    testingValue2 = [10,20,30,15,7]
+#    
+#    graph.makeLine('Test Profile 1',testingDates1,testingValue1,'b')
+#    graph.makeLine('Test Profile 2',testingDates2,testingValue2,'r')
+#    print graph.linedict
+#       
+#    frame = GraphUI.MainWindow()
+#    ex = GraphTable(frame)
+#    
+#    graph.addPoint('Test Profile 1', datetime.date(2006, 1, 8), 12)
+#    print graph.linedict
 
-
+    def test():
+            frame = GraphUI.MainWindow()
+            self.controller = Controller(None,None)
+            ex = GraphTable.GraphTable(frame, self.controller)
 def main():
     
     app = QtGui.QApplication(sys.argv)
 #{ name_of_recipe: [(a,b)...], other_recipe: [(a,b)...]} <-- where a*b is the thing you want to graph
-    testingDates1 = [datetime.date(2006, 1, 3), datetime.date(2006, 1, 4),datetime.date(2006, 1, 5),datetime.date(2006, 1, 6),datetime.date(2006, 1, 7)]
-    testingValue1 = [1,2,3,10,7]
-    testingDates2 = [datetime.date(2006, 1, 5), datetime.date(2006, 1, 6),datetime.date(2006, 1, 7),datetime.date(2006, 1, 8),datetime.date(2006, 1, 9)]
-    testingValue2 = [10,20,30,15,7]
-    
-    graph.makeLine('Test Profile 1',testingDates1,testingValue1,'b')
-    graph.makeLine('Test Profile 2',testingDates2,testingValue2,'r')
-    print graph.linedict
-       
+#    testingDates1 = [datetime.date(2006, 1, 3), datetime.date(2006, 1, 4),datetime.date(2006, 1, 5),datetime.date(2006, 1, 6),datetime.date(2006, 1, 7)]
+#    testingValue1 = [1,2,3,10,7]
+#    testingDates2 = [datetime.date(2006, 1, 5), datetime.date(2006, 1, 6),datetime.date(2006, 1, 7),datetime.date(2006, 1, 8),datetime.date(2006, 1, 9)]
+#    testingValue2 = [10,20,30,15,7]
+#    
+#    graph.makeLine('Test Profile 1',testingDates1,testingValue1,'b')
+#    graph.makeLine('Test Profile 2',testingDates2,testingValue2,'r')
+#    print graph.linedict
+
+    frame = GraphTable.test(self)
     frame = GraphUI.MainWindow()
-    ex = GraphTable(frame)
+    self.controller = Controller(None,None)
+    ex = GraphTable.GraphTable(frame,self.controller)
     
-    graph.addPoint('Test Profile 1', datetime.date(2006, 1, 8), 12)
-    print graph.linedict
+#    graph.addPoint('Test Profile 1', datetime.date(2006, 1, 8), 12)
+#    print graph.linedict
     #frame.reDraw()
     #ex.reDraw(frame.reDraw())
     #ex2 = GUI(frame)
