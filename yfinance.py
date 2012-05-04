@@ -11,6 +11,7 @@
 
 
 import urllib
+import string
 
 
 """
@@ -168,9 +169,8 @@ def get_historical(ticker,date):
     datetime.date object representing the date you want
     """
     d = string.replace(str(date),'-','') # formatting
-    e = string.replace(str(end),'-','')
-    data = yfinance.get_historical_prices(ticker,d,d)
+    data = get_historical_prices(ticker,d,d)
     while not data: 
         d = str(int(d)-1)
-        data = yfinance.get_historical_prices(ticker,d,d)
+        data = get_historical_prices(ticker,d,d)
     return data[1][2] # return the high for the day

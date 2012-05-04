@@ -186,6 +186,7 @@ class ActionTrigger(QtGui.QFrame):
     Convert this trigger into a trigger function
     """
     def convertToTriggerFunc(self):
+        pass
         
         
 class StockChooser(QtGui.QTextEdit):

@@ -1,6 +1,6 @@
 # trigger functions
 ##
-import yfinance
+import Demo.yfinance as yfinance
 
 def test_oncall():
 	print 'trigger called'

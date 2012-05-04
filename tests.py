@@ -4,6 +4,8 @@
 import math
 import exprfuncs
 from backend import Expression, RecipeRow, Recipe,Portfolio, Parser,Trigger
+from PySide import QtGui
+import sys
 
 def test_save(path):
 	expr = Expression(func=getattr(exprfuncs,'expr_test_a'),val=8)
@@ -38,6 +40,6 @@ def test_load(path):
 	print portfolio.get_performance()
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
+    app = QtGui.QApplication(sys.argv)
     w = Window()
     sys.exit(app.exec_())
