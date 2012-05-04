@@ -174,7 +174,7 @@ class Recipe(BackendObj):
 			if not row.eval(data):
 				self.trigger.reset() 
 				return self.last_point()
-		new_val = self.trigger.activate(100)
+		new_val = self.trigger.activate(cash)
 		print 'trigger activated, new value: ',new_val
 		if new_val: self.first += new_val[1]*new_val[0] # add the amnt of money spent
 		return self.performance_update(new_val)
@@ -186,7 +186,7 @@ class Portfolio(BackendObj):
 	def __init__(self,color="red",cash="10000"):
 		super(Portfolio,self).__init__(color)
 		self.recipes = {}
-		self.cash = cash
+		self.cash = [cash]
 
 	def add_recipe(self,recipe):
 		self.recipes[recipe.name] = recipe
@@ -196,6 +196,7 @@ class Portfolio(BackendObj):
 
 	def eval(self,data):
 		run_a,run_b = 0,0
+		self.cash.append(self.cash[-1]) # copy the last value 
 		for recipe in self.recipes.values():
 			a = recipe.eval(self.cash,data)
 			print a
@@ -223,7 +224,7 @@ class Portfolio(BackendObj):
 ###
 class Trigger:
 
-	def __init__(self,oncall=None,getPrice=None):
+	def __init__(self,oncall=None,getPrice=None,ticker,amount,amount_type):
 		self.tripped = False 
 		self.func = getattr(triggerfuncs,oncall) or (lambda: 1)
 		self.get_price = getattr(triggerfuncs,getPrice) or (lambda: 1)
@@ -234,7 +235,7 @@ class Trigger:
 		else:
 			self.tripped = True 
 			print 'activating trigger: ',self.func.func_name
-			return self.func() # returns a positive or negative numebr representign the outcome 
+			return self.func(ticker,amount,amount_type,cash) # returns a positive or negative numebr representign the outcome 
 
 	def reset(self):
 		self.tripped = False 
@@ -370,6 +371,7 @@ class Controller:
 				graph_output[recipe.name] = (graph_data,self.graph_axis)
 			table_output[recipe.name] = result 
 		# send the output to the table
+		graph_data['cash'] = (self.portfolio.cash,self.graph_axis) 
 		self.graph.update(graph_output,self.table,table_output);
 
 	def run_historical(self,start,end):

@@ -10,22 +10,33 @@ def test_getPrice(data):
 	return 1 # price stays constant
 
 
-def buy_stock(ticker,amount,type):
+def buy_stock(ticker,amount,type,cash):
 	"""
 	ticker: stock ticker
 	amount: quantity
 	type: 'SHARES' or 'DOLLARS'
 	"""
 	value = yfinance.get_price(ticker)
-	if type == 'SHARES': return (amount,value)
-	amount //= value # you can only buy full shares of stock!
+	if type == 'DOLLARS':
+		amount //= value
+
+	cash[-1] -= value*amount
 	return (amount,value)
 
-def sell_stock(ticker,amount,type):
+def sell_stock(ticker,amount,type,cash):
 	"""
 	ticker: stock symbol
 	amount: quantity
 	type: 'SHARES' or 'DOLLARS'
 	"""
 	value = yfinance.get_price(ticker)
-	
+	if type == 'DOLLARS':
+		amount //= value # you can only sell amount many shares
+
+	cash[-1] += value*amount 
+	return (-amount,value) # you sold it dingus!
+
+
+def sell_short(ticker,amount,type,cash):
+	"""
+	ticker 
