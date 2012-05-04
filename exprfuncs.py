@@ -1,7 +1,7 @@
 #
 # Expression Functions
 ##
-import datetime, Demo.yfinance as yfinance
+import datetime, yfinance as yfinance
 
 def expr_test_b(x,d):
 	return x*((d%2)+1) # starts with 5 

@@ -3,8 +3,8 @@ Created on Apr 14, 2012
 
 @author: Paavan
 '''
-from Demo.exprfuncs import *
-from Demo.backend import Expression
+from exprfuncs import *
+from backend import Expression
 
 class Function(object):
     NO_UNITS=0
