@@ -9,7 +9,7 @@ import datetime
 def same_date(a,b):
 	if a.day == b.day:
 		if a.month == b.month:
-			return a.year = b.year 
+			return a.year == b.year 
 
 class BackendObj(object):
 	def __init__(self,color):
