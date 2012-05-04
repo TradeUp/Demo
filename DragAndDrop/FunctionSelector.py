@@ -12,8 +12,8 @@ class FunctionScrollWidget(QtGui.QScrollArea):
 		
 		layout.addWidget(FunctionItem("Price", "stockquote", self))
 		
-		layout.addWidget(FunctionItem("Dummy Func Multiply", "expr_test_b", self))
-		layout.addWidget(FunctionItem("Dummy Func Divide", "expr_test_a", self))
+		layout.addWidget(FunctionItem("Dummy Func Half", "expr_test_b", self))
+		layout.addWidget(FunctionItem("Dummy Func Num", "expr_test_a", self))
 		
 		root.setLayout(layout)
 		
@@ -36,9 +36,8 @@ class FunctionItem(QtGui.QLabel):
 	Begin dragging this widget
 	"""
 	def mouseMoveEvent(self, e):
-		print "DRAGGING"
 		#drag only on left click
-		if e.buttons() is not QtCore.Qt.LeftButton: return
+		if e.buttons() != QtCore.Qt.LeftButton: return
 
 		mimedata = QtCore.QMimeData()
 		drag = QtGui.QDrag(self)

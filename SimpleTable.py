@@ -82,7 +82,7 @@ class Table(QTableWidget):
         self.rows[name] = Row(self,name,data)
 
     def update(self,update_data):
-        for name,data in update_data:
+        for name,data in update_data.items():
             self.rows[name].updateRow(data)
 
     def notifyRows(self, rowRemoved):
@@ -101,9 +101,9 @@ class Row(object):
         self.initgui()
         # set the formatting strings for updating
         self.formats = {
-            'value' : (lambda x: '$'+x),
-            'pli' : (lambda x: '$'+x),
-            'percent': (lambda x: x+'%')
+            'value' : (lambda x: '$'+str(x)),
+            'pli' : (lambda x: '$'+str(x)),
+            'percent': (lambda x: str(x) +'%')
         }
 
     def initgui(self):
@@ -140,7 +140,7 @@ class Row(object):
         - PLI
         - percent
         """
-        for key, value in data:
+        for key, value in data.items():
             self.gui[key].setText(self.formats[key](value)) # returns a formatted version of the data
 
 

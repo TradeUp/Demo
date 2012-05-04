@@ -18,6 +18,7 @@ class GUI(QtGui.QMainWindow):
         exitAction.setShortcut('Ctrl+Q')
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(self.close)
+        exitAction.setMenuRole(QtGui.QAction.MenuRole.ApplicationSpecificRole);
 
         self.statusBar()
 

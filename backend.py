@@ -6,10 +6,15 @@ import exprfuncs
 import triggerfuncs
 import datetime
 
+def same_date(a,b):
+	if a.day == b.day:
+		if a.month == b.month:
+			return a.year = b.year 
+
 class BackendObj(object):
 	def __init__(self,color):
 		self.color = color
-		self.first = None 
+		self.first = 0 
 		self.performance = { self.color : [(0,0)]} # decide initial amount of portfolio
 	def json(self):
 		return json.dumps(self.data())
@@ -19,6 +24,7 @@ class BackendObj(object):
 		self.performance[self.color].append((quantity,new_price))
 
 	def last_point(self):
+		print self.performance[self.color]
 		return self.performance[self.color][-1]
 	def add_point(self,point):
 		self.performance[self.color][-1] = point 
@@ -26,10 +32,10 @@ class BackendObj(object):
 
 	def performance_update(self,point):
 		""" triggered when your trigger goes off """
-		quantity, price = self.performance[self.color][-1] 
-		if quantity == 0 and price == 0:
-			first = len(self.performance[self.color]) -1 # the most recent point is now saved
-
+		if not point:
+			print 'no change'
+			return self.last_point()
+		quantity, price = self.performance[self.color][-1]
 		self.performance[self.color][-1] = (point[0]+quantity,price) # add the change
 		return self.performance[self.color][-1] 
 
@@ -71,8 +77,7 @@ class Expression:
 	def data(self):
 		return {
 			'func': self.func.func_name,
-			'val': self.val,
-			'typ': self.typ.func_name
+			'val': self.val     
 			}
 
 	def eval(self,data):
@@ -151,7 +156,7 @@ class Recipe(BackendObj):
 		for row in self.rows:
 			data.append(row.data())
 		out = {
-			'trigger' : self.trigger.func.func_name,
+			'trigger' : self.trigger.data(),
 			'rows' : data,
 			'name' : self.name
 		}
@@ -169,7 +174,10 @@ class Recipe(BackendObj):
 			if not row.eval(data):
 				self.trigger.reset() 
 				return self.last_point()
-		return self.performance_update(self.trigger.activate(cash))
+		new_val = self.trigger.activate(cash)
+		print 'trigger activated, new value: ',new_val
+		if new_val: self.first += new_val[1]*new_val[0] # add the amnt of money spent
+		return self.performance_update(new_val)
 
 class Portfolio(BackendObj):
 	"""
@@ -178,7 +186,7 @@ class Portfolio(BackendObj):
 	def __init__(self,color="red",cash="10000"):
 		super(Portfolio,self).__init__(color)
 		self.recipes = {}
-		self.cash = cash
+		self.cash = [cash]
 
 	def add_recipe(self,recipe):
 		self.recipes[recipe.name] = recipe
@@ -187,13 +195,15 @@ class Portfolio(BackendObj):
 		self.recipes[recipe.name] = None 
 
 	def eval(self,data):
-		run = (0,0)
-		for recipe in self.recipes:
-			a,b = recipe.eval(self.cash,data)
-			run[0] += a
-			run[1] += b 
+		run_a,run_b = 0,0
+		self.cash.append(self.cash[-1]) # copy the last value 
+		for recipe in self.recipes.values():
+			a = recipe.eval(self.cash,data)
+			print a
+			run_a += a[0]
+			run_b += a[1]
 			# nice
-		return self.add_point(run)
+		return self.add_point((run_a,run_b))
 
 	def data(self):
 		out = []
@@ -214,7 +224,7 @@ class Portfolio(BackendObj):
 ###
 class Trigger:
 
-	def __init__(self,oncall=None,getPrice=None):
+	def __init__(self,oncall=None,getPrice=None,ticker,amount,amount_type):
 		self.tripped = False 
 		self.func = getattr(triggerfuncs,oncall) or (lambda: 1)
 		self.get_price = getattr(triggerfuncs,getPrice) or (lambda: 1)
@@ -224,14 +234,18 @@ class Trigger:
 			return None 
 		else:
 			self.tripped = True 
-			return self.func(cash) # returns a positive or negative numebr representign the outcome 
+			print 'activating trigger: ',self.func.func_name
+			return self.func(ticker,amount,amount_type,cash) # returns a positive or negative numebr representign the outcome 
 
 	def reset(self):
 		self.tripped = False 
 		return None 
 
 	def data(self):
-		return self.func.func_name
+		return {
+			'oncall': self.func.func_name,
+			'getPrice': self.get_price.func_name
+			}
 ########
 #### Parsing/Evaluating Code
 ########
@@ -243,6 +257,7 @@ class Parser:
 		if path:
 			with open(path) as f:
 				self.data = json.loads(f.read())
+				print self.data 
 		"""
 		self.data will be a list of recipes, which are a dict of: trigger, rows """
 
@@ -252,8 +267,9 @@ class Parser:
 		for recipe_data in self.data:
 			rows = []
 			for row in recipe_data['rows']:
+				print 'parsing row: ', row
 				rows.append(self.getrow(row))
-			self.portfolio.add_recipe(Recipe(trigger=Trigger(oncall=recipe_data['trigger']),rows=rows)) # you should add color here
+			self.portfolio.add_recipe(Recipe(trigger=Trigger(oncall=recipe_data['trigger']['oncall'],getPrice=recipe_data['trigger']['getPrice']),rows=rows)) # you should add color here
 		return self.portfolio
 
 	def parse_recipe(self,path):
@@ -269,11 +285,13 @@ class Parser:
 
 
 	def expr_a(self,data):
-		return Expression(func=getattr(exprfuncs,data['expr_a']['func']),
+		print 'expr a: ',data['expr_a']['func']
+		return Expression(func=str(data['expr_a']['func']),
 		val=data['expr_a']['val'])
 
 	def expr_b(self,data):
-		return Expression(func=getattr(exprfuncs,data['expr_b']['func']),
+		print data
+		return Expression(func=str(data['expr_b']['func']),
 		val=data['expr_b']['val'])
 
 	def operator(self,data):
@@ -296,6 +314,7 @@ class Controller:
 		self.parser = Parser(None)
 		self.graphed = []
 		self.portfolio = Portfolio() 
+		self.graph_axis = [] # reset for each run
 
 	def add_recipe(self,filename):	
 		recipe = self.parser.parse_recipe(str(filename[0]))
@@ -320,25 +339,24 @@ class Controller:
 
 	def pl_calc(self,recipe):
 		l_quan,l_val = recipe.last_point()
-		f_quan,f_val = recipe.first 
 		# multiply/subtract
-		return (l_quan*l_val - f_quan*f_val) 
+		print 'recipe first: ',recipe.first
+		return (l_quan*l_val - recipe.first)
 
 	def per_calc(self,recipe,pl):
+		if not recipe.first: return 0 
 		return (pl/recipe.first)
 
-	def eval(self,time):
+	def eval(self,date):
 		"""
-		output to graph:
-
-		{ name_of_recipe: [(a,b)...], other_recipe: [(a,b)...]} <-- where a*b is the thing you want to graph
-
+		note that date is of form: datetime.date
 		"""
+		self.graph_axis.append(date)
 		table_output = {}
 		graph_output = {}
 
-		self.portfolio.eval(time)
-		print "hello5"
+		self.portfolio.eval(date)
+
 		for key,recipe in self.portfolio.recipes.items():
 			# create a data object out of the recipe
 			l_v,l_p = recipe.last_point()
@@ -348,13 +366,24 @@ class Controller:
 				'pli' : pl,
 				'percent' : self.per_calc(recipe,pl)
 			}
-			print "hello6"
 			if recipe.name in self.graphed:
-				graph_output[recipe.name] = (recipe.get_performance()[recipe.color], [datetime.datetime(2001, 3, x) for x in xrange(len(recipe.get_performance()[recipe.color]))])
+				graph_data = [x*y for x,y in recipe.get_performance()]
+				graph_output[recipe.name] = (graph_data,self.graph_axis)
 			table_output[recipe.name] = result 
-			print "hello7"
 		# send the output to the table
+		graph_data['cash'] = (self.portfolio.cash,self.graph_axis) 
 		self.graph.update(graph_output,self.table,table_output);
 
+	def run_historical(self,start,end):
+		""" takes two datetime.dates """
+		self.graph_axis = [] # reset the axis
+
+		curr = start;
+		day = datetime.timedelta(days=1) # to add a day
+		end += day 
+
+		while(!same_date(curr,end)):
+			self.eval(curr)
+			curr += day 
 
         

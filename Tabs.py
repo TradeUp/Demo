@@ -54,8 +54,12 @@ class Tabs(QtGui.QDialog):
 #        buttonLayout.addStretch(1)
         buttonLayout.addWidget(TestButton)
 #        buttonLayout.addWidget(cancelButton)
-
-        self.controller.eval(1)
+#        recipeParser = Parser('test.algo')
+#        self.controller.portfolio = recipeParser.build_portfolio()
+#        for recipe in self.controller.portfolio.recipes.values():
+#            self.controller.graphed.append(recipe.name)
+#            self.controller.table.addRecipe(recipe.name)
+#        self.controller.eval(1)
         print "hello4"
         mainLayout = QtGui.QVBoxLayout()
         mainLayout.addWidget(tabWidget)
@@ -68,11 +72,17 @@ class Tabs(QtGui.QDialog):
     
     #@QtCore.SLOT()
     def run_test3(self):
+        print 'building new parser/portfolio from test.algo'
+        recipeParser = Parser('test.algo')
+        self.controller.portfolio = recipeParser.build_portfolio()
+        for recipe in self.controller.portfolio.recipes.values():
+            self.controller.graphed.append(recipe.name)
+            self.controller.table.addRecipe(recipe.name)
         # run the controller evaluating in a loop
         print "Test called"
-        for x in xrange(100):
+        for x in xrange(1,20):
             self.controller.eval(x) # every other one should be true (xing fingers)
-            time.sleep(1)
+            #time.sleep(.5)
 
 class GeneralTab(QtGui.QWidget):
     def __init__(self, parent=None):

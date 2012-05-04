@@ -20,7 +20,7 @@ import matplotlib.font_manager as font_manager
 
 class MainWindow(QMainWindow):
 
-    linedict = {'cheese': ([(1,2), (2,3)], [datetime.date(2006, 1, 5), datetime.date(2006, 1, 6)])}
+    linedict = {'cheese': ([(1,2), (2,3)], [datetime.date(2001, 3, 5), datetime.date(2001, 3, 6)])}
     unusedColors = ['b', 'g', 'r','c','m','y','k']
     usedColors = []
 
@@ -34,17 +34,20 @@ class MainWindow(QMainWindow):
         self.canvas.setParent( self.main_frame )
 
         
-        self.axes = self.figure.add_subplot(111)
         self.reDraw()
         #self.canvas.draw()
         
     def OOps(self, data):
         self.linedict.clear()
         for n in data:
-            self.linedict.update({n:(data[n][1],(data[n][0][0][0] * data[n][0][0][1]))})
+            # n = name/key
+            # need to take (amnt,price) -> amnt*price 
+            self.linedict[n] = data[n]
         self.reDraw()
         
     def reDraw(self):
+        self.figure.clear()
+        self.axes = self.figure.add_subplot(111)
         self.axes.grid(color='0.75', linestyle='-', linewidth=0.5)      
         color = ''
         for line in self.linedict.items():
