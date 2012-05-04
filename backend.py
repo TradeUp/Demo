@@ -9,7 +9,7 @@ import datetime
 def same_date(a,b):
 	if a.day == b.day:
 		if a.month == b.month:
-			return a.year = b.year 
+			return a.year == b.year 
 
 class BackendObj(object):
 	def __init__(self,color):
@@ -380,8 +380,6 @@ class Controller:
 		day = datetime.timedelta(days=1) # to add a day
 		end += day 
 
-		while(!same_date(curr,end)):
+		while(not same_date(curr,end)):
 			self.eval(curr)
 			curr += day 
-
-        

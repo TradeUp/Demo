@@ -29,3 +29,11 @@ def sell_stock(ticker,amount,type):
 	"""
 	value = yfinance.get_price(ticker)
 	
+def sell_short(ticker, amount, type):
+	"""
+	ticker: stock symbol
+	amount: quantity
+	type: 'SHARES' or 'DOLLARS'
+	"""
+	pass
+	
