@@ -5,7 +5,7 @@ import GraphTable
 import GraphUI
 import graph
 import datetime
-from GraphTable import Testing
+#from GraphTable import Testing
 from PySide import QtGui, QtCore
 from PySide.QtCore import *
 from backend import Parser,Recipe , Controller

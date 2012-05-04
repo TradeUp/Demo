@@ -92,13 +92,13 @@ class GraphTable(QtGui.QWidget):
 #    graph.addPoint('Test Profile 1', datetime.date(2006, 1, 8), 12)
 #    print graph.linedict
 
-    def test():
-            frame = GraphUI.MainWindow()
-            self.controller = Controller(None,None)
-            ex = GraphTable.GraphTable(frame, self.controller)
-def main():
-    
-    app = QtGui.QApplication(sys.argv)
+#    def test():
+#            frame = GraphUI.MainWindow()
+#            self.controller = Controller(None,None)
+#            ex = GraphTable.GraphTable(frame, self.controller)
+#def main():
+#    
+#    app = QtGui.QApplication(sys.argv)
 #{ name_of_recipe: [(a,b)...], other_recipe: [(a,b)...]} <-- where a*b is the thing you want to graph
 #    testingDates1 = [datetime.date(2006, 1, 3), datetime.date(2006, 1, 4),datetime.date(2006, 1, 5),datetime.date(2006, 1, 6),datetime.date(2006, 1, 7)]
 #    testingValue1 = [1,2,3,10,7]
@@ -109,20 +109,20 @@ def main():
 #    graph.makeLine('Test Profile 2',testingDates2,testingValue2,'r')
 #    print graph.linedict
 
-    frame = GraphTable.test(self)
-    frame = GraphUI.MainWindow()
-    self.controller = Controller(None,None)
-    ex = GraphTable.GraphTable(frame,self.controller)
+#    frame = GraphTable.test(self)
+#    frame = GraphUI.MainWindow()
+#    self.controller = Controller(None,None)
+#    ex = GraphTable.GraphTable(frame,self.controller)
     
 #    graph.addPoint('Test Profile 1', datetime.date(2006, 1, 8), 12)
 #    print graph.linedict
     #frame.reDraw()
     #ex.reDraw(frame.reDraw())
     #ex2 = GUI(frame)
-    sys.exit(app.exec_())
+#    sys.exit(app.exec_())
 
-
-if __name__ == '__main__':
-    main()
+#
+#if __name__ == '__main__':
+#    main()
 
 #sys.exit(app.exec_())
