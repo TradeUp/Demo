@@ -9,11 +9,12 @@ from FunctionSelector import *
 from backend import *
 
 class RecipeWindow(QWidget):
-    def __init__(self, portfolio=None):
+    def __init__(self, controller, portfolio=None):
         super(RecipeWindow, self).__init__();
-        self.initUI()
         self.setAcceptDrops(True)
         self.portfolio = portfolio or Portfolio()
+        self.controller = controller
+        self.initUI()
 
         
     def initUI(self):
@@ -25,7 +26,7 @@ class RecipeWindow(QWidget):
         self.functionList = FunctionScrollWidget()
         vLayout1.addWidget(self.functionList)
         # create the inspector
-        self.inspector = Inspector()
+        self.inspector = Inspector(self.controller)
         self.inspector.setMinimumHeight(150)
         vLayout1.addWidget(self.inspector)
         # add the vLayout to the root

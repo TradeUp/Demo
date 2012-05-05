@@ -40,7 +40,7 @@ class Tabs(QtGui.QDialog):
 
         tabWidget = QtGui.QTabWidget()
         tabWidget.addTab(ex,"Graph")
-        tabWidget.addTab(DragAndDrop.RecipeWindow(), "Kitchen") 
+        tabWidget.addTab(DragAndDrop.RecipeWindow(self.controller), "Kitchen") 
       
         ##
         ## simulation running GUI controls
@@ -102,7 +102,7 @@ class Tabs(QtGui.QDialog):
         
     def set_end(self):
         """ sets end"""
-        date = self.end.date()
+        date = self.endDate.date()
         d = int(date.day())
         m = int(date.month())
         y = int(date.year())

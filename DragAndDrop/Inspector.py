@@ -10,7 +10,7 @@ from PySide import QtGui
 from Function import *
 
 class Inspector(QtGui.QFrame):
-    def __init__(self):
+    def __init__(self, controller):
         super(Inspector, self).__init__();
         
         #default message.
@@ -21,6 +21,7 @@ class Inspector(QtGui.QFrame):
         
         layout.setContentsMargins(0,0,0,0);
         
+        self.controller = controller
         self.setLayout(layout);
         
     '''Set the editor for this inspector, given a function object'''
@@ -37,7 +38,7 @@ class Inspector(QtGui.QFrame):
             layout = self.layout()
             w = layout.takeAt(0)
             w.widget().deleteLater();
-            layout.addWidget(SimpleEditor(func))
+            layout.addWidget(SimpleEditor(func, self.controller))
             self.setLayout(layout)
         elif(isinstance(func, DummyFunction)):
             layout = self.layout()
@@ -55,8 +56,10 @@ class Editor(QtGui.QWidget):
 Editor for a SimpleFunction object
 """
 class SimpleEditor(Editor):
-    def __init__(self, func):
+    def __init__(self, func, controller):
         super(SimpleEditor, self).__init__()
+        
+        self.controller = controller
         
         self.func = func;
         rootVLayout = QtGui.QVBoxLayout()
@@ -65,21 +68,44 @@ class SimpleEditor(Editor):
         label = QtGui.QLabel("Stock: ")
         label.setMaximumHeight(45)
         
-        self.txtStock = QtGui.QTextEdit()
+        btnSave = QtGui.QPushButton("Save")
+        
+        btnSave.clicked.connect(self.updateFunc)
+        
+        self.txtStock = QtGui.QLineEdit()
         self.txtStock.setMaximumHeight(25)
+        
         self.txtStock.setText(func.stock());
-        self.txtStock.textChanged.connect(self.updateFunc)
+        
+        self.txtStock.textChanged.connect(self.resetTextEdit);
         
         layout.addWidget(label)
         layout.addWidget(self.txtStock)
         
-        rootVLayout.addLayout(layout);   
+        rootVLayout.addLayout(layout); 
+        rootVLayout.addWidget(btnSave);  
         self.setLayout(rootVLayout);
         
     @QtCore.Slot()
     def updateFunc(self):
-        self.func.setStock(self.txtStock.toPlainText())
-        print "Updated func.stock to: " + self.txtStock.toPlainText()
+        ticker = self.txtStock.text()
+        
+        if(self.controller.validate_ticker(ticker)):
+            self.txtStock.setStyleSheet("background-color:#00FF00;");
+            self.func.setStock(ticker)
+        else:
+            self.txtStock.setStyleSheet("background-color:#FF0000;");
+            
+    @QtCore.Slot()
+    def resetTextEdit(self):
+        self.txtStock.setStyleSheet("");
+        
+    """
+    Bind the enter key to saving
+    """
+    def keyPressEvent(self, event):
+        self.updateFunc();
+        
         
 """
 Editor for a SimpleFunction object
@@ -111,5 +137,5 @@ class DummyEditor(Editor):
         
     @QtCore.Slot()
     def updateFunc(self):
-        self.func.setValue(int(self.txtStock.toPlainText()))
-        print "Updated func.stock to: " + self.txtStock.toPlainText()
+        self.func.setValue(int(self.txtStock.text()))
+        print "Updated func.stock to: " + self.txtStock.text()
