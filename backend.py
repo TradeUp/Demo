@@ -288,7 +288,7 @@ class Parser:
 			print 'whats in here ',self.data
 			for row in self.data['rows']:
 				rows.append(self.getrow(row))
-			return Recipe(trigger=Trigger(oncall=self.data['trigger']),rows=rows,name=self.data['name'])
+			return Recipe(trigger=Trigger(oncall=self.data['trigger']['oncall'],amount=self.data['trigger']['amount'],amount_type=self.data['trigger']['amount_type']),rows=rows,name=self.data['name'])
 
 
 	def expr_a(self,data):
