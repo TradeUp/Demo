@@ -75,6 +75,8 @@ class RecipeWindow(QWidget):
         recipe = self.list.createRecipe()
         
         triggerFunc = self.pnlBuyActions.getTriggerFunc()
+        
+        recipe.trigger = triggerFunc
             
         self.portfolio.add_recipe(recipe);
         
