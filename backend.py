@@ -5,6 +5,8 @@ import json
 import exprfuncs
 import triggerfuncs
 import datetime,yfinance,time 
+from PySide import QtGui
+
 
 def same_date(a,b):
 	if a.day == b.day:
@@ -54,12 +56,12 @@ class Expression:
 
 	def __init__(self,func=None,val=None,typ=None):
 		# TODO: override in subclass (assign attributes)
+		func_data = getattr(exprfuncs,'exprfunc_data')
 		self.func = getattr(exprfuncs,func)
 		self.val = val 
-		self.typ = typ or func 
+		self.run = func_data()[func]
+		
 
-		def __eq__(self,other):
-			return self.typ == other.typ
 
 
 
@@ -95,11 +97,12 @@ class RecipeRow:
 		operator: String - ">","<" or "="/"==" 
 	"""
 
-	def __init__(self,a=None,b=None,c=None):
-		self.expr_a = a or None
-		self.expr_b = b or None
-		self.operator = c or None
-
+	def __init__(self,a,b,c):
+		self.expr_a = a
+		self.expr_b = b
+		self.operator = c
+		self.run = 'REALTIME' if (self.expr_a.run == 'REALTIME' or self.expr_b.run == 'REALTIME') else 'ALL'
+			
 
 	def __eq__(self,other):
 		return (self.expr_a == other.expr_a) and (self.expr_b==other.expr_b) and (self.operator==other.operator)
@@ -138,6 +141,10 @@ class Recipe(BackendObj):
 		self.rows = rows
 		self.trigger = trigger
 		self.name = name
+		self.run = 'ALL'
+		for r in self.rows:
+			if r.run == 'REALTIME': self.run = 'REALTIME'
+		
 
 	def __eq__(self,other):
 		# don't really knwo why I wrote this
@@ -196,13 +203,18 @@ class Portfolio(BackendObj):
 		run_a,run_b = 0,0
 		self.cash.append(self.cash[-1]) # copy the last value 
 		for recipe in self.recipes.values():
+			print 'this is what ur working with: ',recipe
 			a = recipe.run(self.cash,data)
-			print a
 			run_a += a[0]
 			run_b += a[1]
 			# nice
 		return self.add_point((run_a,run_b))
 
+	def checkRun(self):
+		for r in self.recipes.values():
+			if r.run == 'REALTIME': return False 
+		return True 
+	
 	def data(self):
 		out = []
 		for key, recipe in self.recipes.items():
@@ -326,6 +338,7 @@ class Controller:
 	def add_recipe(self,filename):	
 		print 'yo chek it ',filename 
 		recipe = self.parser.parse_recipe(str(filename[0]))
+		print 'u made a recipe boi: ',recipe 
 		if recipe:
 			self.table.addRecipe(recipe.name) #TODO: add data also
 			self.portfolio.add_recipe(recipe)
@@ -355,6 +368,7 @@ class Controller:
 		if not recipe.first: return 0 
 		return (pl/recipe.first)
 
+	
 	def run(self,date):
 		"""
 		note that date is of form: datetime.date
@@ -387,6 +401,12 @@ class Controller:
 	#
 	def run_historical(self,start,end):
 		""" takes two datetime.dates """
+		if not self.portfolio.checkRun():
+			error = QtGui.QErrorMessage()
+			error.showMessage('Error: Recipe uses Expressions Unsupported in historical data. Please run real-time.')
+			error.exec_()
+			return 
+			
 		self.graph_axis = [] # reset the axis
 
 		curr = start;
@@ -415,6 +435,7 @@ class Controller:
 	def run_realtime(self):
 		""" runs a realtime simulation (until you call stop_realtime)
 		"""
+		
 		while(self.running):
 			curr = datetime.datetime.now()
 			self.graph_axis.append(curr)
