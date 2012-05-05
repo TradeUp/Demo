@@ -77,7 +77,6 @@ class RecipeWindow(QWidget):
         triggerFunc = self.pnlBuyActions.getTriggerFunc()
             
         self.portfolio.add_recipe(recipe);
-        self.portfolio.
         self.portfolio.to_file("test.algo");
         
         return self.portfolio
