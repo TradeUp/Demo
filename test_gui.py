@@ -12,7 +12,7 @@ def create_recipe(path):
 	expr = Expression(func=getattr(exprfuncs,'expr_test_a'),val=8)
 	expr_b = Expression(func=getattr(exprfuncs,'expr_test_b'),val=2)
 	row = RecipeRow(a=expr,b=expr_b,c="=")
-	assert (row.eval(2))
+	assert (row.run(2))
 	recipe = Recipe(trigger=Trigger(oncall='test_trigger_a'),name="Dylan")
 	recipe.add_row(row)
 	recipe.to_file(path) # save it to the path

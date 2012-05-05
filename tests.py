@@ -14,7 +14,7 @@ def test_save(path):
 
 	row = RecipeRow(a=expr,b=expr_b,c="=")
 
-	assert (row.eval(2))
+	assert (row.run(2))
 
 	recipe = Recipe(trigger=Trigger(oncall='test_trigger_a'))
 	recipe.add_row(row)
@@ -32,11 +32,11 @@ def test_load(path):
 	assert(len(portfolio.recipes)==1)
 	assert(len(portfolio.recipes[0].rows)==1)
 	print "portfolio loaded"
-	print portfolio.eval(2) # 99
-	print portfolio.eval(2) # 99
-	print portfolio.eval(1) # 99
-	print portfolio.eval(2) # 98
-	print portfolio.eval(2) # 98 
+	print portfolio.run(2) # 99
+	print portfolio.run(2) # 99
+	print portfolio.run(1) # 99
+	print portfolio.run(2) # 98
+	print portfolio.run(2) # 98 
 	print portfolio.get_performance()
 
 if __name__ == "__main__":

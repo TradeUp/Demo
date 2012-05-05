@@ -65,7 +65,7 @@ class Expression:
 			'typ': self.typ.func_name
 			}
 
-	def eval(self,data):
+	def run(self,data):
 		if self.func and self.val:
 			return self.func(self.val,data)
 		return None 
@@ -100,14 +100,14 @@ class RecipeRow:
 		}
 		return data
 
-	def eval(self,data):
+	def run(self,data):
 		""" evaluates the row """
 		if self.operator is ">":
-			return (self.expr_a.eval(data) > self.expr_b.eval(data))
+			return (self.expr_a.run(data) > self.expr_b.run(data))
 		elif self.operator is "<":
-			return (self.expr_a.eval(data) < self.expr_b.eval(data))
+			return (self.expr_a.run(data) < self.expr_b.run(data))
 		else:
-			return (self.expr_a.eval(data) == self.expr_b.eval(data)) 
+			return (self.expr_a.run(data) == self.expr_b.run(data)) 
 
 	def __str__(self):
 		# for debugging
@@ -152,10 +152,10 @@ class Recipe(BackendObj):
 		with open(path,'w') as output:
 			output.write(self.json())
 
-	def eval(self,data):
+	def run(self,data):
 		""" evalutes against the piece of data, triggers trigger if appropriate. trigger will return data """
 		for row in self.rows:
-			if not row.eval(data): 
+			if not row.run(data): 
 				return self.performance_update(self.trigger.reset()) 
 		return self.performance_update(self.trigger.activate())
 
@@ -170,10 +170,10 @@ class Portfolio(BackendObj):
 	def add_recipe(self,recipe):
 		self.recipes.append(recipe)
 
-	def eval(self,data):
+	def run(self,data):
 		run = 0
 		for recipe in self.recipes:
-			run += recipe.eval(data)
+			run += recipe.run(data)
 		run /= len(self.recipes)
 		return self.performance_static(run)
 
@@ -190,7 +190,7 @@ class Portfolio(BackendObj):
 #### The Trigger Class ####
 #
 # usage: 
-#	during eval() or a row, trigger.activate() is called when conditions are true.
+#	during run() or a row, trigger.activate() is called when conditions are true.
 #	its our job to make sure this only happens when it's been reset before. (i.e in between calls)
 #
 ###
@@ -266,14 +266,14 @@ class Parser:
 
 class Evaluator:
 	"""
-	Evaluates a .algo file on every eval() 
+	Evaluates a .algo file on every run() 
 	"""
 	def __init__(self,path):
 		parser = Parser(path)
 		self.portfolio = parser.build_portfolio()
 
 
-	def eval(data):
-		self.portfoliio.eval(data)
+	def run(data):
+		self.portfoliio.run(data)
 
 
