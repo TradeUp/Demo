@@ -21,6 +21,16 @@ class Function(object):
         
     def getUnits(self):
         return self.units;
+    
+    """
+    Subclasses will implement so caller can know whether
+    this function is valid in O(1) time
+    """
+    def isValid(self):
+        pass
+    
+    def setValid(self, valid):
+        pass
 
     """
     Figure out what function object best fits the string and return a new
@@ -41,6 +51,14 @@ class SimpleFunction(Function):
         super(SimpleFunction, self).__init__(func, units);
         
         self._stock = ""
+        
+        self.valid = False
+        
+    def isValid(self):
+        return self.valid
+    
+    def setValid(self, valid):
+        self.valid = valid;
     
     def setStock(self, stock):
         self._stock = stock
