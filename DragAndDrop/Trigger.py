@@ -51,10 +51,23 @@ class TriggerWidget(QtGui.QFrame):
     """
     def getRecipeRow(self):
         #If one of the functions are None or the units don't match, return None
-        if(self.leftTarget.function() == None or self.rightTarget.function() == None
-           or self.leftTarget.function().getUnits() != self.rightTarget.function().getUnits()):
-            self.setInvalid();
-            return None;
+        error = False
+        
+        if(not self.leftTarget.validate()):
+            self.setInvalid(self.leftTarget)
+            error = True
+        
+        if not self.rightTarget.validate():
+            self.setInvalid(self.rightTarget)
+            error = True
+        
+        if not error and self.leftTarget.function().getUnits() != self.rightTarget.function().getUnits():
+            self.setInvalid(self);
+            error = True
+            
+        if error: return None
+        
+        
         
         exprLeft = self.leftTarget.function().getExpression();
         exprRight = self.rightTarget.function().getExpression();
@@ -65,14 +78,16 @@ class TriggerWidget(QtGui.QFrame):
     """
     Mark as invalid: make red
     """
-    def setInvalid(self):
-            self.setStyleSheet("background-color:#FF0000;"); 
+    def setInvalid(self, target):
+            target.setStyleSheet("background-color:#FF0000;"); 
         
     """Connected to request_selection signal of FunctionDropTarget class"""
     @QtCore.Slot(object)
     def selectionRequested(self, e):
         #undo marking invalid
         self.setStyleSheet("");
+        self.leftTarget.setStyleSheet("")
+        self.rightTarget.setStyleSheet("")
         e._target = self;
         self.request_selection.emit(e);
         
@@ -98,6 +113,11 @@ class FunctionDropTarget(QtGui.QLabel):
         palette.setColor(QtGui.QPalette.ColorRole.Highlight, QtGui.QColor(0,0,255));
         self.setPalette(palette);
         self.setAutoFillBackground(True);
+        
+    def validate(self):
+        if(self.function() == None or not self.function().isValid()):
+            return False
+        return True
         
     def function(self):
         return self.func;

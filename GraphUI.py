@@ -3,7 +3,7 @@ import platform
 import datetime
 import numpy as np
 import PySide
-from PySide.QtGui import QApplication, QMainWindow, QTextEdit, QMessageBox, QWidget, QVBoxLayout
+from PySide.QtGui import * 
 from PySide import QtCore
 
 __version__ = '0.4.1'
@@ -31,11 +31,8 @@ class MainWindow(QMainWindow):
         self.main_frame = QWidget()
         self.figure = Figure()
         self.canvas = FigureCanvas(self.figure)
-        self.canvas.setParent( self.main_frame )
-
-        
+        self.canvas.setParent( self.main_frame )     
         self.reDraw()
-        #self.canvas.draw()
         
     def OOps(self, data):
         self.linedict.clear()
@@ -60,26 +57,21 @@ class MainWindow(QMainWindow):
                 unusedColors = self.usedColors[1:]
                 usedColors = self.usedColors[:1]
             print line[1]
-            self.axes.plot_date(line[1][0],line[1][1], color=color, label=line[0])
-    #.plot_date(dates, values, 'b.-')
- 
-        #self.axes.xaxis.set_major_locator(matplotlib.dates.WeekdayLocator(byweekday=matplotlib.dates.MO))
-        #self.axes.xaxis.set_major_formatter( matplotlib.dates.DateFormatter('%a %d\n%b %Y'))
-    
+            self.axes.plot(line[1][0],line[1][1], color=color, label=line[0])
+
         props = font_manager.FontProperties(size=10)
         self.axes.legend(loc='center left', shadow=True, fancybox=True, prop=props)
-        vbox = QVBoxLayout( )
-        vbox.addWidget( self.canvas )
-        self.main_frame.setLayout( vbox )
-        self.setCentralWidget( self.main_frame )
+        vbox = QVBoxLayout()
+        vbox.addWidget(self.canvas)
+        self.main_frame.setLayout(vbox)
+        self.setCentralWidget(self.main_frame)
         self.canvas.draw()
         
     def testing(self):
         print 'hi'
 
     def update(self,data,table,table_data):
-        print "UPdate called on"
-        print data
+        print "Update called on", data
         graph.makenew(self, data)
         table.update(table_data)
     
