@@ -25,6 +25,7 @@ class GUI(QtGui.QMainWindow):
         menubar = self.menuBar()
         fileMenu = menubar.addMenu('&File')
         fileMenu.addAction(exitAction)
+        
 
         toolbar = self.addToolBar('Exit')
         toolbar.addAction(exitAction)
