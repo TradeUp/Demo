@@ -60,7 +60,7 @@ class MainWindow(QMainWindow):
                 unusedColors = self.usedColors[1:]
                 usedColors = self.usedColors[:1]
             print line[1]
-            self.axes.plot_date(line[1][0],line[1][1], color=color, label=line[0])
+            self.axes.plot(line[1][0],line[1][1], color=color, label=line[0])
     #.plot_date(dates, values, 'b.-')
  
         #self.axes.xaxis.set_major_locator(matplotlib.dates.WeekdayLocator(byweekday=matplotlib.dates.MO))
