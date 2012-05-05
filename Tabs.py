@@ -45,7 +45,7 @@ class Tabs(QtGui.QDialog):
         ##
         ## simulation running GUI controls
         ##
-        controlLayout = QtGui.QHBoxLayout()
+        historicalLayout = QtGui.QHBoxLayout()
 
         self.start = QtGui.QCalendarWidget()
         self.end = QtGui.QCalendarWidget()
@@ -62,15 +62,29 @@ class Tabs(QtGui.QDialog):
                 
         go = QtGui.QPushButton('Run')
         go.clicked.connect(self.run_historical)
+        historical = QtGui.QLabel('Run Historical')
+        
+        historicalLayout.addWidget(historical)
+        historicalLayout.addWidget(self.startDate)
+        historicalLayout.addWidget(self.endDate)
+        historicalLayout.addWidget(go)
 
-        controlLayout.addWidget(self.startDate)
-        controlLayout.addWidget(self.endDate)
-        controlLayout.addWidget(go)
-
-
+        realtimeLayout = QtGui.QHBoxLayout()
+        realtime = QtGui.QLabel('Run Realtime')
+        start = QtGui.QPushButton('Start')
+        stop = QtGui.QPushButton('Stop')
+        start.clicked.connect(self.run_realtime)
+        stop.clicked.connect(self.stop_realtime)
+        
+        realtimeLayout.addWidget(realtime)
+        realtimeLayout.addWidget(start)
+        realtimeLayout.addWidget(stop)
+        
         mainLayout = QtGui.QVBoxLayout()
         mainLayout.addWidget(tabWidget)
-        mainLayout.addLayout(controlLayout)
+        mainLayout.addLayout(historicalLayout)
+        mainLayout.addLayout(realtimeLayout)
+        
         self.setLayout(mainLayout)
 
 
@@ -96,6 +110,12 @@ class Tabs(QtGui.QDialog):
         
     def run_historical(self):
         self.controller.run_historical(self.startDate, self.endDate)
+        
+    def run_realtime(self):
+        self.controller.run_realtime()
+    def stop_realtime(self):
+        self.controller.stop_realtime()
+        
     def run_test3(self):
         print 'building new parser/portfolio from test.algo'
         recipeParser = Parser('test.algo')
