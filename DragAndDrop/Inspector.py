@@ -93,8 +93,10 @@ class SimpleEditor(Editor):
         if(self.controller.validate_ticker(ticker)):
             self.txtStock.setStyleSheet("background-color:#00FF00;");
             self.func.setStock(ticker)
+            self.func.setValid(True)
         else:
             self.txtStock.setStyleSheet("background-color:#FF0000;");
+            self.func.setValid(False)
             
     @QtCore.Slot()
     def resetTextEdit(self):
