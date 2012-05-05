@@ -80,7 +80,7 @@ class RecipeWindow(QWidget):
         recipe.trigger = triggerFunc
             
         recipe.to_file("test.algo");
-        
+       
         #return self.portfolio
     
 def main():
