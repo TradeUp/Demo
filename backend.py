@@ -376,7 +376,7 @@ class Controller:
 				graph_output[recipe.name] = (graph_data,self.graph_axis)
 			table_output[recipe.name] = result 
 		# send the output to the table
-		graph_data['cash'] = (self.portfolio.cash,self.graph_axis) 
+		graph_output['cash'] = (self.portfolio.cash,self.graph_axis) 
 		self.graph.update(graph_output,self.table,table_output);
 
 	##

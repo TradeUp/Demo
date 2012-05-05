@@ -42,35 +42,60 @@ class Tabs(QtGui.QDialog):
         tabWidget.addTab(ex,"Graph")
         tabWidget.addTab(DragAndDrop.RecipeWindow(), "Kitchen") 
       
-        TestButton = QtGui.QPushButton("TestMe")
-#        cancelButton = QtGui.QPushButton(self.tr("Cancel"))
-        print "hello" 
-        TestButton.clicked.connect(self.run_test3);
-        print "hello3"
-#        self.connect(TestButton, QtCore.SIGNAL("clicked()"), self, Tabs.run_test3(self))
-#        self.connect(cancelButton, QtCore.SIGNAL("clicked()"), self, QtCore.SLOT("reject()"))
+        ##
+        ## simulation running GUI controls
+        ##
+        controlLayout = QtGui.QHBoxLayout()
 
-        buttonLayout = QtGui.QHBoxLayout()
-#        buttonLayout.addStretch(1)
-        buttonLayout.addWidget(TestButton)
-#        buttonLayout.addWidget(cancelButton)
-#        recipeParser = Parser('test.algo')
-#        self.controller.portfolio = recipeParser.build_portfolio()
-#        for recipe in self.controller.portfolio.recipes.values():
-#            self.controller.graphed.append(recipe.name)
-#            self.controller.table.addRecipe(recipe.name)
-#        self.controller.run(1)
-        print "hello4"
+        self.start = QtGui.QCalendarWidget()
+        self.end = QtGui.QCalendarWidget()
+
+        self.startDate = QtGui.QDateEdit()
+        self.startDate.setDateRange(QtCore.QDate(1990,1,1),QtCore.QDate.currentDate())
+        self.startDate.setCalendarPopup(True)
+        self.startDate.dateChanged.connect(self.set_start)
+        
+        self.endDate = QtGui.QDateEdit()
+        self.endDate.setDateRange(QtCore.QDate(1990,1,1),QtCore.QDate.currentDate())
+        self.endDate.setCalendarPopup(True)
+        self.endDate.dateChanged.connect(self.set_end)
+                
+        go = QtGui.QPushButton('Run')
+        go.clicked.connect(self.run_historical)
+
+        controlLayout.addWidget(self.startDate)
+        controlLayout.addWidget(self.endDate)
+        controlLayout.addWidget(go)
+
+
         mainLayout = QtGui.QVBoxLayout()
         mainLayout.addWidget(tabWidget)
-        mainLayout.addLayout(buttonLayout)
+        mainLayout.addLayout(controlLayout)
         self.setLayout(mainLayout)
 
 
         self.setAcceptDrops(True)
         self.setWindowTitle("TradeUp")
     
-    #@QtCore.SLOT()
+    def set_start(self):
+        """ sets start"""
+        date = self.startDate.date()
+        d = int(date.day())
+        m = int(date.month())
+        y = int(date.year())
+        self.startDate = datetime.date(y,m,d)
+        
+        
+    def set_end(self):
+        """ sets end"""
+        date = self.end.date()
+        d = int(date.day())
+        m = int(date.month())
+        y = int(date.year())
+        self.endDate = datetime.date(y,m,d)
+        
+    def run_historical(self):
+        self.controller.run_historical(self.startDate, self.endDate)
     def run_test3(self):
         print 'building new parser/portfolio from test.algo'
         recipeParser = Parser('test.algo')
