@@ -169,7 +169,7 @@ class Recipe(BackendObj):
 
 	def run(self,cash,data):
 		""" evalutes against the piece of data, triggers trigger if appropriate. trigger will return data """
-		self.update_value(self.trigger.get_price(data)) # gets the most recent price
+		self.update_value(self.trigger.get_price(self.trigger.ticker)) # gets the most recent price
 		for row in self.rows:
 			if not row.run(data):
 				self.trigger.reset() 
@@ -224,10 +224,10 @@ class Portfolio(BackendObj):
 ###
 class Trigger:
 
-	def __init__(self,ticker,amount,amount_type,oncall,getPrice):
+	def __init__(self,ticker,amount,amount_type,oncall):
 		self.tripped = False 
 		self.func = getattr(triggerfuncs,oncall) or (lambda: 1)
-		self.get_price = getattr(triggerfuncs,getPrice) or (lambda: 1)
+		self.get_price = getattr(triggerfuncs,'get_price') or (lambda: 1)
 		
 		self.ticker = ticker
 		self.amount = amount
@@ -249,8 +249,11 @@ class Trigger:
 	def data(self):
 		return {
 			'oncall': self.func.func_name,
-			'getPrice': self.get_price.func_name
-			}
+			'getPrice': self.get_price.func_name,
+			'amount':self.amount,
+			'amount_type':self.amount_type,
+			'ticker': self.ticker
+		}
 ########
 #### Parsing/Evaluating Code
 ########
@@ -274,7 +277,7 @@ class Parser:
 			for row in recipe_data['rows']:
 				print 'parsing row: ', row
 				rows.append(self.getrow(row))
-			self.portfolio.add_recipe(Recipe(trigger=Trigger(oncall=recipe_data['trigger']['oncall'],getPrice=recipe_data['trigger']['getPrice']),rows=rows)) # you should add color here
+			self.portfolio.add_recipe(Recipe(trigger=Trigger(oncall=recipe_data['trigger']['oncall'],amount=recipe_data['trigger']['amount'],amount_type=recipe_data['trigger']['amount_type'],ticker=recipe_data['trigger']['ticker']),rows=rows)) # you should add color here
 		return self.portfolio
 
 	def parse_recipe(self,path):
@@ -406,7 +409,7 @@ class Controller:
 		if not self.validate_ticker(ticker): return False
 		if amount < 0: return False
 		if amount_type != 'SHARES' and amount_type != 'DOLLARS': return False
-		if not getattr('triggerFuncs',oncall) or not getattr('triggerFuncs',getPrice): return False
+		if not getattr(triggerfuncs,oncall) or not getattr(triggerfuncs,getPrice): return False
 		return True 
 	
 	def run_realtime(self):
