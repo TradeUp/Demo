@@ -37,7 +37,7 @@ class RecipeWindow(QWidget):
         
         self.list = RecipeList();
         self.list.setBackgroundRole(QtGui.QPalette.ColorRole.Light)
-        self.list.setMinimumWidth(250)
+        self.list.setMinimumWidth(300)
         
         self.list.addEmptyTrigger();
         
@@ -73,7 +73,20 @@ class RecipeWindow(QWidget):
         self.show()
         
     def saveRecipe(self):
+        
+        if(self.list.numTriggers() == 0):
+            msgBox = QtGui.QMessageBox(QtGui.QMessageBox.Icon.Critical, "Error", "");
+            msgBox.setText("A recipe must have at least one trigger to be able to save.")
+            msgBox.exec_()
+            return
+        
         recipe = self.list.createRecipe()
+        
+        if not recipe:
+            msgBox = QtGui.QMessageBox(QtGui.QMessageBox.Icon.Critical, "Error", "")
+            msgBox.setText("There was an error saving the recipe! Fix the red triggers and try again.")
+            msgBox.exec_()
+            return
         
         triggerFunc = self.pnlBuyActions.getTrigger().convertToTriggerFunc()
         
@@ -81,6 +94,11 @@ class RecipeWindow(QWidget):
             
         recipe.to_file("test.algo");
        
+        #save successful
+        msgBox = QtGui.QMessageBox(QtGui.QMessageBox.Icon.Information, "Success!", "")
+        msgBox.setText("Recipe successfully saved!")
+        msgBox.exec_()
+        
         #return self.portfolio
     
 def main():

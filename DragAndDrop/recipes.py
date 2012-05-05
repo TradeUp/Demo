@@ -34,7 +34,10 @@ class RecipeList(QtGui.QScrollArea):
         
     def addEmptyTrigger(self):
         trigger = TriggerWidget(self);
+        
         trigger.request_selection.connect(self.selectionRequested);
+        trigger.request_removal.connect(self.removeRequested);
+        
         trigger.setMaximumWidth(self.size().width());
         trigger.setMaximumHeight(50);
         self._triggers.append(trigger);
@@ -44,6 +47,9 @@ class RecipeList(QtGui.QScrollArea):
         root.setLayout(self._layout);
         self.setWidget(root);
         root.show();
+        
+    def numTriggers(self):
+        return len(self._triggers)
     
     """
     Create a Recipe object with rows
@@ -55,8 +61,11 @@ class RecipeList(QtGui.QScrollArea):
         for trigger in self._triggers:
             row = trigger.getRecipeRow();
             
+            #do not save if there is an error!
             if(row != None):
                 recipe.add_row(trigger.getRecipeRow())
+            else:
+                return None
             
         return recipe
                 
@@ -70,3 +79,15 @@ class RecipeList(QtGui.QScrollArea):
         
         #emit the function selected event to all listeners
         self.function_selected.emit(e.function());
+        
+    """
+    Slot that allows the removal of a recipe row
+    """
+    @QtCore.Slot(object)
+    def removeRequested(self, row):
+        if self._selectedTrigger == row: self._selectedTrigger = None;
+        
+        self._triggers.remove(row)
+        
+        self._layout.removeWidget(row)
+        row.deleteLater();

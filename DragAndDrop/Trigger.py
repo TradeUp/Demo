@@ -14,6 +14,7 @@ from backend import *
 class TriggerWidget(QtGui.QFrame):
     
     request_selection = QtCore.Signal(object);
+    request_removal = QtCore.Signal(object);
     
     def __init__(self, parent):
         super(TriggerWidget, self).__init__(parent);
@@ -21,6 +22,10 @@ class TriggerWidget(QtGui.QFrame):
         self._layout = QtGui.QVBoxLayout(self);
         
         self._mainTriggerLayout = QtGui.QHBoxLayout();
+        
+        btnRemove = QtGui.QPushButton("-")
+        btnRemove.clicked.connect(self.removeRow);
+        btnRemove.setMaximumWidth(20)
         
         self.leftTarget = FunctionDropTarget()
         self.leftTarget.request_selection.connect(self.selectionRequested);
@@ -34,6 +39,7 @@ class TriggerWidget(QtGui.QFrame):
         
         self.combobox = ComparisonComboBox(self);
         
+        self._mainTriggerLayout.addWidget(btnRemove,1);
         self._mainTriggerLayout.addWidget(self.leftTarget,5);
         self._mainTriggerLayout.addWidget(self.combobox,1);
         self._mainTriggerLayout.addWidget(self.rightTarget,5);
@@ -67,8 +73,6 @@ class TriggerWidget(QtGui.QFrame):
             
         if error: return None
         
-        
-        
         exprLeft = self.leftTarget.function().getExpression();
         exprRight = self.rightTarget.function().getExpression();
         comparison = self.combobox.currentText()
@@ -94,6 +98,13 @@ class TriggerWidget(QtGui.QFrame):
     def deselect(self):
         self.leftTarget.deselect();
         self.rightTarget.deselect();
+        
+    """
+    Send the removal request
+    """
+    @QtCore.Slot(object)
+    def removeRow(self):
+        self.request_removal.emit(self)
         
         
 class FunctionDropTarget(QtGui.QLabel):
