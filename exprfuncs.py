@@ -8,6 +8,8 @@ def expr_test_b(x,d):
 def expr_test_a(x,d):
 	return x # starts with 10
 
-def historical_price(ticker,date):
-	""" takes a datetime.date and a string ticker"""
-	return yfinance.get_historical(ticker,date)
+def get_price_expr(tick,d):
+	if isinstance(d,datetime.date):
+		return yfinance.get_historical(tick,d)
+	else:
+		return yfinance.get_price(tick)
