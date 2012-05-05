@@ -78,10 +78,9 @@ class RecipeWindow(QWidget):
         
         recipe.trigger = triggerFunc
             
-        self.portfolio.add_recipe(recipe);
-        self.portfolio.to_file("test.algo");
+        recipe.to_file("test.algo");
         
-        return self.portfolio
+        #return self.portfolio
     
 def main():
     app = QApplication(sys.argv)

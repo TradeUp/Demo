@@ -10,7 +10,7 @@ class FunctionScrollWidget(QtGui.QScrollArea):
 		
 		layout = QtGui.QVBoxLayout()
 		
-		layout.addWidget(FunctionItem("Price", "stockquote", self))
+		layout.addWidget(FunctionItem("Price", "get_price_expr", self))
 		
 		layout.addWidget(FunctionItem("Dummy Func Half", "expr_test_b", self))
 		layout.addWidget(FunctionItem("Dummy Func Num", "expr_test_a", self))
