@@ -133,8 +133,6 @@ class Recipe(BackendObj):
 	""" 
 	Backend representation of a recipe. Used for saving the recipe to JSON. 
 	"""
-
-
 	def __init__(self,trigger=None,color="green",rows=[],name="Default"):
 		super(Recipe,self).__init__(color)
 		self.rows = rows
@@ -147,9 +145,9 @@ class Recipe(BackendObj):
 		for s,o in zip(self.rows,other.rows):
 			if s is not o: return False 
 
+
 	def add_row(self,row):
 		self.rows.append(row)
-
 
 	def data(self):
 		data = []
