@@ -6,8 +6,8 @@ def test_oncall():
 	print 'trigger called'
 	return (10,1)  # every time it's triggered we get +10 shares
 
-def test_getPrice(data):
-	return 1 # price stays constant
+def test_getPrice(ticker):
+	return yfinance.get_price(ticker)
 
 
 def buy_stock(ticker,amount,type,cash):

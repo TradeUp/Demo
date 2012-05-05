@@ -79,7 +79,6 @@ class RecipeWindow(QWidget):
         recipe.trigger = triggerFunc
             
         self.portfolio.add_recipe(recipe);
-        
         self.portfolio.to_file("test.algo");
         
         return self.portfolio

@@ -40,7 +40,7 @@ class ActionPanel(QtGui.QScrollArea):
         root.show();
         
     def getTriggerFunc(self):
-        trigger = self._triggers[0]
-        
+        #trigger = self._triggers[0]
+        return self._triggers[0]
         
         

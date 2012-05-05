@@ -73,7 +73,7 @@ class Tabs(QtGui.QDialog):
         realtime = QtGui.QLabel('Run Realtime')
         start = QtGui.QPushButton('Start')
         stop = QtGui.QPushButton('Stop')
-        start.clicked.connect(self.run_realtime)
+        start.clicked.connect(self.run_test3)
         stop.clicked.connect(self.stop_realtime)
         
         realtimeLayout.addWidget(realtime)
