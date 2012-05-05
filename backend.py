@@ -4,7 +4,7 @@
 import json
 import exprfuncs
 import triggerfuncs
-import datetime
+import datetime,yfinance,time 
 
 def same_date(a,b):
 	if a.day == b.day:
@@ -80,7 +80,7 @@ class Expression:
 			'val': self.val     
 			}
 
-	def eval(self,data):
+	def run(self,data):
 		if self.func and self.val:
 			return self.func(self.val,data)
 		return None 
@@ -115,14 +115,14 @@ class RecipeRow:
 		}
 		return data
 
-	def eval(self,data):
+	def run(self,data):
 		""" evaluates the row """
 		if self.operator is ">":
-			return (self.expr_a.eval(data) > self.expr_b.eval(data))
+			return (self.expr_a.run(data) > self.expr_b.run(data))
 		elif self.operator is "<":
-			return (self.expr_a.eval(data) < self.expr_b.eval(data))
+			return (self.expr_a.run(data) < self.expr_b.run(data))
 		else:
-			return (self.expr_a.eval(data) == self.expr_b.eval(data)) 
+			return (self.expr_a.run(data) == self.expr_b.run(data)) 
 
 	def __str__(self):
 		# for debugging
@@ -167,11 +167,11 @@ class Recipe(BackendObj):
 		with open(path,'w') as output:
 			output.write(self.json())
 
-	def eval(self,cash,data):
+	def run(self,cash,data):
 		""" evalutes against the piece of data, triggers trigger if appropriate. trigger will return data """
 		self.update_value(self.trigger.get_price(data)) # gets the most recent price
 		for row in self.rows:
-			if not row.eval(data):
+			if not row.run(data):
 				self.trigger.reset() 
 				return self.last_point()
 		new_val = self.trigger.activate(cash)
@@ -194,11 +194,11 @@ class Portfolio(BackendObj):
 	def remove_recipe(self,recipe):
 		self.recipes[recipe.name] = None 
 
-	def eval(self,data):
+	def run(self,data):
 		run_a,run_b = 0,0
 		self.cash.append(self.cash[-1]) # copy the last value 
 		for recipe in self.recipes.values():
-			a = recipe.eval(self.cash,data)
+			a = recipe.run(self.cash,data)
 			print a
 			run_a += a[0]
 			run_b += a[1]
@@ -218,7 +218,7 @@ class Portfolio(BackendObj):
 #### The Trigger Class ####
 #
 # usage: 
-#	during eval() or a row, trigger.activate() is called when conditions are true.
+#	during run() or a row, trigger.activate() is called when conditions are true.
 #	its our job to make sure this only happens when it's been reset before. (i.e in between calls)
 #
 ###
@@ -232,6 +232,7 @@ class Trigger:
 		self.ticker = ticker
 		self.amount = amount
 		self.amount_type = amount_type
+		self.running = False 
 		
 	def activate(self,cash):
 		if self.tripped:
@@ -333,7 +334,7 @@ class Controller:
 		self.table.removeRow(self.row,rowNum)
 		self.table.notifyRows(self.row,rowNum)
 		# update the graph
-	    # self.graph.add_recipe(recipe)
+		# self.graph.add_recipe(recipe)
 
 	def add_recipe_graph(self,recipeName):
 		self.graphed.append(recipeName)
@@ -351,7 +352,7 @@ class Controller:
 		if not recipe.first: return 0 
 		return (pl/recipe.first)
 
-	def eval(self,date):
+	def run(self,date):
 		"""
 		note that date is of form: datetime.date
 		"""
@@ -359,7 +360,7 @@ class Controller:
 		table_output = {}
 		graph_output = {}
 
-		self.portfolio.eval(date)
+		self.portfolio.run(date)
 
 		for key,recipe in self.portfolio.recipes.items():
 			# create a data object out of the recipe
@@ -378,6 +379,9 @@ class Controller:
 		graph_data['cash'] = (self.portfolio.cash,self.graph_axis) 
 		self.graph.update(graph_output,self.table,table_output);
 
+	##
+	# methods to be called on the GUI side
+	#
 	def run_historical(self,start,end):
 		""" takes two datetime.dates """
 		self.graph_axis = [] # reset the axis
@@ -387,5 +391,36 @@ class Controller:
 		end += day 
 
 		while(not same_date(curr,end)):
-			self.eval(curr)
+			self.run(curr)
 			curr += day 
+	
+	def validate_ticker(self,ticker):
+		""" validates a ticker symbol by trying a request to Yahoo
+		"""
+		if yfinance.get_price(ticker) == '0.00':
+			return False
+		return True 
+	
+	def validate_trigger(self,ticker,amount,amount_type,oncall,getPrice):
+		""" trigger validation method """
+		if not self.validate_ticker(ticker): return False
+		if amount < 0: return False
+		if amount_type != 'SHARES' and amount_type != 'DOLLARS': return False
+		if not getattr('triggerFuncs',oncall) or not getattr('triggerFuncs',getPrice): return False
+		return True 
+	
+	def run_realtime(self):
+		""" runs a realtime simulation (until you call stop_realtime)
+		"""
+		while(self.running):
+			curr = datetime.datetime.now()
+			self.graph_axis.append(curr)
+			self.run(curr)
+			time.sleep(10)
+			
+	def stop_realtime(self):
+		""" called to stop the realtime run"""
+		self.running = False 
+		
+		
+		

@@ -59,7 +59,7 @@ class Tabs(QtGui.QDialog):
 #        for recipe in self.controller.portfolio.recipes.values():
 #            self.controller.graphed.append(recipe.name)
 #            self.controller.table.addRecipe(recipe.name)
-#        self.controller.eval(1)
+#        self.controller.run(1)
         print "hello4"
         mainLayout = QtGui.QVBoxLayout()
         mainLayout.addWidget(tabWidget)
@@ -81,7 +81,7 @@ class Tabs(QtGui.QDialog):
         # run the controller evaluating in a loop
         print "Test called"
         for x in xrange(1,20):
-            self.controller.eval(x) # every other one should be true (xing fingers)
+            self.controller.run(x) # every other one should be true (xing fingers)
             #time.sleep(.5)
 
 class GeneralTab(QtGui.QWidget):
