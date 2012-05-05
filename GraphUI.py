@@ -20,7 +20,7 @@ import matplotlib.font_manager as font_manager
 
 class MainWindow(QMainWindow):
 
-    linedict = {'cheese': ([(1,2), (2,3)], [datetime.date(2001, 3, 5), datetime.date(2001, 3, 6)])}
+    linedict = {'cheese': ([datetime.date(2001, 3, 5), datetime.date(2001, 3, 6)], [(1,2), (2,3)])}
     unusedColors = ['b', 'g', 'r','c','m','y','k']
     usedColors = []
 

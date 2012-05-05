@@ -42,35 +42,80 @@ class Tabs(QtGui.QDialog):
         tabWidget.addTab(ex,"Graph")
         tabWidget.addTab(DragAndDrop.RecipeWindow(), "Kitchen") 
       
-        TestButton = QtGui.QPushButton("TestMe")
-#        cancelButton = QtGui.QPushButton(self.tr("Cancel"))
-        print "hello" 
-        TestButton.clicked.connect(self.run_test3);
-        print "hello3"
-#        self.connect(TestButton, QtCore.SIGNAL("clicked()"), self, Tabs.run_test3(self))
-#        self.connect(cancelButton, QtCore.SIGNAL("clicked()"), self, QtCore.SLOT("reject()"))
+        ##
+        ## simulation running GUI controls
+        ##
+        historicalLayout = QtGui.QHBoxLayout()
 
-        buttonLayout = QtGui.QHBoxLayout()
-#        buttonLayout.addStretch(1)
-        buttonLayout.addWidget(TestButton)
-#        buttonLayout.addWidget(cancelButton)
-#        recipeParser = Parser('test.algo')
-#        self.controller.portfolio = recipeParser.build_portfolio()
-#        for recipe in self.controller.portfolio.recipes.values():
-#            self.controller.graphed.append(recipe.name)
-#            self.controller.table.addRecipe(recipe.name)
-#        self.controller.eval(1)
-        print "hello4"
+        self.start = QtGui.QCalendarWidget()
+        self.end = QtGui.QCalendarWidget()
+
+        self.startDate = QtGui.QDateEdit()
+        self.startDate.setDateRange(QtCore.QDate(1990,1,1),QtCore.QDate.currentDate())
+        self.startDate.setCalendarPopup(True)
+        self.startDate.dateChanged.connect(self.set_start)
+        
+        self.endDate = QtGui.QDateEdit()
+        self.endDate.setDateRange(QtCore.QDate(1990,1,1),QtCore.QDate.currentDate())
+        self.endDate.setCalendarPopup(True)
+        self.endDate.dateChanged.connect(self.set_end)
+                
+        go = QtGui.QPushButton('Run')
+        go.clicked.connect(self.run_historical)
+        historical = QtGui.QLabel('Run Historical')
+        
+        historicalLayout.addWidget(historical)
+        historicalLayout.addWidget(self.startDate)
+        historicalLayout.addWidget(self.endDate)
+        historicalLayout.addWidget(go)
+
+        realtimeLayout = QtGui.QHBoxLayout()
+        realtime = QtGui.QLabel('Run Realtime')
+        start = QtGui.QPushButton('Start')
+        stop = QtGui.QPushButton('Stop')
+        start.clicked.connect(self.run_realtime)
+        stop.clicked.connect(self.stop_realtime)
+        
+        realtimeLayout.addWidget(realtime)
+        realtimeLayout.addWidget(start)
+        realtimeLayout.addWidget(stop)
+        
         mainLayout = QtGui.QVBoxLayout()
         mainLayout.addWidget(tabWidget)
-        mainLayout.addLayout(buttonLayout)
+        mainLayout.addLayout(historicalLayout)
+        mainLayout.addLayout(realtimeLayout)
+        
         self.setLayout(mainLayout)
 
 
         self.setAcceptDrops(True)
         self.setWindowTitle("TradeUp")
     
-    #@QtCore.SLOT()
+    def set_start(self):
+        """ sets start"""
+        date = self.startDate.date()
+        d = int(date.day())
+        m = int(date.month())
+        y = int(date.year())
+        self.startDate = datetime.date(y,m,d)
+        
+        
+    def set_end(self):
+        """ sets end"""
+        date = self.end.date()
+        d = int(date.day())
+        m = int(date.month())
+        y = int(date.year())
+        self.endDate = datetime.date(y,m,d)
+        
+    def run_historical(self):
+        self.controller.run_historical(self.startDate, self.endDate)
+        
+    def run_realtime(self):
+        self.controller.run_realtime()
+    def stop_realtime(self):
+        self.controller.stop_realtime()
+        
     def run_test3(self):
         print 'building new parser/portfolio from test.algo'
         recipeParser = Parser('test.algo')
@@ -81,7 +126,7 @@ class Tabs(QtGui.QDialog):
         # run the controller evaluating in a loop
         print "Test called"
         for x in xrange(1,20):
-            self.controller.eval(x) # every other one should be true (xing fingers)
+            self.controller.run(x) # every other one should be true (xing fingers)
             #time.sleep(.5)
 
 class GeneralTab(QtGui.QWidget):

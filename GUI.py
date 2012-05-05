@@ -19,7 +19,6 @@ class GUI(QtGui.QMainWindow):
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(self.close)
         exitAction.setMenuRole(QtGui.QAction.MenuRole.ApplicationSpecificRole);
-
         self.statusBar()
 
         menubar = self.menuBar()
