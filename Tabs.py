@@ -17,6 +17,8 @@ import time
 
 class Tabs(QtGui.QDialog):
     def __init__(self, parent=None):
+        self.start = None
+        self.end = None 
         QtGui.QDialog.__init__(self, parent)
 
 #        testingDates1 = [datetime.date(2006, 1, 3), datetime.date(2006, 1, 4),datetime.date(2006, 1, 5),datetime.date(2006, 1, 6),datetime.date(2006, 1, 7)]
@@ -106,6 +108,9 @@ class Tabs(QtGui.QDialog):
         self.end = datetime.date(y,m,d)
         
     def run_historical(self):
+        if not self.start or self.end:
+            self.set_start()
+            self.set_end()
         self.controller.run_historical(self.start, self.end)
         
     def run_realtime(self):
