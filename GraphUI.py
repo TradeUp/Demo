@@ -61,11 +61,7 @@ class MainWindow(QMainWindow):
                 usedColors = self.usedColors[:1]
             print line[1]
             self.axes.plot(line[1][0],line[1][1], color=color, label=line[0])
-    #.plot_date(dates, values, 'b.-')
- 
-        #self.axes.xaxis.set_major_locator(matplotlib.dates.WeekdayLocator(byweekday=matplotlib.dates.MO))
-        #self.axes.xaxis.set_major_formatter( matplotlib.dates.DateFormatter('%a %d\n%b %Y'))
-    
+
         props = font_manager.FontProperties(size=10)
         self.axes.legend(loc='center left', shadow=True, fancybox=True, prop=props)
         vbox = QVBoxLayout( )
