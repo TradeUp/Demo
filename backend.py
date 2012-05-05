@@ -285,9 +285,10 @@ class Parser:
 			if not self.data: return None 
 			# build the recipe from the data
 			rows = []
+			print 'whats in here ',self.data
 			for row in self.data['rows']:
 				rows.append(self.getrow(row))
-			return Recipe(trigger=Trigger(oncall=self.data['trigger']),rows=rows,name=self.data['name'])
+			return Recipe(trigger=Trigger(oncall=self.data['trigger']['oncall'],amount=self.data['trigger']['amount'],amount_type=self.data['trigger']['amount_type'],ticker=self.data['trigger']['ticker']),rows=rows,name=self.data['name'])
 
 
 	def expr_a(self,data):
@@ -323,6 +324,7 @@ class Controller:
 		self.graph_axis = [] # reset for each run
 
 	def add_recipe(self,filename):	
+		print 'yo chek it ',filename 
 		recipe = self.parser.parse_recipe(str(filename[0]))
 		if recipe:
 			self.table.addRecipe(recipe.name) #TODO: add data also

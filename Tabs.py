@@ -47,9 +47,6 @@ class Tabs(QtGui.QDialog):
         ##
         historicalLayout = QtGui.QHBoxLayout()
 
-        self.start = QtGui.QCalendarWidget()
-        self.end = QtGui.QCalendarWidget()
-
         self.startDate = QtGui.QDateEdit()
         self.startDate.setDateRange(QtCore.QDate(1990,1,1),QtCore.QDate.currentDate())
         self.startDate.setCalendarPopup(True)
@@ -97,7 +94,7 @@ class Tabs(QtGui.QDialog):
         d = int(date.day())
         m = int(date.month())
         y = int(date.year())
-        self.startDate = datetime.date(y,m,d)
+        self.start = datetime.date(y,m,d)
         
         
     def set_end(self):
@@ -106,10 +103,10 @@ class Tabs(QtGui.QDialog):
         d = int(date.day())
         m = int(date.month())
         y = int(date.year())
-        self.endDate = datetime.date(y,m,d)
+        self.end = datetime.date(y,m,d)
         
     def run_historical(self):
-        self.controller.run_historical(self.startDate, self.endDate)
+        self.controller.run_historical(self.start, self.end)
         
     def run_realtime(self):
         self.controller.run_realtime()

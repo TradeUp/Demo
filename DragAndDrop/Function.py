@@ -28,7 +28,7 @@ class Function(object):
     """
     @staticmethod
     def getFunction(func):
-        if func.lower() == "stockquote":
+        if func.lower() == "get_price_expr":
             return SimpleFunction(func.lower(), Function.DOLLARS)
         elif func.lower() == "expr_test_a":
             return DummyFunction(func.lower(), Function.NO_UNITS)

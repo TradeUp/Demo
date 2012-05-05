@@ -74,12 +74,13 @@ class RecipeWindow(QWidget):
     def saveRecipe(self):
         recipe = self.list.createRecipe()
         
-        triggerFunc = self.pnlBuyActions.getTriggerFunc()
-            
-        self.portfolio.add_recipe(recipe);
-        self.portfolio.to_file("test.algo");
+        triggerFunc = self.pnlBuyActions.getTrigger().convertToTriggerFunc()
         
-        return self.portfolio
+        recipe.trigger = triggerFunc
+            
+        recipe.to_file("test.algo");
+       
+        #return self.portfolio
     
 def main():
     app = QApplication(sys.argv)

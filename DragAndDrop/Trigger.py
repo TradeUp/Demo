@@ -186,7 +186,13 @@ class ActionTrigger(QtGui.QFrame):
     Convert this trigger into a trigger function
     """
     def convertToTriggerFunc(self):
-        pass
+        ticker = self._txtStock.toPlainText()
+        amount = self._txtAmount.toPlainText()
+        type = self._cmbUnits.getType()
+        
+        onCall = self._cmbAction.getOnCallFunction()
+        
+        return Trigger(ticker, amount, type, onCall)
         
         
 class StockChooser(QtGui.QTextEdit):
@@ -202,6 +208,10 @@ class ActionComboBox(QtGui.QComboBox):
         self.addItem("Sell")
         self.addItem("Sell short")
         
+    def getOnCallFunction(self):
+        if self.currentText() == "Buy": return "buy_stock"
+        else: return "sell_stock"
+        
 class UnitComboBox(QtGui.QComboBox):
     def __init__(self, parent):
         super(UnitComboBox, self).__init__(parent);
@@ -209,6 +219,10 @@ class UnitComboBox(QtGui.QComboBox):
         
         self.addItem("Shares")
         self.addItem("Dollars")
+        
+    def getType(self):
+        if self.currentText() == "Shares": return 'SHARES'
+        else: return 'DOLLARS'
         
 class ComparisonComboBox(QtGui.QComboBox):
     def __init__(self, parent):
