@@ -39,7 +39,7 @@ class ActionPanel(QtGui.QScrollArea):
         self.setWidget(root);
         root.show();
         
-    def getTriggerFunc(self):
+    def getTrigger(self):
         #trigger = self._triggers[0]
         return self._triggers[0]
         

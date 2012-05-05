@@ -74,7 +74,7 @@ class RecipeWindow(QWidget):
     def saveRecipe(self):
         recipe = self.list.createRecipe()
         
-        triggerFunc = self.pnlBuyActions.getTriggerFunc()
+        triggerFunc = self.pnlBuyActions.getTrigger().convertToTriggerFunc()
         
         recipe.trigger = triggerFunc
             
