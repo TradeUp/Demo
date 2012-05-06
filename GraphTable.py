@@ -1,12 +1,5 @@
-'''
-Created on Mar 14, 2012
-
-@author: WillIV
-'''
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
-# simple.py
 import sys
 import GraphUI
 import graph
@@ -35,7 +28,6 @@ class GraphTable(QtGui.QWidget):
         # set the table's controller
         self.table.controller = self.controller 
         addButton = AddButton(self.table)
-        buttonTable = QVBoxLayout
         layout = QVBoxLayout()
         layout.addWidget(self.table)
         layout.addWidget(addButton)
