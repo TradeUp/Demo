@@ -201,8 +201,9 @@ class ActionTrigger(QtGui.QFrame):
         self._cmbAction = ActionComboBox(self)
         self._cmbUnits = UnitComboBox(self)
         
-        self._txtAmount = QtGui.QTextEdit(self)
-        self._txtStock = StockChooser(self)
+        self._txtAmount = QtGui.QLineEdit(self)
+        
+        self._txtStock = QtGui.QLineEdit(self)
         
         self._layout.addWidget(self._cmbAction, 1)
         self._layout.addWidget(self._txtAmount, 2)
@@ -217,18 +218,16 @@ class ActionTrigger(QtGui.QFrame):
     Convert this trigger into a trigger function
     """
     def convertToTriggerFunc(self):
-        ticker = self._txtStock.toPlainText()
-        amount = self._txtAmount.toPlainText()
+        
+        ticker = self._txtStock.text()
+        
+        amount = self._txtAmount.text()
+        
         type = self._cmbUnits.getType()
         
         onCall = self._cmbAction.getOnCallFunction()
         
         return Trigger(ticker, amount, type, onCall)
-        
-        
-class StockChooser(QtGui.QTextEdit):
-    def __init__(self, parent):
-        super(StockChooser, self).__init__(parent)
         
 class ActionComboBox(QtGui.QComboBox):
     def __init__(self, parent):
