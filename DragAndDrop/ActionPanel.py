@@ -42,5 +42,14 @@ class ActionPanel(QtGui.QScrollArea):
     def getTrigger(self):
         #trigger = self._triggers[0]
         return self._triggers[0]
+    
+    """
+    Validate the triggers
+    """
+    def validate(self, controller):
+        valid = True
+        for trigger in self._triggers:
+            if not trigger.validate(controller): valid = False
         
+        return valid
         

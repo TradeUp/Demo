@@ -420,7 +420,7 @@ class Controller:
 	def validate_ticker(self,ticker):
 		""" validates a ticker symbol by trying a request to Yahoo
 		"""
-		if yfinance.get_price(ticker) == '0.00':
+		if ticker == "" or yfinance.get_price(ticker) == '0.00':
 			return False
 		return True 
 	

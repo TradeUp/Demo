@@ -8,6 +8,7 @@ import sys
 from PySide import QtCore
 from PySide import QtGui
 from Function import *
+import string
 
 class Inspector(QtGui.QFrame):
     def __init__(self, controller):
@@ -88,7 +89,7 @@ class SimpleEditor(Editor):
         
     @QtCore.Slot()
     def updateFunc(self):
-        ticker = self.txtStock.text()
+        ticker = string.upper(self.txtStock.text())
         
         if(self.controller.validate_ticker(ticker)):
             self.txtStock.setStyleSheet("background-color:#00FF00;");

@@ -202,12 +202,18 @@ class ActionTrigger(QtGui.QFrame):
         self._cmbUnits = UnitComboBox(self)
         
         self._txtAmount = QtGui.QLineEdit(self)
+        self._txtAmount.textChanged.connect(self.resetTextAmount)
         
         self._txtStock = QtGui.QLineEdit(self)
+        self._txtStock.textChanged.connect(self.resetTextStock)
+        
+        lblOf = QtGui.QLabel("of", self)
+        lblOf.setMaximumWidth(10)
         
         self._layout.addWidget(self._cmbAction, 1)
         self._layout.addWidget(self._txtAmount, 2)
         self._layout.addWidget(self._cmbUnits, 1)
+        self._layout.addWidget(lblOf, 1)
         self._layout.addWidget(self._txtStock, 2)
         
         self.setLayout(self._layout);
@@ -228,6 +234,33 @@ class ActionTrigger(QtGui.QFrame):
         onCall = self._cmbAction.getOnCallFunction()
         
         return Trigger(ticker, amount, type, onCall)
+    
+    """
+    Validate this trigger
+    """
+    def validate(self, controller):
+        valid = True
+        
+        try:
+            if int(self._txtAmount.text()) < 0: raise ValueError()
+        except ValueError:
+            self._txtAmount.setStyleSheet("background-color:#FF0000;")
+            valid = False
+        
+        if not controller.validate_ticker(self._txtStock.text()):
+            self._txtStock.setStyleSheet("background-color:#FF0000;");
+            valid = False
+            
+        return valid
+    
+    @QtCore.Slot()
+    def resetTextStock(self):
+        self._txtStock.setStyleSheet("");
+        
+    @QtCore.Slot()
+    def resetTextAmount(self):
+        self._txtAmount.setStyleSheet("");
+        
         
 class ActionComboBox(QtGui.QComboBox):
     def __init__(self, parent):

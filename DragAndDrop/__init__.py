@@ -88,6 +88,12 @@ class RecipeWindow(QWidget):
             msgBox.exec_()
             return
         
+        if not self.pnlBuyActions.validate(self.controller):
+            msgBox = QtGui.QMessageBox(QtGui.QMessageBox.Icon.Critical, "Error", "")
+            msgBox.setText("There was an error saving the recipe! Fix the buy action and try again.")
+            msgBox.exec_()
+            return
+        
         triggerFunc = self.pnlBuyActions.getTrigger().convertToTriggerFunc()
         
         recipe.trigger = triggerFunc
