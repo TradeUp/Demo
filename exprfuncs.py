@@ -23,6 +23,6 @@ def exprfunc_data():
 	return {
 		'expr_test_b':'ALL',
 		'expr_test_a':'ALL',
-		'get_price_expr':'REALTIME',
+		'get_price_expr':'ALL',
 		'get_market_cap':'REALTIME'
 	}

@@ -59,7 +59,7 @@ class Expression:
 		func_data = getattr(exprfuncs,'exprfunc_data')
 		self.func = getattr(exprfuncs,func)
 		self.val = val 
-		self.run = func_data()[func]
+		self.status = func_data()[func]
 		
 
 
@@ -101,7 +101,7 @@ class RecipeRow:
 		self.expr_a = a
 		self.expr_b = b
 		self.operator = c
-		self.run = 'REALTIME' if (self.expr_a.run == 'REALTIME' or self.expr_b.run == 'REALTIME') else 'ALL'
+		self.status = 'REALTIME' if (self.expr_a.status == 'REALTIME' or self.expr_b.status == 'REALTIME') else 'ALL'
 			
 
 	def __eq__(self,other):
@@ -141,9 +141,9 @@ class Recipe(BackendObj):
 		self.rows = rows
 		self.trigger = trigger
 		self.name = name
-		self.run = 'ALL'
+		self.status = 'ALL'
 		for r in self.rows:
-			if r.run == 'REALTIME': self.run = 'REALTIME'
+			if r.status == 'REALTIME': self.status = 'REALTIME'
 		
 
 	def __eq__(self,other):
@@ -239,9 +239,9 @@ class Trigger:
 		self.func = getattr(triggerfuncs,oncall) or (lambda: 1)
 		self.get_price = getattr(triggerfuncs,'get_price') or (lambda: 1)
 		
-		self.ticker = ticker
-		self.amount = amount
-		self.amount_type = amount_type
+		self.ticker = str(ticker)
+		self.amount = int(amount)
+		self.amount_type = str(amount_type)
 		self.running = False 
 		
 	def activate(self,cash):
