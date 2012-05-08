@@ -1,7 +1,7 @@
 # Backend code
 #	CS032 Final Project - TradeUp
 ###
-import json
+import json,threading
 import exprfuncs
 import triggerfuncs
 import datetime,yfinance,time 
@@ -343,7 +343,8 @@ class Controller:
 		self.portfolio = Portfolio() 
 		self.graph_axis = [] # reset for each run
 		self.graph_output = {}
-		self.running = False
+		self.table_output = {}
+		self.realtime = None 
 
 	def add_recipe(self,filename):	
 		recipe = self.parser.parse_recipe(str(filename[0]))
@@ -391,8 +392,10 @@ class Controller:
 		"""
 		note that date is of form: datetime.date
 		"""
-		self.graph_axis.append(date)
-		print 'you appended:::', date 
+		if date == 'realtime':
+			self.graph_axis.append(datetime.datetime.now())
+		else:
+			self.graph_axis.append(date)
 		table_output = {}
 		graph_output = {}
 
@@ -414,10 +417,10 @@ class Controller:
 		# send the output to the table
 		if 'cash' in self.graphed:
 			graph_output['cash'] = (self.portfolio.cash,self.graph_axis) 
-		self.graph.update(graph_output,self.table,table_output);
 		
 		self.graph_output = graph_output # we always know the last output
-
+		self.table_output = table_output 
+		
 	def refresh_graph(self):
 		print 'calling refresh graph for some reason'
 		data = {}
@@ -444,6 +447,8 @@ class Controller:
 		while(not same_date(curr,end)):
 			self.run(curr)
 			curr += day 
+		self.graph.update(self.graph_output,self.table,self.table_output);
+
 	
 	def validate_ticker(self,ticker):
 		""" validates a ticker symbol by trying a request to Yahoo
@@ -460,19 +465,39 @@ class Controller:
 		if not getattr(triggerfuncs,oncall) or not getattr(triggerfuncs,getPrice): return False
 		return True 
 	
+			
 	def run_realtime(self):
 		""" runs a realtime simulation (until you call stop_realtime)
 		"""
-		self.running = True 
-		while(self.running):
-			curr = datetime.datetime.now()
-			self.graph_axis.append(curr)
-			self.run(curr)
-			time.sleep(10)
-			
+		self.graph_output = {}
+		self.table_ouput = {}
+		
+		# for the default
+		curr = datetime.datetime.now()
+		self.graph_axis.append(curr)
+		
+		try:
+			self.realtime = RealThread(0,self)
+			self.realtime.start()
+		except  Exception as e:
+			print 'Error. unable to thread ', e
+
 	def stop_realtime(self):
 		""" called to stop the realtime run"""
-		self.running = False 
+		self.realtime.stop()
+		self.graph.update(self.graph_output,self.table,self.table_output);
+
 		
-		
-		
+class RealThread(threading.Thread):
+	def __init__(self,ID,parent):
+		super(RealThread,self).__init__()
+		self.ID = ID
+		self.parent = parent
+		self.end = threading.Event()
+	def stop(self):
+		self.end.set()
+	def run(self):
+		while not self.end.isSet():
+			print 'runnign: ',self.parent
+			self.parent.run('realtime')
+			time.sleep(10)
