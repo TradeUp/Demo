@@ -82,12 +82,12 @@ class Table(QTableWidget):
                 self.deactivateRecipe(self.item(row,col).text())
 
     def activateRecipe(self,recipe):
-        if recipe == 'Total:': recipe = 'cash'
+        if recipe == "Cash:": recipe = 'cash'
         # call controller.activate on the row
         self.controller.activate(recipe)
     
     def deactivateRecipe(self,recipe):
-        if recipe == 'Total:': recipe = 'cash'
+        if recipe == "Cash:": recipe = 'cash'
         self.controller.deactivate(recipe)
     
     
