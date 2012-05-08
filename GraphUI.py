@@ -59,6 +59,7 @@ class MainWindow(QMainWindow):
                 color = self.usedColors[0]
                 unusedColors = self.usedColors[1:]
                 usedColors = self.usedColors[:1]
+
             print line[1]
             yaxis = line[1][0]
             xaxis = line[1][1]

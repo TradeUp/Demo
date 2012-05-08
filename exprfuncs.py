@@ -10,7 +10,9 @@ def expr_test_a(x,d):
 
 def get_price_expr(tick,d):
 	if isinstance(d,datetime.date):
-		return yfinance.get_historical(tick,d)
+		res = yfinance.get_historical(tick,d)
+		print 'result: ',res
+		return res 
 	else:
 		return yfinance.get_price(tick)
 	
