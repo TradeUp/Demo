@@ -89,7 +89,8 @@ class MainWindow(QMainWindow):
         print "Update called on", data
         graph.makenew(self, data)
         table.update(table_data)
-    
+    def refresh(self,data):
+        graph.makenew(self,data)
     def up(self):
         frame.redraw();
 
