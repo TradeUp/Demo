@@ -389,6 +389,13 @@ class Controller:
 
 		for key,recipe in self.portfolio.recipes.items():
 			# create a data object out of the recipe
+			print '******************************'
+			print 'table_output', table_output
+			print 'graph_output', graph_output
+			print 'graph_axis', self.graph_axis
+			print 'graphed', self.graphed
+			print 'recipe.name', recipe.name
+			
 			l_v,l_p = recipe.last_point()
 			pl = self.pl_calc(recipe)
 			result = {
@@ -399,9 +406,11 @@ class Controller:
 			if recipe.name in self.graphed:
 				graph_data = [x*y for x,y in recipe.get_performance()]
 				graph_output[recipe.name] = (graph_data,self.graph_axis)
+				print 'graph_data', graph_data
+			print '******************************'
 			table_output[recipe.name] = result 
 		# send the output to the table
-		graph_output['cash'] = (self.portfolio.cash,self.graph_axis) 
+		graph_output['cash'] = (self.portfolio.cash,self.graph_axis)
 		self.graph.update(graph_output,self.table,table_output);
 
 	##

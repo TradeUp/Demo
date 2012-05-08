@@ -36,7 +36,7 @@ class RemoveButton(QPushButton):
     
     def __init__(self, table, row):
         super(RemoveButton, self).__init__()
-        self.setIcon(QIcon("/home/dylan/Desktop/remove_button.png")) 
+        self.setIcon(QIcon("Demo/button_delete_01.png")) 
         self.table = table
         self.row = row
         self.clicked.connect(self.remove)
