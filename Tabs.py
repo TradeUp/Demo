@@ -90,6 +90,7 @@ class Tabs(QtGui.QDialog):
         self.mnuOpenRecipe.setStatusTip('Open a recipe')
         self.mnuOpenRecipe.setEnabled(False)
         self.mnuOpenRecipe.setMenuRole(QtGui.QAction.MenuRole.ApplicationSpecificRole);
+        self.mnuOpenRecipe.triggered.connect(self.kitchen.openRecipe)
         
         self.mnuOpenPortfolio = QtGui.QAction('Open Portfolio..', self)
         self.mnuOpenPortfolio.setStatusTip('Open a portfolio')

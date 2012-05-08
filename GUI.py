@@ -37,7 +37,7 @@ class GUI(QtGui.QMainWindow):
 
         self.setWindowTitle('TradeUp')
         
-        self.setAcceptDrops(True)    
+        self.setAcceptDrops(True)  
         self.show()
         
 

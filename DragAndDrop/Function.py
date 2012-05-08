@@ -45,6 +45,19 @@ class Function(object):
         elif func.lower() == "expr_test_b":
             return DummyFunction(func.lower(), Function.NO_UNITS)
     
+    """
+    Inflate a function object from an expression object
+    """
+    @staticmethod
+    def inflateFunction(expr):
+        #all functions so far are only SimpleFunctions
+        func = Function.getFunction(expr.funcName)
+        func.setStock(expr.val)
+        
+        func.setValid(True)
+        
+        return func
+    
 """A simple function which only has a stock name parameter"""
 class SimpleFunction(Function):
     def __init__(self, func, units):

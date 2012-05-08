@@ -33,8 +33,9 @@ class RecipeList(QtGui.QScrollArea):
         self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff);
         
     def addEmptyTrigger(self):
-        trigger = TriggerWidget(self);
+        self.addTrigger(TriggerWidget(self))
         
+    def addTrigger(self, trigger):
         trigger.request_selection.connect(self.selectionRequested);
         trigger.request_removal.connect(self.removeRequested);
         
@@ -51,6 +52,32 @@ class RecipeList(QtGui.QScrollArea):
     def numTriggers(self):
         return len(self._triggers)
     
+    def loadRecipe(self, recipe):
+        #first, clear the list of all triggers
+        self.clearList();
+        
+        print "LOADING RECIPES"
+        #iterate through all the rows, adding each one one by one
+        for row in recipe.rows:
+            print "LOADING TRIGGER"
+             
+            trigger = TriggerWidget(self)
+            trigger.setRecipeRow(row)
+            
+            self.addTrigger(trigger)
+        print "FINISHED"
+        
+    """
+    Remove all the trigger rows from the list
+    """
+    def clearList(self):
+        for row in self._triggers:
+            if self._selectedTrigger == row: self._selectedTrigger = None;
+            self._layout.removeWidget(row)
+            row.deleteLater();
+            
+        self._triggers = []
+    
     """
     Create a Recipe object with rows
     """
@@ -58,6 +85,7 @@ class RecipeList(QtGui.QScrollArea):
         recipe = Recipe();
         
         #add all the triggers
+        print "CREATING RECIPE FROM: ", self._triggers
         for trigger in self._triggers:
             row = trigger.getRecipeRow();
             
@@ -88,6 +116,8 @@ class RecipeList(QtGui.QScrollArea):
         if self._selectedTrigger == row: self._selectedTrigger = None;
         
         self._triggers.remove(row)
+        
+        print self._triggers
         
         self._layout.removeWidget(row)
         row.deleteLater();

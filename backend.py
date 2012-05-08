@@ -58,6 +58,7 @@ class Expression:
 		# TODO: override in subclass (assign attributes)
 		func_data = getattr(exprfuncs,'exprfunc_data')
 		self.func = getattr(exprfuncs,func)
+		self.funcName = func
 		self.val = val 
 		self.status = func_data()[func]
 		
@@ -244,6 +245,7 @@ class Trigger:
 
 	def __init__(self,ticker,amount,amount_type,oncall):
 		self.tripped = False 
+		self.funcName = oncall
 		self.func = getattr(triggerfuncs,oncall) or (lambda: 1)
 		self.get_price = getattr(triggerfuncs,'get_price') or (lambda: 1)
 		
