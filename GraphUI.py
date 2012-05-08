@@ -20,7 +20,8 @@ import matplotlib.font_manager as font_manager
 
 class MainWindow(QMainWindow):
 
-    linedict = {'Default': ([datetime.date(2001, 3, 5), datetime.date(2001, 3, 6)], [1,5])}
+    #linedict = {'Default': ([datetime.date(2001, 3, 5), datetime.date(2001, 3, 6)], [1,5])}
+    linedict = {'Default': ([1,5], [datetime.date(2001, 3, 5), datetime.date(2001, 3, 6)])}
     unusedColors = ['b', 'g', 'r','c','m','y','k']
     usedColors = []
 
@@ -59,8 +60,8 @@ class MainWindow(QMainWindow):
                 unusedColors = self.usedColors[1:]
                 usedColors = self.usedColors[:1]
             print line[1]
-            yaxis = line[1][1]
-            xaxis = line[1][0]
+            yaxis = line[1][0]
+            xaxis = line[1][1]
             j = max(yaxis)- min(yaxis)
             x = j*.1
             newMax = max(yaxis) + x
