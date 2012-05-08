@@ -20,7 +20,7 @@ import matplotlib.font_manager as font_manager
 
 class MainWindow(QMainWindow):
 
-    linedict = {'Default': ([datetime.date(2001, 3, 5), datetime.date(2001, 3, 6)], [(1,2), (2,3)])}
+    linedict = {'Default': ([datetime.date(2001, 3, 5), datetime.date(2001, 3, 6)], [1,5])}
     unusedColors = ['b', 'g', 'r','c','m','y','k']
     usedColors = []
 
@@ -47,6 +47,8 @@ class MainWindow(QMainWindow):
         self.axes = self.figure.add_subplot(111)
         self.axes.grid(color='0.75', linestyle='-', linewidth=0.5)      
         color = ''
+        superMax = 0
+        superMin = float('inf')
         for line in self.linedict.items():
             if(len(self.unusedColors) >= 1):
                 color = self.unusedColors[0]
@@ -56,8 +58,20 @@ class MainWindow(QMainWindow):
                 color = self.usedColors[0]
                 unusedColors = self.usedColors[1:]
                 usedColors = self.usedColors[:1]
-            print 'this is the line ur printing: ', line[1], ' ',line
-            self.axes.plot(line[1][1],line[1][0], color=color, label=line[0])
+
+            print line[1]
+            yaxis = line[1][1]
+            xaxis = line[1][0]
+            j = max(yaxis)- min(yaxis)
+            x = j*.1
+            newMax = max(yaxis) + x
+            newMin = min(yaxis) - x
+            if(newMax > superMax):
+                superMax = newMax
+            if(newMin < superMin):
+                superMin = newMin  
+            self.axes.plot(xaxis,yaxis, color=color, label=line[0])
+        self.axes.set_ylim([superMin,superMax])  
 
         props = font_manager.FontProperties(size=10)
         self.axes.legend(loc='center left', shadow=True, fancybox=True, prop=props)
