@@ -51,7 +51,7 @@ class RemoveButton(QPushButton):
 
 
 class Table(QTableWidget):
-    
+        
     def __init__(self):
         super(Table, self).__init__(0, 5) #init with one row, 5 columns
         self.rows = {} # contains all of the rows
@@ -59,6 +59,7 @@ class Table(QTableWidget):
         self.initgui()
         self.controller = None
         self.cellClicked.connect(self.cellActive)
+        self.setFixedWidth(504)
     
     def cellActive(self,row,col):
         """ called when a cell is activated """

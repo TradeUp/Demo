@@ -52,6 +52,7 @@ class GraphTable(QtGui.QWidget):
         self.endDate.setCalendarPopup(True)
         self.endDate.dateChanged.connect(self.set_end)
                 
+        
         go = QtGui.QPushButton('Run')
         go.clicked.connect(self.run_historical)
         historical = QtGui.QLabel('Run Historical')
@@ -65,12 +66,16 @@ class GraphTable(QtGui.QWidget):
         realtime = QtGui.QLabel('Run Realtime')
         start = QtGui.QPushButton('Start')
         stop = QtGui.QPushButton('Stop')
+        start.setFixedWidth(100)
+        stop.setFixedWidth(100)
+        go.setFixedWidth(100)
         start.clicked.connect(self.run_realtime)
         stop.clicked.connect(self.stop_realtime)
         
         realtimeLayout.addWidget(realtime)
         realtimeLayout.addWidget(start)
         realtimeLayout.addWidget(stop)
+
 
         layout.addLayout(historicalLayout)
         layout.addLayout(realtimeLayout)

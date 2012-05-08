@@ -48,9 +48,12 @@ class Tabs(QtGui.QDialog):
         ##
         ## simulation running GUI controls
         ##
-        
+        header = QtGui.QPixmap('tradeupheader.png')
+        headerP = QtGui.QLabel()
+        headerP.setPixmap(header)
         
         mainLayout = QtGui.QVBoxLayout()
+        mainLayout.addWidget(headerP)
         mainLayout.addWidget(self.tabWidget)
 #        mainLayout.addLayout(historicalLayout)
 #        mainLayout.addLayout(realtimeLayout)

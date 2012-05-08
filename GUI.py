@@ -39,11 +39,15 @@ class GUI(QtGui.QMainWindow):
         
         self.setAcceptDrops(True)  
         self.show()
-        
+
 
 def main():
+
     
+    QtGui.QApplication.setStyle('motif')
     app = QtGui.QApplication(sys.argv)
+    
+
     gui = GUI()
     sys.exit(app.exec_())
 
