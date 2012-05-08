@@ -23,7 +23,7 @@ class BackendObj(object):
 
 	def update_value(self,new_price):
 		quantity,price = self.performance[self.color][-1] # get last tuple
-		self.performance[self.color].append((quantity,new_price))
+		self.performance[self.color].append((quantity,float(new_price)))
 
 	def last_point(self):
 		print self.performance[self.color]
@@ -38,7 +38,7 @@ class BackendObj(object):
 			print 'no change'
 			return self.last_point()
 		quantity, price = self.performance[self.color][-1]
-		self.performance[self.color][-1] = (point[0]+quantity,price) # add the change
+		self.performance[self.color][-1] = (point[0]+quantity,float(price)) # add the change
 		return self.performance[self.color][-1] 
 
 	def get_performance(self):
@@ -120,12 +120,18 @@ class RecipeRow:
 
 	def run(self,data):
 		""" evaluates the row """
-		if self.operator is ">":
-			return (self.expr_a.run(data) > self.expr_b.run(data))
-		elif self.operator is "<":
-			return (self.expr_a.run(data) < self.expr_b.run(data))
+		a = self.expr_a.run(data)
+		b = self.expr_b.run(data)
+		print self.operator 
+		
+		if self.operator == ">":
+			print 'a: ', a ,' b:', b
+			return (a > b)
+		elif self.operator == "<":
+			print 'a: ', a ,' b:', b
+			return (a < b)
 		else:
-			return (self.expr_a.run(data) == self.expr_b.run(data)) 
+			return (a == b) 
 
 	def __str__(self):
 		# for debugging
@@ -174,10 +180,11 @@ class Recipe(BackendObj):
 
 	def run(self,cash,data):
 		""" evalutes against the piece of data, triggers trigger if appropriate. trigger will return data """
-		self.update_value(self.trigger.get_price(self.trigger.ticker)) # gets the most recent price
+		self.update_value(self.trigger.get_price(self.trigger.ticker,data)) # gets the most recent price
 		for row in self.rows:
 			if not row.run(data):
 				self.trigger.reset() 
+				print 'not triggered'
 				return self.last_point()
 		new_val = self.trigger.activate(cash)
 		print 'trigger activated, new value: ',new_val
@@ -188,7 +195,7 @@ class Portfolio(BackendObj):
 	"""
 	Represents a portfolio; a collection of recipes
 	""" 
-	def __init__(self,color="red",cash="10000"):
+	def __init__(self,color="red",cash=10000):
 		super(Portfolio,self).__init__(color)
 		self.recipes = {}
 		self.cash = [cash]
@@ -205,8 +212,9 @@ class Portfolio(BackendObj):
 		for recipe in self.recipes.values():
 			print 'this is what ur working with: ',recipe
 			a = recipe.run(self.cash,data)
-			run_a += a[0]
-			run_b += a[1]
+			print 'output: (a) ',a 
+			run_a += int(a[0])
+			run_b += float(a[1])
 			# nice
 		return self.add_point((run_a,run_b))
 
@@ -331,19 +339,29 @@ class Controller:
 		#table.controller = self
 		self.graph = graph
 		self.parser = Parser(None)
-		self.graphed = []
+		self.graphed = ['cash']
 		self.portfolio = Portfolio() 
 		self.graph_axis = [] # reset for each run
+		self.graph_output = {}
+		self.running = False
 
 	def add_recipe(self,filename):	
-		print 'yo chek it ',filename 
 		recipe = self.parser.parse_recipe(str(filename[0]))
-		print 'u made a recipe boi: ',recipe 
+		self.graphed.append(recipe.name)
 		if recipe:
 			self.table.addRecipe(recipe.name) #TODO: add data also
 			self.portfolio.add_recipe(recipe)
 			# self.graph.add_recipe(recipe)
-
+	def activate(self,recipeName):
+		if recipeName not in self.graphed:
+			self.graphed.append(recipeName)
+			self.refresh_graph()
+	
+	def deactivate(self,recipeName):
+		if recipeName in self.graphed:
+			self.graphed.remove(recipeName)
+			self.refresh_graph()
+			
 	def remove_recipe(self,recipeName,rowNum):
 		""" see above"""
 		self.portfolio.remove_recipe(recipeName)
@@ -374,6 +392,7 @@ class Controller:
 		note that date is of form: datetime.date
 		"""
 		self.graph_axis.append(date)
+		print 'you appended:::', date 
 		table_output = {}
 		graph_output = {}
 
@@ -393,9 +412,18 @@ class Controller:
 				graph_output[recipe.name] = (graph_data,self.graph_axis)
 			table_output[recipe.name] = result 
 		# send the output to the table
-		graph_output['cash'] = (self.portfolio.cash,self.graph_axis) 
+		if 'cash' in self.graphed:
+			graph_output['cash'] = (self.portfolio.cash,self.graph_axis) 
 		self.graph.update(graph_output,self.table,table_output);
+		
+		self.graph_output = graph_output # we always know the last output
 
+	def refresh_graph(self):
+		print 'calling refresh graph for some reason'
+		data = {}
+		for recipeName in self.graphed:
+			data[recipeName] = self.graph_output[recipeName]
+		self.graph.refresh(data)
 	##
 	# methods to be called on the GUI side
 	#
@@ -407,7 +435,7 @@ class Controller:
 			error.exec_()
 			return 
 			
-		self.graph_axis = [] # reset the axis
+		self.graph_axis = [start] # reset the axis
 
 		curr = start;
 		day = datetime.timedelta(days=1) # to add a day
@@ -435,7 +463,7 @@ class Controller:
 	def run_realtime(self):
 		""" runs a realtime simulation (until you call stop_realtime)
 		"""
-		
+		self.running = True 
 		while(self.running):
 			curr = datetime.datetime.now()
 			self.graph_axis.append(curr)
