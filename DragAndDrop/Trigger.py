@@ -168,7 +168,7 @@ class FunctionDropTarget(QtGui.QLabel):
             tokens = e.mimeData().text().split('/');
 
             self.setText(tokens[0])
-            self.func = Function.getFunction(tokens[1])
+            self.func = Function.Function.getFunction(tokens[1])
 
             #send the request selection signal
             self.request_selection.emit(FunctionSelectionEvent(self, self.func, self.onSelected));
