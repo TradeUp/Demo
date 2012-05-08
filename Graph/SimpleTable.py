@@ -23,11 +23,21 @@ class AddButton(QPushButton):
         
     def chooseFile(self):
         fileName = QFileDialog.getOpenFileName(self, dir="/home/dylan/mock_algo/", filter="*.algo")
+        if fileName == '': return
         #add some method to send file name to backend here!!
         print fileName 
         """ADD FUNCTION HERE...LET IT RETURN TRUE IF VALID FILE"""
         parser = Parser(None) # don't need a path to recipe
-        recipe = parser.parse_recipe(str(fileName[0]))
+        recipe = None
+        
+        try:
+            recipe = parser.parse_recipe(str(fileName[0]))
+        except:
+            msgBox = QMessageBox(QMessageBox.Icon.Critical, "Error", "");
+            msgBox.setText("Unable to open file.")
+            msgBox.exec_()
+            return
+        
         if recipe:
             self.table.addRecipe(recipe.name,)
             
@@ -36,7 +46,7 @@ class RemoveButton(QPushButton):
     
     def __init__(self, table, row):
         super(RemoveButton, self).__init__()
-        self.setIcon(QIcon("/Users/WillIV/Dropbox/TradeUp/Graph/button_delete_01.png")) 
+        self.setIcon(QIcon("./Graph/button_delete_01.png")) 
         self.table = table
         self.row = row
         self.clicked.connect(self.remove)

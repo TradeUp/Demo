@@ -32,16 +32,15 @@ class Tabs(QtGui.QDialog):
        
         frame = GraphUI.MainWindow()
         self.controller = Controller(None,None)
-        ex = GraphTable.GraphTable(frame,self.controller)
+        self.graph = GraphTable.GraphTable(frame,self.controller)
         # set the graph too
-        self.controller.table = ex.table 
+        self.controller.table = self.graph.table 
         frame.controller = self.controller
         # now the frame is the graph (i.e. has the method makenew)
         self.controller.graph = frame
         
-
         self.tabWidget = QtGui.QTabWidget()
-        self.tabWidget.addTab(ex,"Graph")
+        self.tabWidget.addTab(self.graph,"Graph")
         self.kitchen = DragAndDrop.RecipeWindow(self.controller)
         self.tabWidget.addTab(self.kitchen, "Kitchen") 
       
@@ -77,6 +76,7 @@ class Tabs(QtGui.QDialog):
         self.mnuSavePortfolio.setStatusTip('Save the current portfolio')
         self.mnuSavePortfolio.setEnabled(True)
         self.mnuSavePortfolio.setMenuRole(QtGui.QAction.MenuRole.ApplicationSpecificRole);
+        self.mnuSavePortfolio.triggered.connect(self.graph.table.savePortfolio)
         
         self.mnuSaveRecipeAs = QtGui.QAction('Save Recipe as..', self)
         self.mnuSaveRecipeAs.setStatusTip('Save the current recipe')
@@ -88,6 +88,7 @@ class Tabs(QtGui.QDialog):
         self.mnuSavePortfolioAs.setStatusTip('Save the current portfolio')
         self.mnuSavePortfolioAs.setEnabled(True)
         self.mnuSavePortfolioAs.setMenuRole(QtGui.QAction.MenuRole.ApplicationSpecificRole);
+        self.mnuSavePortfolioAs.triggered.connect(self.graph.table.savePortfolioAs)
         
         self.mnuOpenRecipe = QtGui.QAction('Open Recipe..', self)
         self.mnuOpenRecipe.setStatusTip('Open a recipe')
@@ -99,6 +100,7 @@ class Tabs(QtGui.QDialog):
         self.mnuOpenPortfolio.setStatusTip('Open a portfolio')
         self.mnuOpenPortfolio.setEnabled(True)
         self.mnuOpenPortfolio.setMenuRole(QtGui.QAction.MenuRole.ApplicationSpecificRole);
+        self.mnuOpenPortfolio.triggered.connect(self.graph.table.openPortfolio)
         
         fileMenu.addAction(self.mnuOpenRecipe)
         fileMenu.addAction(self.mnuOpenPortfolio)

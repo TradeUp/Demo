@@ -30,7 +30,14 @@ class AddButton(QPushButton):
         # recipe = parser.parse_recipe(str(fileName[0]))
         # if recipe:
         #     self.table.addRecipe(recipe.name)
-        if not fileName[0] == '': self.controller.add_recipe(fileName)
+        if not fileName[0] == '': 
+            recipe = self.controller.add_recipe(fileName)
+            
+            if not recipe:
+                msgBox = QMessageBox(QMessageBox.Icon.Critical, "Error", "");
+                msgBox.setText("Unable to open file.")
+                msgBox.exec_()
+                return
 
 class RemoveButton(QPushButton):
     
@@ -58,6 +65,7 @@ class Table(QTableWidget):
         self.rowNums = {}
         self.initgui()
         self.controller = None
+        self.portfolioPath = None
         self.cellClicked.connect(self.cellActive)
         self.setFixedWidth(504)
     
@@ -108,6 +116,39 @@ class Table(QTableWidget):
         for row in xrange(rowRemoved, self.rowCount()):
             button = self.cellWidget(row, 4)
             button.updateRow(button.row - 1)
+    
+    def savePortfolio(self):
+        if self.portfolioPath == None:
+            self.savePortfolioAs()
+            return
+        
+        self.controller.portfolio.to_file(self.portfolioPath)
+        
+    def savePortfolioAs(self):
+        #bring up a file dialog so they can open it
+        path = QFileDialog.getSaveFileName(self, dir="/home/dylan/mock_algo/", filter="*.torg")[0]
+        if path == '':
+            return
+        
+        self.portfolioPath = path;
+        
+        self.savePortfolio()
+    
+    def openPortfolio(self):
+        #bring up a file dialog so they can open it
+        path = QFileDialog.getOpenFileName(self, dir="/home/dylan/mock_algo/", filter="*.torg")[0]
+        if path == '':
+            return
+        
+        self.portfolioPath = path
+        
+        parser = Parser(self.portfolioPath)
+        self.controller.portfolio = parser.build_portfolio()
+        
+        #reset the rows and add all the new recipes
+        self.rows = {}
+        for key, recipe in self.controller.portfolio.recipes.items():
+            self.addRecipe(recipe.name)
 
 class Row(object):
     """ models a row in the table """

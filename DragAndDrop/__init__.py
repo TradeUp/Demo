@@ -7,6 +7,7 @@ from Inspector import *
 from ActionPanel import *
 from FunctionSelector import *
 from backend import *
+import os
 
 class RecipeWindow(QWidget):
     def __init__(self, controller, recipeName=None):
@@ -31,9 +32,12 @@ class RecipeWindow(QWidget):
         vLayout1.addWidget(self.inspector)
         # add the vLayout to the root
         rootHLayout.addLayout(vLayout1);
-        # set up the bottons
-        btnSave = QtGui.QPushButton("Save");
+        # set up the buttons
         btnAddRow = QtGui.QPushButton("Add Row");
+        
+        # label that stores the name of the recipe
+        self.lblName = QtGui.QLabel("Untitled", self)
+        self.lblName.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
         
         self.list = RecipeList();
         self.list.setBackgroundRole(QtGui.QPalette.ColorRole.Light)
@@ -49,8 +53,9 @@ class RecipeWindow(QWidget):
         btnAddRow.clicked.connect(self.list.addEmptyTrigger)
         
         vLayout2 = QtGui.QGridLayout();
-        vLayout2.addWidget(btnAddRow, 0, 0, 1, 1)
-        vLayout2.addWidget(self.list, 1, 0, 10, 1)
+        vLayout2.addWidget(self.lblName, 0,0,1,1)
+        vLayout2.addWidget(btnAddRow, 1, 0, 1, 1)
+        vLayout2.addWidget(self.list, 2, 0, 10, 1)
         
         
         rootHLayout.addLayout(vLayout2);
@@ -78,6 +83,8 @@ class RecipeWindow(QWidget):
         if self.recipeName == '':
             self.recipeName = None
             return
+        
+        self.lblName.setText(os.path.basename(self.recipeName))
         
         self.saveRecipe()
         
@@ -123,8 +130,6 @@ class RecipeWindow(QWidget):
         if path == '':
             return
         
-        self.recipeName = path
-        
         parser = Parser(None)
         
         recipe = None
@@ -140,7 +145,9 @@ class RecipeWindow(QWidget):
             
         self.pnlBuyActions.loadRecipe(recipe);
     
-        return True
+        self.recipeName = path
+        self.lblName.setText(os.path.basename(self.recipeName))
+    
 def main():
     app = QApplication(sys.argv)
     ex = RecipeWindow()
