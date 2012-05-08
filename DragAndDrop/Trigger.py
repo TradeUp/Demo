@@ -291,11 +291,11 @@ class ActionTrigger(QtGui.QFrame):
     
     @QtCore.Slot()
     def resetTextStock(self):
-        self._txtStock.setStyleSheet("border-radius: 5px; background: #333;");
+        self._txtStock.setStyleSheet("border-radius: 5px; background: #fff; color: #444;");
         
     @QtCore.Slot()
     def resetTextAmount(self):
-        self._txtAmount.setStyleSheet("border-radius: 5px; background: #333;");
+        self._txtAmount.setStyleSheet("border-radius: 5px; background: #fff; color:#444");
         
         
 class ActionComboBox(QtGui.QComboBox):
