@@ -37,6 +37,8 @@ class GUI(QtGui.QMainWindow):
 
         self.setWindowTitle('TradeUp')
         self.setMinimumSize(900,600)
+        self.showFullScreen()
+        self.showMaximized()
         self.setAcceptDrops(True)  
         self.show()
 
