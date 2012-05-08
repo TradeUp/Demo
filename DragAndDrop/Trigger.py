@@ -309,7 +309,9 @@ class ActionComboBox(QtGui.QComboBox):
         
     def getOnCallFunction(self):
         if self.currentText() == "Buy": return "buy_stock"
-        else: return "sell_stock"
+        elif self.currentText() == "Sell": return "sell_stock"
+        else:
+            return "sell_short"
         
     """
     Set the specified action as selected
