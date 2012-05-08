@@ -349,12 +349,18 @@ class Controller:
 		self.realtime = None 
 
 	def add_recipe(self,filename):	
-		recipe = self.parser.parse_recipe(str(filename[0]))
+		recipe = None
+		try:
+			recipe = self.parser.parse_recipe(str(filename[0]))
+		except:
+			return None
 		self.graphed.append(recipe.name)
 		if recipe:
 			self.table.addRecipe(recipe.name) #TODO: add data also
 			self.portfolio.add_recipe(recipe)
 			# self.graph.add_recipe(recipe)
+			
+		return recipe
 	def activate(self,recipeName):
 		if recipeName not in self.graphed:
 			self.graphed.append(recipeName)

@@ -30,7 +30,14 @@ class AddButton(QPushButton):
         # recipe = parser.parse_recipe(str(fileName[0]))
         # if recipe:
         #     self.table.addRecipe(recipe.name)
-        if not fileName[0] == '': self.controller.add_recipe(fileName)
+        if not fileName[0] == '': 
+            recipe = self.controller.add_recipe(fileName)
+            
+            if recipe == None:
+                msgBox = QMessageBox(QMessageBox.Icon.Critical, "Error", "");
+                msgBox.setText("Unable to open file.")
+                msgBox.exec_()
+                return
 
 class RemoveButton(QPushButton):
     
