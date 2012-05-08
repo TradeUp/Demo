@@ -348,6 +348,8 @@ class Controller:
 		self.table_output = {}
 		self.realtime = None 
 		self.progress = None # progressbar
+		self.unusedColors = ['b', 'r','c','m','y','k']
+		self.usedColors = []
 
 	def add_recipe(self,filename):	
 		recipe = None
@@ -355,6 +357,7 @@ class Controller:
 			recipe = self.parser.parse_recipe(str(filename[0]))
 		except:
 			return None
+		recipe.color = "b"
 		if recipe.name in self.portfolio.recipes: return 
 		self.graphed.append(recipe.name)
 		if recipe:
@@ -366,11 +369,16 @@ class Controller:
 	def activate(self,recipeName):
 		if recipeName not in self.graphed:
 			self.graphed.append(recipeName)
+			if(len(self.unusedColors) >= 1):
+				self.portfolio.recipes.get(recipeName).color = self.unusedColors[0]
+				self.usedColors.append(self.unusedColors[0])
+				del self.unusedColors[0]
 			self.refresh_graph()
 	
 	def deactivate(self,recipeName):
 		if recipeName in self.graphed:
 			self.graphed.remove(recipeName)
+			self.unusedColors.append(self.portfolio.recipes.get(recipeName).color)
 			self.refresh_graph()
 			
 	def remove_recipe(self,recipeName,rowNum):
@@ -423,11 +431,11 @@ class Controller:
 			}
 			if recipe.name in self.graphed:
 				graph_data = [x*y for x,y in recipe.get_performance()]
-				graph_output[recipe.name] = (graph_data,self.graph_axis)
+				graph_output[recipe.name] = (graph_data,self.graph_axis,recipe.color)
 			table_output[recipe.name] = result 
 		# send the output to the table
 		if 'cash' in self.graphed:
-			graph_output['cash'] = (self.portfolio.cash,self.graph_axis) 
+			graph_output['cash'] = (self.portfolio.cash,self.graph_axis, 'g') 
 			table_output['total'] = {
 										'value': self.portfolio.cash[-1],
 										'pli': (self.portfolio.cash[-1] - self.portfolio.cash[0]),

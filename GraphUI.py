@@ -21,7 +21,7 @@ import matplotlib.font_manager as font_manager
 class MainWindow(QMainWindow):
 
     #linedict = {'Default': ([datetime.date(2001, 3, 5), datetime.date(2001, 3, 6)], [1,5])}
-    linedict = {'Default': ([1,5], [datetime.date(2001, 3, 5), datetime.date(2001, 3, 6)])}
+    linedict = {'Default': ([20,45,40,43,35,55,45,70,65,75,85,60,75,90,100], [datetime.date(2001, 1, 1), datetime.date(2001, 1, 2), datetime.date(2001, 1, 3), datetime.date(2001, 1, 4), datetime.date(2001, 1, 5), datetime.date(2001, 1, 6), datetime.date(2001, 1, 7), datetime.date(2001, 1, 8), datetime.date(2001, 1, 9), datetime.date(2001, 1, 10), datetime.date(2001, 1, 11), datetime.date(2001, 1, 12), datetime.date(2001, 1, 13), datetime.date(2001, 1, 14), datetime.date(2001, 1, 15),], 'r')}
     unusedColors = ['b', 'g', 'r','c','m','y','k']
     usedColors = []
 
@@ -52,14 +52,14 @@ class MainWindow(QMainWindow):
         superMax = 0
         superMin = float('inf')
         for line in self.linedict.items():
-            if(len(self.unusedColors) >= 1):
-                color = self.unusedColors[0]
-                self.usedColors.append(self.unusedColors[0])
-                del self.unusedColors[0]
-            else:
-                color = self.usedColors[0]
-                unusedColors = self.usedColors[1:]
-                usedColors = self.usedColors[:1]
+#            if(len(self.unusedColors) >= 1):
+#                color = self.unusedColors[0]
+#                self.usedColors.append(self.unusedColors[0])
+#                del self.unusedColors[0]
+#            else:
+#                color = self.usedColors[0]
+#                unusedColors = self.usedColors[1:]
+#                usedColors = self.usedColors[:1]
             yaxis = line[1][0]
             xaxis = line[1][1]
             j = max(yaxis)- min(yaxis)
@@ -69,8 +69,8 @@ class MainWindow(QMainWindow):
             if(newMax > superMax):
                 superMax = newMax
             if(newMin < superMin):
-                superMin = newMin  
-            self.axes.plot(xaxis,yaxis, color=color, label=line[0])
+                superMin = newMin 
+            self.axes.plot(xaxis,yaxis, color=line[1][2], label=line[0])
         self.axes.set_ylim([superMin,superMax])  
 
         props = font_manager.FontProperties(size=10)
