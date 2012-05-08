@@ -350,6 +350,7 @@ class Controller:
 		self.progress = None # progressbar
 		self.unusedColors = ['b', 'r','c','m','y','k']
 		self.usedColors = []
+		self.running = False
 
 	def add_recipe(self,filename):	
 		recipe = None
@@ -383,6 +384,7 @@ class Controller:
 			
 	def remove_recipe(self,recipeName,rowNum):
 		""" see above"""
+		if self.running: return 
 		self.portfolio.remove_recipe(recipeName)
 		self.table.removeRow(rowNum)
 		self.table.notifyRows(rowNum)
@@ -531,6 +533,7 @@ class Controller:
 
 	def stop_realtime(self):
 		""" called to stop the realtime run"""
+		self.running = False 
 		self.realtime.stop()
 		self.graph.update(self.graph_output,self.table,self.table_output);
 
@@ -544,6 +547,7 @@ class HstoryThread(threading.Thread):
 	def stop(self):
 		pass 	
 	def run(self):
+		self.parent.running = True 
 		curr = self.s;
 		day = datetime.timedelta(days=1) # to add a day
 		self.end += day 
@@ -556,6 +560,7 @@ class HstoryThread(threading.Thread):
 			begin += 1
 			self.parent.graph.update(self.parent.graph_output,self.parent.table,self.parent.table_output);
 		self.join()
+		self.parent.running = False 
 
 class RealThread(threading.Thread):
 	def __init__(self,ID,parent):
@@ -566,6 +571,7 @@ class RealThread(threading.Thread):
 	def stop(self):
 		self.end.set()
 	def run(self):
+		self.parent.running = True 
 		count = 0
 		while not self.end.isSet():
 			print 'runnign: ',self.parent
