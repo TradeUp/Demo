@@ -86,9 +86,12 @@ class RecipeWindow(QWidget):
         
         self.lblName.setText(os.path.basename(self.recipeName))
         
-        self.saveRecipe(self.recipeName)
+        self.saveRecipeWithName(self.recipeName)
         
-    def saveRecipe(self,name):
+    def saveRecipe(self):
+        self.saveRecipeWithName(self.recipeName)
+        
+    def saveRecipeWithName(self,name):
         if(self.recipeName == None):
             self.saveRecipeAs()
             return
