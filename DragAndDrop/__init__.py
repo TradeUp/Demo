@@ -126,12 +126,21 @@ class RecipeWindow(QWidget):
         self.recipeName = path
         
         parser = Parser(None)
-        recipe = parser.parse_recipe(path)
+        
+        recipe = None
+        try:
+            recipe = parser.parse_recipe(path)
+        except:
+            msgBox = QtGui.QMessageBox(QtGui.QMessageBox.Icon.Critical, "Error", "");
+            msgBox.setText("Unable to open file.")
+            msgBox.exec_()
+            return
         
         self.list.loadRecipe(recipe)
             
         self.pnlBuyActions.loadRecipe(recipe);
     
+        return True
 def main():
     app = QApplication(sys.argv)
     ex = RecipeWindow()
