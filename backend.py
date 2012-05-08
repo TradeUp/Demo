@@ -358,7 +358,10 @@ class Controller:
 			recipe = self.parser.parse_recipe(str(filename[0]))
 		except:
 			return None
-		recipe.color = "b"
+		if(len(self.unusedColors) >= 1):
+				recipe.color = self.unusedColors[0]
+				self.usedColors.append(self.unusedColors[0])
+				del self.unusedColors[0]
 		if recipe.name in self.portfolio.recipes: return 
 		self.graphed.append(recipe.name)
 		if recipe:
@@ -558,7 +561,7 @@ class HstoryThread(threading.Thread):
 			self.parent.run(curr)
 			curr += day 
 			begin += 1
-			self.parent.graph.update(self.parent.graph_output,self.parent.table,self.parent.table_output);
+			self.parent.graph.update(self.parent.graph_output,self.parent.table,self.parent.table_output,self.parent.color);
 		self.join()
 		self.parent.running = False 
 
