@@ -19,7 +19,7 @@ def get_price_expr(tick,d):
 def get_change(tick,d):
 	return yfinance.get_change(tick)
 
-def get_valumne(tick,d):
+def get_volume(tick,d):
 	return yfinance.get_volume(tick)
 
 def get_avg_daily_volume(tick,d):

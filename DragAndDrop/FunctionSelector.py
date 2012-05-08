@@ -61,9 +61,9 @@ class FunctionScrollWidget(QtGui.QScrollArea):
 			return "Dividend Yield"
 		elif funcName == "get_earnings_per_share":
 			return "Earnings per Share"
-		elif funcName == "get_52week_high":
+		elif funcName == "get_52_week_high":
 			return "52 Week High"
-		elif funcName == "get_52week_low":
+		elif funcName == "get_52_week_low":
 			return "52 Week Low"
 		elif funcName == "get_50day_moving_avg":
 			return "50 day moving avg"
@@ -87,6 +87,7 @@ ListWidgetItem that is capable of storing the function that it represents
 """
 class FunctionItem(QtGui.QLabel):
 	def __init__(self, func, parent):
+		print func
 		super(FunctionItem, self).__init__(FunctionScrollWidget.getDisplayNameForFunction(func), parent)
 
 		self.func = func
