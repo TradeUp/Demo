@@ -428,7 +428,11 @@ class Controller:
 		# send the output to the table
 		if 'cash' in self.graphed:
 			graph_output['cash'] = (self.portfolio.cash,self.graph_axis) 
-		
+			table_output['total'] = {
+										'value': self.portfolio.cash[-1],
+										'pli': (self.portfolio.cash[-1] - self.portfolio.cash[0]),
+										'percent': ((self.portfolio.cash[-1] - self.portfolio.cash[0]) / self.portfolio.cash[0])
+									}
 		self.graph_output = graph_output # we always know the last output
 		self.table_output = table_output 
 		
@@ -460,17 +464,20 @@ class Controller:
 		
 		self.graph_axis = [start] # reset the axis
 
-		curr = start;
-		day = datetime.timedelta(days=1) # to add a day
-		end += day 
+#		curr = start;
+#		day = datetime.timedelta(days=1) # to add a day
+#		end += day 
+#
+#		while(not same_date(curr,end)):
+#			self.progress.setValue(begin)
+#			self.run(curr)
+#			curr += day 
+#			begin += 1
 
-		while(not same_date(curr,end)):
-			self.progress.setValue(begin)
-			self.run(curr)
-			curr += day 
-			begin += 1
+		thre = HstoryThread(self,start,end)
+		thre.start()
 			
-		self.graph.update(self.graph_output,self.table,self.table_output);
+#		self.graph.update(self.graph_output,self.table,self.table_output);
 
 	
 	def validate_ticker(self,ticker):
@@ -503,7 +510,7 @@ class Controller:
 		"""
 		self.reset()
 		# for the default
-		self.progress.setVisible(True)
+		self.progress.setVisible(False)
 		self.progress.setRange(0,100)
 		curr = datetime.datetime.now()
 		self.graph_axis = [curr]
@@ -519,7 +526,29 @@ class Controller:
 		self.realtime.stop()
 		self.graph.update(self.graph_output,self.table,self.table_output);
 
+class HstoryThread(threading.Thread):
+	def __init__(self,parent,s,end):
+		super(HstoryThread,self).__init__()
+		self.parent = parent
+		self.s = s
+		self.end = end
 		
+	def stop(self):
+		pass 	
+	def run(self):
+		curr = self.s;
+		day = datetime.timedelta(days=1) # to add a day
+		self.end += day 
+		begin = 0
+		
+		while(not same_date(curr,self.end)):
+			self.parent.progress.setValue(begin)
+			self.parent.run(curr)
+			curr += day 
+			begin += 1
+			self.parent.graph.update(self.parent.graph_output,self.parent.table,self.parent.table_output);
+		self.join()
+
 class RealThread(threading.Thread):
 	def __init__(self,ID,parent):
 		super(RealThread,self).__init__()
@@ -535,4 +564,6 @@ class RealThread(threading.Thread):
 			self.parent.progress.setValue(count)
 			self.parent.run('realtime')
 			count +=1
-			time.sleep(10)
+			time.sleep(2)
+			self.parent.graph.update(self.parent.graph_output,self.parent.table,self.parent.table_output);
+

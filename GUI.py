@@ -2,6 +2,7 @@ import sys
 import Tabs
 import os
 from PySide import QtGui
+import yfinance
 
 class GUI(QtGui.QMainWindow):
     
@@ -10,7 +11,15 @@ class GUI(QtGui.QMainWindow):
         
         self.initUI()
         
-    def initUI(self):               
+    def initUI(self):      
+        try:
+            yfinance.get_price('aapl')
+        except:
+            error = QtGui.QErrorMessage()
+            error.showMessage('Error Establishing Internet Connection')
+            error.exec_()
+            self.destroy()
+            return 
         
         tabs = Tabs.Tabs()
         self.setCentralWidget(tabs)

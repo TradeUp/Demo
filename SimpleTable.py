@@ -69,7 +69,9 @@ class Table(QTableWidget):
         self.cellClicked.connect(self.cellActive)
 #        self.setFixedWidth(504)
         self.setMinimumHeight(100)
-    
+        
+        for i in range(5):
+            self.setColumnWidth(i,275)
     def cellActive(self,row,col):
         """ called when a cell is activated """
         if(col==0):
@@ -194,6 +196,7 @@ class Row(object):
         #add in remove button
         self.gui['remove'] = RemoveButton(self.table, rows)
         self.table.setCellWidget(rows, 4, self.gui['remove'])
+        
     
     def updateRow(self, data):
         """

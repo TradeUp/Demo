@@ -86,7 +86,7 @@ class RecipeWindow(QWidget):
         
         self.lblName.setText(os.path.basename(self.recipeName))
         
-        self.saveRecipe(recipeName)
+        self.saveRecipe(self.recipeName)
         
     def saveRecipe(self,name):
         if(self.recipeName == None):
@@ -116,7 +116,7 @@ class RecipeWindow(QWidget):
         triggerFunc = self.pnlBuyActions.getTrigger().convertToTriggerFunc()
         
         recipe.trigger = triggerFunc
-        recipe.name = name
+        recipe.name = name.rsplit('/')[-1]
         recipe.to_file(self.recipeName);
        
         #save successful
