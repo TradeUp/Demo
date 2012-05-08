@@ -30,7 +30,7 @@ class AddButton(QPushButton):
         # recipe = parser.parse_recipe(str(fileName[0]))
         # if recipe:
         #     self.table.addRecipe(recipe.name)
-        self.controller.add_recipe(fileName)
+        if not fileName[0] == '': self.controller.add_recipe(fileName)
 
 class RemoveButton(QPushButton):
     
@@ -64,12 +64,18 @@ class Table(QTableWidget):
         """ called when a cell is activated """
         if(col==0):
             if(self.item(row,col).checkState()):
-                self.activateRecipe(self.item(row,col))
+                self.activateRecipe(self.item(row,col).text())
+            else:
+                self.deactivateRecipe(self.item(row,col).text())
 
     def activateRecipe(self,recipe):
-        for k,v in self.rows.items():
-            if recipe == v.gui:
-                print 'found :', v.name 
+        if recipe == 'Total:': recipe = 'cash'
+        # call controller.activate on the row
+        self.controller.activate(recipe)
+    
+    def deactivateRecipe(self,recipe):
+        if recipe == 'Total:': recipe = 'cash'
+        self.controller.deactivate(recipe)
         
     def initgui(self):
         # add the headers

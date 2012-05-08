@@ -40,9 +40,10 @@ class Tabs(QtGui.QDialog):
         self.controller.graph = frame
         
 
-        tabWidget = QtGui.QTabWidget()
-        tabWidget.addTab(ex,"Graph")
-        tabWidget.addTab(DragAndDrop.RecipeWindow(self.controller), "Kitchen") 
+        self.tabWidget = QtGui.QTabWidget()
+        self.tabWidget.addTab(ex,"Graph")
+        self.kitchen = DragAndDrop.RecipeWindow(self.controller)
+        self.tabWidget.addTab(self.kitchen, "Kitchen") 
       
         ##
         ## simulation running GUI controls
@@ -72,7 +73,7 @@ class Tabs(QtGui.QDialog):
         realtime = QtGui.QLabel('Run Realtime')
         start = QtGui.QPushButton('Start')
         stop = QtGui.QPushButton('Stop')
-        start.clicked.connect(self.run_test3)
+        start.clicked.connect(self.run_realtime)
         stop.clicked.connect(self.stop_realtime)
         
         realtimeLayout.addWidget(realtime)
@@ -80,7 +81,7 @@ class Tabs(QtGui.QDialog):
         realtimeLayout.addWidget(stop)
         
         mainLayout = QtGui.QVBoxLayout()
-        mainLayout.addWidget(tabWidget)
+        mainLayout.addWidget(self.tabWidget)
         mainLayout.addLayout(historicalLayout)
         mainLayout.addLayout(realtimeLayout)
         
@@ -89,6 +90,65 @@ class Tabs(QtGui.QDialog):
 
         self.setAcceptDrops(True)
         self.setWindowTitle("TradeUp")
+    
+    def addMenuItems(self, fileMenu):
+        self.mnuSaveRecipe = QtGui.QAction('Save Recipe..', self)
+        self.mnuSaveRecipe.setShortcut('Ctrl+S')
+        self.mnuSaveRecipe.setStatusTip('Save the current recipe')
+        self.mnuSaveRecipe.setEnabled(False)
+        self.mnuSaveRecipe.setMenuRole(QtGui.QAction.MenuRole.ApplicationSpecificRole);
+        self.mnuSaveRecipe.triggered.connect(self.kitchen.saveRecipe)
+        
+        self.mnuSavePortfolio = QtGui.QAction('Save Portfolio..', self)
+        self.mnuSavePortfolio.setShortcut('Ctrl+S')
+        self.mnuSavePortfolio.setStatusTip('Save the current portfolio')
+        self.mnuSavePortfolio.setEnabled(True)
+        self.mnuSavePortfolio.setMenuRole(QtGui.QAction.MenuRole.ApplicationSpecificRole);
+        
+        self.mnuSaveRecipeAs = QtGui.QAction('Save Recipe as..', self)
+        self.mnuSaveRecipeAs.setStatusTip('Save the current recipe')
+        self.mnuSaveRecipeAs.setEnabled(False)
+        self.mnuSaveRecipeAs.setMenuRole(QtGui.QAction.MenuRole.ApplicationSpecificRole);
+        self.mnuSaveRecipeAs.triggered.connect(self.kitchen.saveRecipeAs)
+        
+        self.mnuSavePortfolioAs = QtGui.QAction('Save Portfolio as..', self)
+        self.mnuSavePortfolioAs.setStatusTip('Save the current portfolio')
+        self.mnuSavePortfolioAs.setEnabled(True)
+        self.mnuSavePortfolioAs.setMenuRole(QtGui.QAction.MenuRole.ApplicationSpecificRole);
+        
+        self.mnuOpenRecipe = QtGui.QAction('Open Recipe..', self)
+        self.mnuOpenRecipe.setStatusTip('Open a recipe')
+        self.mnuOpenRecipe.setEnabled(False)
+        self.mnuOpenRecipe.setMenuRole(QtGui.QAction.MenuRole.ApplicationSpecificRole);
+        
+        self.mnuOpenPortfolio = QtGui.QAction('Open Portfolio..', self)
+        self.mnuOpenPortfolio.setStatusTip('Open a portfolio')
+        self.mnuOpenPortfolio.setEnabled(True)
+        self.mnuOpenPortfolio.setMenuRole(QtGui.QAction.MenuRole.ApplicationSpecificRole);
+        
+        fileMenu.addAction(self.mnuOpenRecipe)
+        fileMenu.addAction(self.mnuOpenPortfolio)
+        fileMenu.addAction(self.mnuSaveRecipe)
+        fileMenu.addAction(self.mnuSaveRecipeAs)
+        fileMenu.addAction(self.mnuSavePortfolio)
+        fileMenu.addAction(self.mnuSavePortfolioAs)
+        
+        self.tabWidget.currentChanged.connect(self.tabChanged)
+    
+    def tabChanged(self, index):
+        
+        #make it easier to set all menu items to enabled or not, avoiding the need for huge if statements
+        recipeMode = True
+        if(index == 0): recipeMode = False
+        
+        self.mnuOpenPortfolio.setEnabled(not recipeMode)
+        self.mnuSavePortfolio.setEnabled(not recipeMode)
+        self.mnuSavePortfolioAs.setEnabled(not recipeMode)
+        
+        self.mnuOpenRecipe.setEnabled(recipeMode)
+        self.mnuSaveRecipe.setEnabled(recipeMode)
+        self.mnuSaveRecipeAs.setEnabled(recipeMode)
+            
     
     def set_start(self):
         """ sets start"""

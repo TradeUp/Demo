@@ -339,9 +339,11 @@ class Controller:
 		#table.controller = self
 		self.graph = graph
 		self.parser = Parser(None)
-		self.graphed = []
+		self.graphed = ['cash']
 		self.portfolio = Portfolio() 
 		self.graph_axis = [] # reset for each run
+		self.graph_output = {}
+		self.running = False
 
 	def add_recipe(self,filename):	
 		recipe = self.parser.parse_recipe(str(filename[0]))
@@ -350,7 +352,16 @@ class Controller:
 			self.table.addRecipe(recipe.name) #TODO: add data also
 			self.portfolio.add_recipe(recipe)
 			# self.graph.add_recipe(recipe)
-
+	def activate(self,recipeName):
+		if recipeName not in self.graphed:
+			self.graphed.append(recipeName)
+			self.refresh_graph()
+	
+	def deactivate(self,recipeName):
+		if recipeName in self.graphed:
+			self.graphed.remove(recipeName)
+			self.refresh_graph()
+			
 	def remove_recipe(self,recipeName,rowNum):
 		""" see above"""
 		self.portfolio.remove_recipe(recipeName)
@@ -410,9 +421,18 @@ class Controller:
 			print '******************************'
 			table_output[recipe.name] = result 
 		# send the output to the table
-		graph_output['cash'] = (self.portfolio.cash,self.graph_axis)
+		if 'cash' in self.graphed:
+			graph_output['cash'] = (self.portfolio.cash,self.graph_axis) 
 		self.graph.update(graph_output,self.table,table_output);
+		
+		self.graph_output = graph_output # we always know the last output
 
+	def refresh_graph(self):
+		print 'calling refresh graph for some reason'
+		data = {}
+		for recipeName in self.graphed:
+			data[recipeName] = self.graph_output[recipeName]
+		self.graph.refresh(data)
 	##
 	# methods to be called on the GUI side
 	#
@@ -452,7 +472,7 @@ class Controller:
 	def run_realtime(self):
 		""" runs a realtime simulation (until you call stop_realtime)
 		"""
-		
+		self.running = True 
 		while(self.running):
 			curr = datetime.datetime.now()
 			self.graph_axis.append(curr)
