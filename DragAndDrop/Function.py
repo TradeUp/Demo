@@ -40,10 +40,42 @@ class Function(object):
     def getFunction(func):
         if func.lower() == "get_price_expr":
             return SimpleFunction(func.lower(), Function.DOLLARS)
-        elif func.lower() == "expr_test_a":
-            return DummyFunction(func.lower(), Function.NO_UNITS)
-        elif func.lower() == "expr_test_b":
-            return DummyFunction(func.lower(), Function.NO_UNITS)
+        elif func.lower() == "get_change":
+            return SimpleFunction(func.lower(), Function.PERCENT)
+        elif func.lower() == "get_volume":
+            return SimpleFunction(func.lower(), Function.NO_UNITS)
+        elif func.lower() == "get_avg_daily_volume":
+            return SimpleFunction(func.lower(), Function.NO_UNITS)
+        elif func.lower() == "get_market_cap":
+            return SimpleFunction(func.lower(), Function.DOLLARS)
+        elif func.lower() == "get_book_value":
+            return SimpleFunction(func.lower(), Function.DOLLARS)
+        elif func.lower() == "get_ebitda":
+            return SimpleFunction(func.lower(), Function.DOLLARS)
+        elif func.lower() == "get_dividend_per_share":
+            return SimpleFunction(func.lower(), Function.DOLLARS)
+        elif func.lower() == "get_dividend_yield":
+            return SimpleFunction(func.lower(), Function.NO_UNITS)
+        elif func.lower() == "get_earnings_per_share":
+            return SimpleFunction(func.lower(), Function.DOLLARS)
+        elif func.lower() == "get_52_week_high":
+            return SimpleFunction(func.lower(), Function.DOLLARS)
+        elif func.lower() == "get_52_week_low":
+            return SimpleFunction(func.lower(), Function.DOLLARS)
+        elif func.lower() == "get_50day_moving_avg":
+            return SimpleFunction(func.lower(), Function.DOLLARS)
+        elif func.lower() == "get_200day_moving_avg":
+            return SimpleFunction(func.lower(), Function.DOLLARS)
+        elif func.lower() == "get_price_earnings_ratio":
+            return SimpleFunction(func.lower(), Function.NO_UNITS)
+        elif func.lower() == "get_price_earnings_growth_ratio":
+            return SimpleFunction(func.lower(), Function.NO_UNITS)
+        elif func.lower() == "get_price_sales_ratio":
+            return SimpleFunction(func.lower(), Function.NO_UNITS)
+        elif func.lower() == "get_price_book_ratio":
+            return SimpleFunction(func.lower(), Function.NO_UNITS)
+        elif func.lower() == "get_short_ratio":
+            return SimpleFunction(func.lower(), Function.NO_UNITS)
     
     """
     Inflate a function object from an expression object
