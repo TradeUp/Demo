@@ -67,7 +67,7 @@ class Table(QTableWidget):
         self.controller = None
         self.portfolioPath = None
         self.cellClicked.connect(self.cellActive)
-        self.setFixedWidth(504)
+#        self.setFixedWidth(504)
         self.setMinimumHeight(100)
     
     def cellActive(self,row,col):
@@ -106,7 +106,7 @@ class Table(QTableWidget):
             'pli':0,
             'percent':0
         }
-       # self.setRowCount(self.rowCount() + 1)
+        # self.setRowCount(self.rowCount() + 1)
         self.rows[name] = Row(self,name,data)
 
     def update(self,update_data):

@@ -205,7 +205,7 @@ class Portfolio(BackendObj):
 		self.recipes[recipe.name] = recipe
 
 	def remove_recipe(self,recipe):
-		self.recipes[recipe.name] = None 
+		self.recipes[recipe] = None 
 
 	def run(self,data):
 		run_a,run_b = 0,0
@@ -355,6 +355,7 @@ class Controller:
 			recipe = self.parser.parse_recipe(str(filename[0]))
 		except:
 			return None
+		if recipe.name in self.portfolio.recipes: return 
 		self.graphed.append(recipe.name)
 		if recipe:
 			self.table.addRecipe(recipe.name) #TODO: add data also
@@ -375,8 +376,8 @@ class Controller:
 	def remove_recipe(self,recipeName,rowNum):
 		""" see above"""
 		self.portfolio.remove_recipe(recipeName)
-		self.table.removeRow(self.row,rowNum)
-		self.table.notifyRows(self.row,rowNum)
+		self.table.removeRow(rowNum)
+		self.table.notifyRows(rowNum)
 		# update the graph
 		# self.graph.add_recipe(recipe)
 
