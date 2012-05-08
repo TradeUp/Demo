@@ -15,11 +15,11 @@ class AddButton(QPushButton):
     
     def __init__(self, table):
         super(AddButton, self).__init__()
-        self.setText("Add Recipe")
+        self.setText("add")
         self.setFixedSize(ADD_BUTTON_W, ADD_BUTTON_H)
         self.clicked.connect(self.chooseFile)
         self.controller = table.controller
-
+        self.setStyleSheet('QPushButton { border-radius: 25px; } QPushButton:hover { color: #444; text-decoration: underline } ')
         
     def chooseFile(self):
         fileName = QFileDialog.getOpenFileName(self, dir="/home/dylan/mock_algo/", filter="*.algo")
@@ -43,7 +43,7 @@ class RemoveButton(QPushButton):
     
     def __init__(self, table, row):
         super(RemoveButton, self).__init__()
-        self.setIcon(QIcon("Demo/button_delete_01.png")) 
+        self.setIcon(QPixmap('remove.png')) 
         self.table = table
         self.row = row
         self.clicked.connect(self.remove)
@@ -68,6 +68,7 @@ class Table(QTableWidget):
         self.portfolioPath = None
         self.cellClicked.connect(self.cellActive)
         self.setFixedWidth(504)
+        self.setMinimumHeight(100)
     
     def cellActive(self,row,col):
         """ called when a cell is activated """

@@ -28,17 +28,18 @@ class TriggerWidget(QtGui.QFrame):
         btnRemove = QtGui.QPushButton("-")
         btnRemove.clicked.connect(self.removeRow);
         btnRemove.setMaximumWidth(20)
-        
+        self.setStyleSheet("QFrame { color: #fff; border-radius: 5px; border: 1px solid #777; background: #ccc; }")
         self.leftTarget = FunctionDropTarget()
-        self.leftTarget.request_selection.connect(self.selectionRequested);
-        self.leftTarget.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter);
-        self.leftTarget.setStyleSheet("QLabel { padding-top:5px; }")
+        self.leftTarget.request_selection.connect(self.selectionRequested)
+        self.leftTarget.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
+        self.leftTarget.setStyleSheet("QLabel { padding-top:5px; background-color: #eee; border-radius: 5px; color: #555; border: 1px solid #777 }")
+        self.leftTarget.setText('this is')
         
         self.rightTarget = FunctionDropTarget()
-        self.rightTarget.request_selection.connect(self.selectionRequested);
-        self.rightTarget.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter);
-        self.rightTarget.setStyleSheet("QLabel { padding-top:5px; }")
-        
+        self.rightTarget.request_selection.connect(self.selectionRequested)
+        self.rightTarget.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
+        self.rightTarget.setStyleSheet("QLabel { padding-top:5px; background-color: #eee; border-radius: 5px; color: #555; border: 1px solid #777 }")
+        self.rightTarget.setText('that')
         self.combobox = ComparisonComboBox(self);
         
         self._mainTriggerLayout.addWidget(btnRemove,1);
@@ -106,9 +107,9 @@ class TriggerWidget(QtGui.QFrame):
     @QtCore.Slot(object)
     def selectionRequested(self, e):
         #undo marking invalid
-        self.setStyleSheet("");
-        self.leftTarget.setStyleSheet("")
-        self.rightTarget.setStyleSheet("")
+#        self.setStyleSheet("border-radius: 5px; border: 1px solid #000");
+#        self.leftTarget.setStyleSheet("border-radius: 5px; border: 1px solid #000")
+#        self.rightTarget.setStyleSheet("border-radius: 5px; border: 1px solid #000")
         e._target = self;
         self.request_selection.emit(e);
         
@@ -216,6 +217,7 @@ class ActionTrigger(QtGui.QFrame):
     def __init__(self, parent):
         super(ActionTrigger, self).__init__(parent)
         
+        self.setStyleSheet("QFrame { color: #fff; border-radius: 5px; border: 1px solid #777; background: #ccc; }")
         self._layout = QtGui.QHBoxLayout(self);
         
         self._cmbAction = ActionComboBox(self)
@@ -228,7 +230,7 @@ class ActionTrigger(QtGui.QFrame):
         self._txtStock.textChanged.connect(self.resetTextStock)
         
         lblOf = QtGui.QLabel("of", self)
-        lblOf.setMaximumWidth(10)
+        lblOf.setMaximumWidth(25)
         
         self._layout.addWidget(self._cmbAction, 1)
         self._layout.addWidget(self._txtAmount, 2)
@@ -278,22 +280,22 @@ class ActionTrigger(QtGui.QFrame):
         try:
             if int(self._txtAmount.text()) < 0: raise ValueError()
         except ValueError:
-            self._txtAmount.setStyleSheet("background-color:#FF0000;")
+            self._txtAmount.setStyleSheet("background-color:#FF0000; border-radius: 5px; border: 1px solid #f33;")
             valid = False
         
         if not controller.validate_ticker(self._txtStock.text()):
-            self._txtStock.setStyleSheet("background-color:#FF0000;");
+            self._txtStock.setStyleSheet("background-color:#FF0000; border-radius: 5px; border: 1px solid #f33;");
             valid = False
             
         return valid
     
     @QtCore.Slot()
     def resetTextStock(self):
-        self._txtStock.setStyleSheet("");
+        self._txtStock.setStyleSheet("border-radius: 5px; background: #333;");
         
     @QtCore.Slot()
     def resetTextAmount(self):
-        self._txtAmount.setStyleSheet("");
+        self._txtAmount.setStyleSheet("border-radius: 5px; background: #333;");
         
         
 class ActionComboBox(QtGui.QComboBox):

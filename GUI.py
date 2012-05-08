@@ -36,7 +36,7 @@ class GUI(QtGui.QMainWindow):
         toolbar.addAction(exitAction)
 
         self.setWindowTitle('TradeUp')
-        
+        self.setMinimumSize(900,600)
         self.setAcceptDrops(True)  
         self.show()
 
@@ -46,7 +46,6 @@ def main():
     
     QtGui.QApplication.setStyle('motif')
     app = QtGui.QApplication(sys.argv)
-    
 
     gui = GUI()
     sys.exit(app.exec_())
