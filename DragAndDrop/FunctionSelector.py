@@ -19,8 +19,16 @@ class FunctionScrollWidget(QtGui.QScrollArea):
 		
 		self.setAcceptDrops(True)
 		self.setWidget(root)
-		
-		
+	
+	@staticmethod
+	def getDisplayNameForFunction(funcName):
+		if funcName == "get_price_expr":
+			return "Price"
+		elif funcName == "expr_test_b":
+			return "Dummy Func Half"
+		elif funcName == "expr_test_a":
+			return "Dummy Func Num"
+		else: return "None"
 	
 
 """

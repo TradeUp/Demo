@@ -8,8 +8,10 @@ import PySide
 import sys
 from PySide import QtCore
 from PySide import QtGui
-from Function import Function
+import Function
 from backend import *
+from FunctionSelector import *
+import string
 
 class TriggerWidget(QtGui.QFrame):
     
@@ -80,6 +82,21 @@ class TriggerWidget(QtGui.QFrame):
         return RecipeRow(exprLeft, exprRight, comparison);
     
     """
+    Set this triggerwidget to match the RecipeRow object passed in
+    """
+    def setRecipeRow(self, row):
+        leftFunction = Function.Function.inflateFunction(row.expr_a)
+        rightFunction = Function.Function.inflateFunction(row.expr_b)
+        comparator = row.operator
+        
+        self.leftTarget.setFunction(leftFunction)
+        self.leftTarget.setText(FunctionScrollWidget.getDisplayNameForFunction(row.expr_a.funcName))
+        
+        self.rightTarget.setFunction(rightFunction)
+        self.rightTarget.setText(FunctionScrollWidget.getDisplayNameForFunction(row.expr_b.funcName))
+        self.combobox.setSelected(comparator)
+    
+    """
     Mark as invalid: make red
     """
     def setInvalid(self, target):
@@ -132,6 +149,9 @@ class FunctionDropTarget(QtGui.QLabel):
         
     def function(self):
         return self.func;
+    
+    def setFunction(self, func):
+        self.func = func
             
     def dragEnterEvent(self, e):
         print "DRAG ENTER"
@@ -229,12 +249,26 @@ class ActionTrigger(QtGui.QFrame):
         
         amount = self._txtAmount.text()
         
-        type = self._cmbUnits.getType()
+        unit = self._cmbUnits.getType()
         
         onCall = self._cmbAction.getOnCallFunction()
         
-        return Trigger(ticker, amount, type, onCall)
+        return Trigger(ticker, amount, unit, onCall)
     
+    """
+    Convert a trigger function into this trigger object
+    """
+    def inflateTriggerFunction(self, func):
+        self._txtAmount.setText(str(func.amount));
+        self._txtStock.setText(func.ticker)
+        self._cmbAction.setSelected(func.amount_type)
+        if(func.funcName == "buy_stock"):
+            self._cmbAction.setSelected("buy")
+        elif func.funcName == "sell_stock":
+            self._cmbAction.setSelected("sell")
+        elif func.funcName == "sell_short":
+            self._cmbAction.setSelected("sell short")
+        
     """
     Validate this trigger
     """
@@ -275,6 +309,17 @@ class ActionComboBox(QtGui.QComboBox):
         if self.currentText() == "Buy": return "buy_stock"
         else: return "sell_stock"
         
+    """
+    Set the specified action as selected
+    """
+    def setSelected(self, action):
+        if string.lower(action) == "buy":
+            self.setCurrentIndex(0)
+        elif string.lower(action) == "sell":
+            self.setCurrentIndex(1)
+        elif string.lower(action) == "sell short":
+            self.setCurrentIndex(2)
+        
 class UnitComboBox(QtGui.QComboBox):
     def __init__(self, parent):
         super(UnitComboBox, self).__init__(parent);
@@ -287,6 +332,12 @@ class UnitComboBox(QtGui.QComboBox):
         if self.currentText() == "Shares": return 'SHARES'
         else: return 'DOLLARS'
         
+    def setSelected(self, unit):
+        if string.lower(unit) == "shares":
+            self.setCurrentIndex(0)
+        elif string.lower(unit) == "dollars":
+            self.setCurrentIndex(1)
+        
 class ComparisonComboBox(QtGui.QComboBox):
     def __init__(self, parent):
         super(ComparisonComboBox, self).__init__(parent);
@@ -297,3 +348,18 @@ class ComparisonComboBox(QtGui.QComboBox):
         self.addItem("=")
         self.addItem(">")
         self.addItem(">=")
+        
+    """
+    Set the indicated operator as selected
+    """
+    def setSelected(self, operator):
+        if operator == "<":
+            self.setCurrentIndex(0)
+        elif operator == "<=":
+            self.setCurrentIndex(1)
+        elif operator == "=" or operator == "==":
+            self.setCurrentIndex(2)
+        elif operator == ">":
+            self.setCurrentIndex(3)
+        elif operator == ">=":
+            self.setCurrentIndex(4)

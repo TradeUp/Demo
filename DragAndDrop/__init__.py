@@ -116,6 +116,21 @@ class RecipeWindow(QWidget):
         msgBox = QtGui.QMessageBox(QtGui.QMessageBox.Icon.Information, "Success!", "")
         msgBox.setText("Recipe successfully saved!")
         msgBox.exec_()
+        
+    def openRecipe(self):
+        #bring up a file dialog so they can open it
+        path = QFileDialog.getOpenFileName(self, dir="/home/dylan/mock_algo/", filter="*.algo")[0]
+        if path == '':
+            return
+        
+        self.recipeName = path
+        
+        parser = Parser(None)
+        recipe = parser.parse_recipe(path)
+        
+        self.list.loadRecipe(recipe)
+            
+        self.pnlBuyActions.loadRecipe(recipe);
     
 def main():
     app = QApplication(sys.argv)

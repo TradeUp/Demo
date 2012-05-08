@@ -42,4 +42,10 @@ def sell_stock(ticker,amount,type,cash):
 
 	cash[-1] += value*amount 
 	return (-amount,value) # you sold it dingus!
+    
+"""
+Sell_stock and sell_short are identical
+"""
+def sell_short(ticker, amount, type, cash):
+    return sell_stock(ticker, amount, type, cash);
 	

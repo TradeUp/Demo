@@ -43,6 +43,13 @@ class ActionPanel(QtGui.QScrollArea):
         #trigger = self._triggers[0]
         return self._triggers[0]
     
+    def loadRecipe(self, recipe):
+        triggerFunc = recipe.trigger
+        
+        trigger = self.getTrigger()
+        
+        trigger.inflateTriggerFunction(triggerFunc)
+    
     """
     Validate the triggers
     """
