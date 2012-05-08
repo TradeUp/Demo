@@ -561,7 +561,7 @@ class HstoryThread(threading.Thread):
 			self.parent.run(curr)
 			curr += day 
 			begin += 1
-			self.parent.graph.update(self.parent.graph_output,self.parent.table,self.parent.table_output,self.parent.color);
+			self.parent.graph.update(self.parent.graph_output,self.parent.table,self.parent.table_output);
 		self.join()
 		self.parent.running = False 
 
