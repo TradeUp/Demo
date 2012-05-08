@@ -12,17 +12,23 @@ class GUI(QtGui.QMainWindow):
         
     def initUI(self):               
         
-        self.setCentralWidget(Tabs.Tabs())
+        tabs = Tabs.Tabs()
+        self.setCentralWidget(tabs)
 
         exitAction = QtGui.QAction('Exit', self)
         exitAction.setShortcut('Ctrl+Q')
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(self.close)
         exitAction.setMenuRole(QtGui.QAction.MenuRole.ApplicationSpecificRole);
-        self.statusBar()
 
         menubar = self.menuBar()
+        
         fileMenu = menubar.addMenu('&File')
+        
+        tabs.addMenuItems(fileMenu)
+        
+        fileMenu.addSeparator()
+        
         fileMenu.addAction(exitAction)
         
 

@@ -36,7 +36,13 @@ class MainWindow(QMainWindow):
         self.reDraw()
         
     def OOps(self, data):
+        print "---------------------------------------"
+        print "THIS IS OOPS", self.linedict
+        print "---------------------------------------"
         self.linedict.clear()
+        print "---------------------------------------"
+        print "THIS IS AFTER CLEAR", self.linedict
+        print "---------------------------------------"
         for n in data:
             # n = name/key
             # need to take (amnt,price) -> amnt*price 
@@ -44,6 +50,9 @@ class MainWindow(QMainWindow):
         self.reDraw()
         
     def reDraw(self):
+        print "---------------------------------------"
+        print "THIS IS REDRAW CLEAR", self.linedict
+        print "---------------------------------------"
         self.figure.clear()
         self.axes = self.figure.add_subplot(111)
         self.axes.grid(color='0.75', linestyle='-', linewidth=0.5)      
@@ -59,8 +68,6 @@ class MainWindow(QMainWindow):
                 color = self.usedColors[0]
                 unusedColors = self.usedColors[1:]
                 usedColors = self.usedColors[:1]
-
-            print line[1]
             yaxis = line[1][0]
             xaxis = line[1][1]
             j = max(yaxis)- min(yaxis)

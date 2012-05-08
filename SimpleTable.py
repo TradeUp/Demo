@@ -30,13 +30,13 @@ class AddButton(QPushButton):
         # recipe = parser.parse_recipe(str(fileName[0]))
         # if recipe:
         #     self.table.addRecipe(recipe.name)
-        self.controller.add_recipe(fileName)
+        if not fileName[0] == '': self.controller.add_recipe(fileName)
 
 class RemoveButton(QPushButton):
     
     def __init__(self, table, row):
         super(RemoveButton, self).__init__()
-        self.setIcon(QIcon("/home/dylan/Desktop/remove_button.png")) 
+        self.setIcon(QIcon("Demo/button_delete_01.png")) 
         self.table = table
         self.row = row
         self.clicked.connect(self.remove)

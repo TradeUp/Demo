@@ -9,10 +9,10 @@ from FunctionSelector import *
 from backend import *
 
 class RecipeWindow(QWidget):
-    def __init__(self, controller, portfolio=None):
+    def __init__(self, controller, recipeName=None):
         super(RecipeWindow, self).__init__();
         self.setAcceptDrops(True)
-        self.portfolio = portfolio or Portfolio()
+        self.recipeName = recipeName
         self.controller = controller
         self.initUI()
 
@@ -47,13 +47,10 @@ class RecipeWindow(QWidget):
         
         #Connect the btnAddRow clicked signal to add a new row in the recipe list
         btnAddRow.clicked.connect(self.list.addEmptyTrigger)
-        #allow saving
-        btnSave.clicked.connect(self.saveRecipe)
         
         vLayout2 = QtGui.QGridLayout();
-        vLayout2.addWidget(btnSave,   0, 0, 1, 1)
-        vLayout2.addWidget(btnAddRow, 1, 0, 1, 1)
-        vLayout2.addWidget(self.list, 2, 0, 10, 1)
+        vLayout2.addWidget(btnAddRow, 0, 0, 1, 1)
+        vLayout2.addWidget(self.list, 1, 0, 10, 1)
         
         
         rootHLayout.addLayout(vLayout2);
@@ -72,7 +69,22 @@ class RecipeWindow(QWidget):
         self.setWindowTitle('Click or Move');
         self.show()
         
+    """
+    Bring up a file dialog so the user can save the recipe
+    """
+    def saveRecipeAs(self):
+        #bring up a file dialog so they can save it
+        self.recipeName = QFileDialog.getSaveFileName(self, dir="/home/dylan/mock_algo/", filter="*.algo")[0]
+        if self.recipeName == '':
+            self.recipeName = None
+            return
+        
+        self.saveRecipe()
+        
     def saveRecipe(self):
+        if(self.recipeName == None):
+            self.saveRecipeAs()
+            return
         
         if(self.list.numTriggers() == 0):
             msgBox = QtGui.QMessageBox(QtGui.QMessageBox.Icon.Critical, "Error", "");
@@ -98,14 +110,12 @@ class RecipeWindow(QWidget):
         
         recipe.trigger = triggerFunc
             
-        recipe.to_file("test.algo");
+        recipe.to_file(self.recipeName);
        
         #save successful
         msgBox = QtGui.QMessageBox(QtGui.QMessageBox.Icon.Information, "Success!", "")
         msgBox.setText("Recipe successfully saved!")
         msgBox.exec_()
-        
-        #return self.portfolio
     
 def main():
     app = QApplication(sys.argv)
