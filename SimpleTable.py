@@ -63,8 +63,14 @@ class Table(QTableWidget):
     def cellActive(self,row,col):
         """ called when a cell is activated """
         if(col==0):
-            if(self.item(row,col).checkState()): print 'hi'
-            
+            if(self.item(row,col).checkState()):
+                self.activateRecipe(self.item(row,col))
+
+    def activateRecipe(self,recipe):
+        for k,v in self.rows.items():
+            if recipe == v.gui:
+                print 'found :', v.name 
+        
     def initgui(self):
         # add the headers
         headers = ["Recipe", "Value", "P/L", "% Return", "Remove?"]
