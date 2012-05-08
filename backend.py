@@ -345,6 +345,7 @@ class Controller:
 		self.graph_output = {}
 		self.table_output = {}
 		self.realtime = None 
+		self.progress = None # progressbar
 
 	def add_recipe(self,filename):	
 		recipe = self.parser.parse_recipe(str(filename[0]))
@@ -440,6 +441,14 @@ class Controller:
 			error.exec_()
 			return 
 			
+		## progress bar
+		diff = end - start
+		count = int((diff.total_seconds()) / 86400)
+		begin = 0
+		
+		self.progress.setRange(0,count)
+		self.progress.setVisible(True)
+		
 		self.graph_axis = [start] # reset the axis
 
 		curr = start;
@@ -447,8 +456,11 @@ class Controller:
 		end += day 
 
 		while(not same_date(curr,end)):
+			self.progress.setValue(begin)
 			self.run(curr)
 			curr += day 
+			begin += 1
+			
 		self.graph.update(self.graph_output,self.table,self.table_output);
 
 	
@@ -482,6 +494,8 @@ class Controller:
 		"""
 		self.reset()
 		# for the default
+		self.progress.setVisible(True)
+		self.progress.setRange(0,100)
 		curr = datetime.datetime.now()
 		self.graph_axis = [curr]
 		
@@ -506,7 +520,10 @@ class RealThread(threading.Thread):
 	def stop(self):
 		self.end.set()
 	def run(self):
+		count = 0
 		while not self.end.isSet():
 			print 'runnign: ',self.parent
+			self.parent.progress.setValue(count)
 			self.parent.run('realtime')
+			count +=1
 			time.sleep(10)

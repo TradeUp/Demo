@@ -40,7 +40,7 @@ class GUI(QtGui.QMainWindow):
         self.setAcceptDrops(True)    
         self.show()
         
-        
+
 def main():
     
     app = QtGui.QApplication(sys.argv)
