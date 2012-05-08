@@ -66,6 +66,7 @@ class Table(QTableWidget):
         self.initgui()
         self.controller = None
         self.portfolioPath = None
+        self.running = False
         self.cellClicked.connect(self.cellActive)
 #        self.setFixedWidth(504)
         self.setMinimumHeight(100)
@@ -88,7 +89,8 @@ class Table(QTableWidget):
     def deactivateRecipe(self,recipe):
         if recipe == 'Total:': recipe = 'cash'
         self.controller.deactivate(recipe)
-        
+    
+    
     def initgui(self):
         # add the headers
         headers = ["Recipe", "Value", "P/L", "% Return", "Remove?"]
@@ -211,7 +213,7 @@ class Row(object):
 
 class TotalRow(Row):
     """ subclass or row that just has GUI differences """
-    def __init__(self,table,name="Total:",data={}):
+    def __init__(self,table,name="Cash:",data={}):
         super(TotalRow,self).__init__(table,name,data)
         self.table.removeCellWidget(0,4) # remove the remove button :*
         self.gui['remove'] = QTableWidgetItem("")
