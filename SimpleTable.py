@@ -58,7 +58,13 @@ class Table(QTableWidget):
         self.rowNums = {}
         self.initgui()
         self.controller = None
-        
+        self.cellClicked.connect(self.cellActive)
+    
+    def cellActive(self,row,col):
+        """ called when a cell is activated """
+        if(col==0):
+            if(self.item(row,col).checkState()): print 'hi'
+            
     def initgui(self):
         # add the headers
         headers = ["Recipe", "Value", "P/L", "% Return", "Remove?"]
@@ -116,6 +122,7 @@ class Row(object):
         self.gui['name'].setCheckState(Qt.Checked)
         self.gui['name'].setFlags(Qt.ItemIsEnabled | Qt.ItemIsUserCheckable | Qt.ItemIsSelectable)
         self.table.setItem(rows, 0, self.gui['name'])
+        self.gui['name']
         
         #set default values for other cells:
         self.gui['value'] = QTableWidgetItem("$0")

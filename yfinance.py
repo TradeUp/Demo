@@ -11,7 +11,7 @@
 
 
 import urllib
-import string
+import string,datetime
 
 
 """
@@ -170,7 +170,9 @@ def get_historical(ticker,date):
     """
     d = string.replace(str(date),'-','') # formatting
     data = get_historical_prices(ticker,d,d)
-    while not data: 
-        d = str(int(d)-1)
-        data = get_historical_prices(ticker,d,d)
-    return data[1][2] # return the high for the day
+    data = data[1:] # remove that first item
+    if len(data) == 0: 
+        day = datetime.timedelta(days=1)
+        return get_historical(ticker,(date-day))
+    if '404' in data[0][0]: return '0.0' # the stock didn't exist then 
+    return float(data[0][2]) # return the high for the day
