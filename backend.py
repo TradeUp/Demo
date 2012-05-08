@@ -432,6 +432,7 @@ class Controller:
 	#
 	def run_historical(self,start,end):
 		""" takes two datetime.dates """
+		self.reset()
 		if not self.portfolio.checkRun():
 			error = QtGui.QErrorMessage()
 			error.showMessage('Error: Recipe uses Expressions Unsupported in historical data. Please run real-time.')
@@ -465,16 +466,23 @@ class Controller:
 		if not getattr(triggerfuncs,oncall) or not getattr(triggerfuncs,getPrice): return False
 		return True 
 	
-			
+	def reset(self):
+		self.graph_output = {}
+		self.table_ouput = {}
+		self.graph_axis = []
+		self.portfolio.cash = [self.portfolio.cash[0]]
+		for k,recipe in self.portfolio.recipes.items():
+			recipe.performance = { recipe.color : [(0,0)]}
+			recipe.trigger.reset()
+		self.portfolio.performance = { self.portfolio.color : [(0,0)] }
+
 	def run_realtime(self):
 		""" runs a realtime simulation (until you call stop_realtime)
 		"""
-		self.graph_output = {}
-		self.table_ouput = {}
-		
+		self.reset()
 		# for the default
 		curr = datetime.datetime.now()
-		self.graph_axis.append(curr)
+		self.graph_axis = [curr]
 		
 		try:
 			self.realtime = RealThread(0,self)
