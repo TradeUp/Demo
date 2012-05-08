@@ -82,12 +82,14 @@ class Table(QTableWidget):
                 self.deactivateRecipe(self.item(row,col).text())
 
     def activateRecipe(self,recipe):
-        if recipe == "Cash:": recipe = 'cash'
+        if 'Cash' in recipe: 
+            recipe = 'cash'
         # call controller.activate on the row
         self.controller.activate(recipe)
     
     def deactivateRecipe(self,recipe):
-        if recipe == "Cash:": recipe = 'cash'
+        if 'Cash' in recipe: 
+            recipe = 'cash'
         self.controller.deactivate(recipe)
     
     
@@ -96,7 +98,7 @@ class Table(QTableWidget):
         headers = ["Recipe", "Value", "P/L", "% Return", "Remove?"]
         self.setHorizontalHeaderLabels(headers)  
         # add the total row
-        self.rows['total'] = TotalRow(self,data={
+        self.rows['cash'] = TotalRow(self,data={
             'value':0,
             'pli':0,
             'percent':0

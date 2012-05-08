@@ -371,6 +371,7 @@ class Controller:
 			
 		return recipe
 	def activate(self,recipeName):
+		print recipeName, ' check it out'
 		if recipeName not in self.graphed:
 			self.graphed.append(recipeName)
 			if(len(self.unusedColors) >= 1):
@@ -380,6 +381,7 @@ class Controller:
 			self.refresh_graph()
 	
 	def deactivate(self,recipeName):
+		print recipeName, 'hey my'
 		if recipeName in self.graphed:
 			self.graphed.remove(recipeName)
 			self.unusedColors.append(self.portfolio.recipes.get(recipeName).color)
@@ -441,7 +443,7 @@ class Controller:
 		# send the output to the table
 		if 'cash' in self.graphed:
 			graph_output['cash'] = (self.portfolio.cash,self.graph_axis, 'g') 
-			table_output['total'] = {
+			table_output['cash'] = {
 										'value': self.portfolio.cash[-1],
 										'pli': (self.portfolio.cash[-1] - self.portfolio.cash[0]),
 										'percent': ((self.portfolio.cash[-1] - self.portfolio.cash[0]) / self.portfolio.cash[0])
