@@ -20,7 +20,7 @@ import matplotlib.font_manager as font_manager
 
 class MainWindow(QMainWindow):
 
-    linedict = {'Default': ([datetime.date(2001, 3, 5), datetime.date(2001, 3, 6)], [(1,2), (2,3)])}
+    linedict = {'Default': ([datetime.date(2001, 3, 5), datetime.date(2001, 3, 6)], [1,2])}
     unusedColors = ['b', 'g', 'r','c','m','y','k']
     usedColors = []
 
@@ -57,7 +57,7 @@ class MainWindow(QMainWindow):
                 unusedColors = self.usedColors[1:]
                 usedColors = self.usedColors[:1]
             print line[1]
-            self.axes.plot(line[1][0],line[1][1][0], color=color, label=line[0])
+            self.axes.plot(line[1][0],line[1][1], color=color, label=line[0])
 
         props = font_manager.FontProperties(size=10)
         self.axes.legend(loc='center left', shadow=True, fancybox=True, prop=props)
