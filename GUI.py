@@ -30,13 +30,11 @@ class GUI(QtGui.QMainWindow):
         fileMenu.addSeparator()
         
         fileMenu.addAction(exitAction)
-        
-
-        toolbar = self.addToolBar('Exit')
-        toolbar.addAction(exitAction)
 
         self.setWindowTitle('TradeUp')
         self.setMinimumSize(900,600)
+        self.showFullScreen()
+        self.showMaximized()
         self.setAcceptDrops(True)  
         self.show()
 
