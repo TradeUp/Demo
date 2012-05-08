@@ -34,6 +34,7 @@ class MainWindow(QMainWindow):
         self.canvas = FigureCanvas(self.figure)
         self.canvas.setParent( self.main_frame )     
         self.reDraw()
+        #### the progress bar
         
     def OOps(self, data):
         self.linedict.clear()

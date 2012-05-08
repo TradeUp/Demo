@@ -48,42 +48,12 @@ class Tabs(QtGui.QDialog):
         ##
         ## simulation running GUI controls
         ##
-        historicalLayout = QtGui.QHBoxLayout()
-
-        self.startDate = QtGui.QDateEdit()
-        self.startDate.setDateRange(QtCore.QDate(1990,1,1),QtCore.QDate.currentDate())
-        self.startDate.setCalendarPopup(True)
-        self.startDate.dateChanged.connect(self.set_start)
         
-        self.endDate = QtGui.QDateEdit()
-        self.endDate.setDateRange(QtCore.QDate(1990,1,1),QtCore.QDate.currentDate())
-        self.endDate.setCalendarPopup(True)
-        self.endDate.dateChanged.connect(self.set_end)
-                
-        go = QtGui.QPushButton('Run')
-        go.clicked.connect(self.run_historical)
-        historical = QtGui.QLabel('Run Historical')
-        
-        historicalLayout.addWidget(historical)
-        historicalLayout.addWidget(self.startDate)
-        historicalLayout.addWidget(self.endDate)
-        historicalLayout.addWidget(go)
-
-        realtimeLayout = QtGui.QHBoxLayout()
-        realtime = QtGui.QLabel('Run Realtime')
-        start = QtGui.QPushButton('Start')
-        stop = QtGui.QPushButton('Stop')
-        start.clicked.connect(self.run_realtime)
-        stop.clicked.connect(self.stop_realtime)
-        
-        realtimeLayout.addWidget(realtime)
-        realtimeLayout.addWidget(start)
-        realtimeLayout.addWidget(stop)
         
         mainLayout = QtGui.QVBoxLayout()
         mainLayout.addWidget(self.tabWidget)
-        mainLayout.addLayout(historicalLayout)
-        mainLayout.addLayout(realtimeLayout)
+#        mainLayout.addLayout(historicalLayout)
+#        mainLayout.addLayout(realtimeLayout)
         
         self.setLayout(mainLayout)
 
@@ -150,35 +120,7 @@ class Tabs(QtGui.QDialog):
         self.mnuSaveRecipe.setEnabled(recipeMode)
         self.mnuSaveRecipeAs.setEnabled(recipeMode)
             
-    
-    def set_start(self):
-        """ sets start"""
-        date = self.startDate.date()
-        d = int(date.day())
-        m = int(date.month())
-        y = int(date.year())
-        self.start = datetime.date(y,m,d)
-        
-        
-    def set_end(self):
-        """ sets end"""
-        date = self.endDate.date()
-        d = int(date.day())
-        m = int(date.month())
-        y = int(date.year())
-        self.end = datetime.date(y,m,d)
-        
-    def run_historical(self):
-        if not self.start or self.end:
-            self.set_start()
-            self.set_end()
-        self.controller.run_historical(self.start, self.end)
-        
-    def run_realtime(self):
-        self.controller.run_realtime()
-    def stop_realtime(self):
-        self.controller.stop_realtime()
-        
+   
     def run_test3(self):
         print 'building new parser/portfolio from test.algo'
         recipeParser = Parser('test.algo')
