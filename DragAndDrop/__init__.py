@@ -9,10 +9,10 @@ from FunctionSelector import *
 from backend import *
 
 class RecipeWindow(QWidget):
-    def __init__(self, controller, portfolio=None):
+    def __init__(self, controller, recipe=None):
         super(RecipeWindow, self).__init__();
         self.setAcceptDrops(True)
-        self.portfolio = portfolio or Portfolio()
+        self.recipe = recipe
         self.controller = controller
         self.initUI()
 
@@ -72,6 +72,16 @@ class RecipeWindow(QWidget):
         self.setWindowTitle('Click or Move');
         self.show()
         
+    """
+    Bring up a file dialog so the user can save the recipe
+    """
+    def saveRecipeAs(self):
+        #if there's no name, bring up a file dialog so they can save it
+        if not name:
+            name = QFileDialog.getOpenFileName(self, dir="/home/dylan/mock_algo/", filter="*.algo")
+            if name[0] == '':
+                return
+        
     def saveRecipe(self):
         
         if(self.list.numTriggers() == 0):
@@ -104,8 +114,6 @@ class RecipeWindow(QWidget):
         msgBox = QtGui.QMessageBox(QtGui.QMessageBox.Icon.Information, "Success!", "")
         msgBox.setText("Recipe successfully saved!")
         msgBox.exec_()
-        
-        #return self.portfolio
     
 def main():
     app = QApplication(sys.argv)

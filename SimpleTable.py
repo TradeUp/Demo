@@ -30,7 +30,7 @@ class AddButton(QPushButton):
         # recipe = parser.parse_recipe(str(fileName[0]))
         # if recipe:
         #     self.table.addRecipe(recipe.name)
-        self.controller.add_recipe(fileName)
+        if not fileName[0] == '': self.controller.add_recipe(fileName)
 
 class RemoveButton(QPushButton):
     
