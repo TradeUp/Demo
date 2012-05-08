@@ -7,6 +7,8 @@ def test_oncall():
 	return (10,1)  # every time it's triggered we get +10 shares
 
 def get_price(ticker,d):
+	if d == 'realtime':
+		return yfinance.get_price(ticker)
 	print 'updating price'
 	return yfinance.get_historical(ticker, d)
 
