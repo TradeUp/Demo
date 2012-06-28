@@ -8,10 +8,11 @@ class GUI(QtGui.QMainWindow):
     
     def __init__(self):
         super(GUI, self).__init__()
-        
+        print "starting to run..1"
         self.initUI()
         
-    def initUI(self):      
+    def initUI(self): 
+        print "starting to run..2"
         try:
             yfinance.get_price('aapl')
         except:
@@ -20,7 +21,7 @@ class GUI(QtGui.QMainWindow):
             error.exec_()
             self.destroy()
             return 
-        
+        print "starting to run..3"
         tabs = Tabs.Tabs()
         self.setCentralWidget(tabs)
 

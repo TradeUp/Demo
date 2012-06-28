@@ -87,6 +87,39 @@ class Expression:
 		if self.func and self.val:
 			return self.func(self.val,data)
 		return None 
+	
+class TechnicalExpression:
+
+	def __init__(self,func=None,valA=None,valB=None,typ=None):
+		func_data = getattr(exprfuncs,'exprfunc_data')
+		self.func = getattr(exprfuncs,func)
+		self.funcName = func
+		self.valA = valA
+		self.valB = valB 
+		self.status = func_data()[func]
+		
+	# these are just for debugging
+	def __unicode__(self):
+		return u'typ: %s\nFunc: %s\nValue: %s\n' (unicode(self.typ),unicode(self.func),unicode(self.val))
+	# debugging... str() or %s
+	def __str__(self):
+		return 'typ: %s\nFunc: %s\nValue: %s\n' (unicode(self.typ),unicode(self.func),unicode(self.val))
+
+	# this is for saving the object to a file
+	def json(self):
+		return json.dumps(self.data())
+
+	def data(self):
+		return {
+			'func': self.func.func_name,
+			'valA': self.valA,
+			'valB': self.valB     
+			}
+
+	def run(self,data):
+		if self.func and self.valA and self.valB:
+			return self.func(self.valA,self.valB,data)
+		return None
 
 class RecipeRow:
 	"""

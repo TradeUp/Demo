@@ -99,6 +99,7 @@ class RecipeList(QtGui.QScrollArea):
                 
     @QtCore.Slot(object)
     def selectionRequested(self, e):
+        print "selected a function!"
         #accept the selection
         if(self._selectedTrigger != None):
             self._selectedTrigger.deselect();

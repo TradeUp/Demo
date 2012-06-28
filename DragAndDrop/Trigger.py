@@ -61,23 +61,23 @@ class TriggerWidget(QtGui.QFrame):
     def getRecipeRow(self):
         #If one of the functions are None or the units don't match, return None
         error = False
-        
+        print 'getting recipe row' 
+        print 'checking left'
         if(not self.leftTarget.validate()):
             self.setInvalid(self.leftTarget)
             error = True
-        
+        print 'checking right'
         if not self.rightTarget.validate():
             self.setInvalid(self.rightTarget)
             error = True
-        
+        print 'checking units'
         if not error and self.leftTarget.function().getUnits() != self.rightTarget.function().getUnits():
             self.setInvalid(self);
             error = True
-            
+        print 'error exists? ' + str(error)
         if error: return None
-        
-        exprLeft = self.leftTarget.function().getExpression();
-        exprRight = self.rightTarget.function().getExpression();
+        exprLeft = self.leftTarget.function().getExpression()
+        exprRight = self.rightTarget.function().getExpression()        
         comparison = self.combobox.currentText()
         
         return RecipeRow(exprLeft, exprRight, comparison);
@@ -144,6 +144,7 @@ class FunctionDropTarget(QtGui.QLabel):
         self.setAutoFillBackground(True);
         
     def validate(self):
+        print 'validating func' + str(self.function())
         if(self.function() == None or not self.function().isValid()):
             return False
         return True

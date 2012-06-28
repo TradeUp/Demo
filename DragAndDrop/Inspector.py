@@ -41,6 +41,12 @@ class Inspector(QtGui.QFrame):
             w.widget().deleteLater();
             layout.addWidget(SimpleEditor(func, self.controller))
             self.setLayout(layout)
+        elif isinstance(func, TechnicalFunction):
+            layout = self.layout()
+            w = layout.takeAt(0)
+            w.widget().deleteLater()
+            layout.addWidget(TechnicalEditor(func, self.controller))
+            self.setLayout(layout)
         elif(isinstance(func, DummyFunction)):
             layout = self.layout()
             w = layout.takeAt(0)
@@ -55,6 +61,83 @@ class Editor(QtGui.QWidget):
 
 """
 Editor for a SimpleFunction object
+"""
+class TechnicalEditor(Editor):
+    def __init__(self, func, controller):
+        super(TechnicalEditor, self).__init__()
+        
+        self.controller = controller
+        
+        self.func = func;
+        rootVLayout = QtGui.QVBoxLayout()
+        
+        layoutRow1 = QtGui.QHBoxLayout()
+        layoutRow2 = QtGui.QHBoxLayout()
+
+        labelA = QtGui.QLabel("Stock A: ")
+        labelA.setMaximumHeight(45)
+        
+        labelB = QtGui.QLabel("Stock B: ")
+        labelB.setMaximumHeight(45)
+        btnSave = QtGui.QPushButton("Save")
+        
+        btnSave.clicked.connect(self.updateFunc)
+        
+        self.txtStockA = QtGui.QLineEdit()
+        self.txtStockA.setMaximumHeight(25)
+        
+        self.txtStockA.setText(func.stockA());
+        
+        self.txtStockB = QtGui.QLineEdit()
+        self.txtStockB.setMaximumHeight(25)
+        
+        self.txtStockB.setText(func.stockB());
+        
+        self.txtStockB.textChanged.connect(self.resetTextEdit);
+        
+        layoutRow1.addWidget(labelA)
+        layoutRow1.addWidget(self.txtStockA)
+        
+        layoutRow2.addWidget(labelB)
+        layoutRow2.addWidget(self.txtStockB)
+        
+        rootVLayout.addLayout(layoutRow1); 
+        rootVLayout.addLayout(layoutRow2)
+        rootVLayout.addWidget(btnSave);  
+        self.setLayout(rootVLayout);
+        
+    @QtCore.Slot()
+    def updateFunc(self):
+        tickerA = string.upper(self.txtStockA.text())
+        tickerB = string.upper(self.txtStockB.text())
+        if(self.controller.validate_ticker(tickerA)):
+            self.txtStockA.setStyleSheet("background-color:#00FF00;");
+            self.func.setStockA(tickerA)
+            self.func.setAValid(True)
+        else:
+            self.txtStockA.setStyleSheet("background-color:#FF0000;");
+            self.func.setAValid(False)
+        if(self.controller.validate_ticker(tickerB)):
+            self.txtStockB.setStyleSheet("background-color:#00FF00;");
+            self.func.setStockB(tickerB)
+            self.func.setBValid(True)
+        else:
+            self.txtStockB.setStyleSheet("background-color:#FF0000;");
+            self.func.setBValid(False)
+            
+    @QtCore.Slot()
+    def resetTextEdit(self):
+        self.txtStockA.setStyleSheet("")
+        self.txtStockB.setStyleSheet("")
+        
+    """
+    Bind the enter key to saving
+    """
+    def keyPressEvent(self, event):
+        self.updateFunc()
+        
+"""
+Editor for a TechnicalFunction object
 """
 class SimpleEditor(Editor):
     def __init__(self, func, controller):

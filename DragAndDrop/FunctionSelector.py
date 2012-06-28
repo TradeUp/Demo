@@ -30,6 +30,16 @@ class FunctionScrollWidget(QtGui.QScrollArea):
 		layout.addWidget(FunctionItem("get_price_sales_ratio", self))
 		layout.addWidget(FunctionItem("get_price_book_ratio", self))
 		layout.addWidget(FunctionItem("get_short_ratio", self))
+		layout.addWidget(FunctionItem("correlation_10_day", self))
+		layout.addWidget(FunctionItem("correlation_30_day", self))
+		layout.addWidget(FunctionItem("variance_10_day", self))
+		layout.addWidget(FunctionItem("variance_30_day", self))
+		layout.addWidget(FunctionItem("covariance_10_day", self))
+		layout.addWidget(FunctionItem("covariance_30_day", self))
+		layout.addWidget(FunctionItem("mean_10_day", self))
+		layout.addWidget(FunctionItem("mean_30_day", self))
+		layout.addWidget(FunctionItem("std_dev_10_day", self))
+		layout.addWidget(FunctionItem("std_dev_30_day", self))
 
 		
 		root.setLayout(layout)
@@ -79,6 +89,30 @@ class FunctionScrollWidget(QtGui.QScrollArea):
 			return "Price Book Ratio"
 		elif funcName == "get_short_ratio":
 			return "Short Ratio"
+		elif funcName == "correlation_10_day":
+			return "Correlation 10-day"
+		elif funcName == "correlation_30_day":
+			return "Correlation 30-day"
+		elif funcName == "mean_10_day":
+			return "Mean 10-day"
+		elif funcName == "mean_30_day":
+			return "Mean 30-day"
+		elif funcName == "std_dev_10_day":
+			return "Std. Dev. 10-day"
+		elif funcName == "std_dev_30_day":
+			return "Std. Dev. 30-day"
+		elif funcName == "variance_10_day":
+			return "Variance 10-day"
+		elif funcName == "variance_30_day":
+			return "Variance 30-day"
+		elif funcName == "covariance_10_day":
+			return "Covariance 10-day"
+		elif funcName == "covariance_30_day":
+			return "Covariance 30-day"
+		else:
+			print 'Error with layout function'
+		
+		
 
 	
 

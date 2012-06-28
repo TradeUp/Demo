@@ -1,0 +1,1 @@
+{"rows": [{"operator": "<", "expr_b": {"val": "AAPL", "func": "get_book_value"}, "expr_a": {"val": "IBM", "func": "get_market_cap"}}], "trigger": {"amount_type": "SHARES", "oncall": "buy_stock", "amount": 20, "getPrice": "get_price", "ticker": "ibm"}, "name": "j.algo"}

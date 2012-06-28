@@ -4,7 +4,7 @@ Created on Apr 14, 2012
 @author: Paavan
 '''
 from exprfuncs import *
-from backend import Expression
+from backend import Expression, TechnicalExpression
 
 class Function(object):
     NO_UNITS=0
@@ -46,7 +46,7 @@ class Function(object):
             return SimpleFunction(func.lower(), Function.NO_UNITS)
         elif func.lower() == "get_avg_daily_volume":
             return SimpleFunction(func.lower(), Function.NO_UNITS)
-        elif func.lower() == "get_market_cap":
+        elif func.lower() == "get_market_cap":  
             return SimpleFunction(func.lower(), Function.DOLLARS)
         elif func.lower() == "get_book_value":
             return SimpleFunction(func.lower(), Function.DOLLARS)
@@ -76,7 +76,29 @@ class Function(object):
             return SimpleFunction(func.lower(), Function.NO_UNITS)
         elif func.lower() == "get_short_ratio":
             return SimpleFunction(func.lower(), Function.NO_UNITS)
-    
+        elif func.lower() == "correlation_10_day":
+            return TechnicalFunction(func.lower(), Function.NO_UNITS)
+        elif func.lower() == "correlation_30_day":
+            return TechnicalFunction(func.lower(), Function.NO_UNITS)
+        elif func.lower() == "covariance_10_day":
+            return TechnicalFunction(func.lower(), Function.DOLLARS)
+        elif func.lower() == "covariance_30_day":
+            return TechnicalFunction(func.lower(), Function.DOLLARS)
+        elif func.lower() == "mean_10_day":
+            return SimpleFunction(func.lower(), Function.DOLLARS)
+        elif func.lower() == "mean_30_day":
+            return SimpleFunction(func.lower(), Function.DOLLARS)
+        elif func.lower() == "std_dev_10_day":
+            return SimpleFunction(func.lower(), Function.DOLLARS)
+        elif func.lower() == "std_dev_30_day":
+            return SimpleFunction(func.lower(), Function.DOLLARS)
+        elif func.lower() == "variance_10_day":
+            return SimpleFunction(func.lower(), Function.DOLLARS)
+        elif func.lower() == "variance_30_day":
+            return SimpleFunction(func.lower(), Function.DOLLARS)
+        else:
+            print 'Error with function definition'
+        
     """
     Inflate a function object from an expression object
     """
@@ -90,6 +112,47 @@ class Function(object):
         
         return func
     
+"""A technical function contains 2 stock parameters"""
+class TechnicalFunction(Function):
+    def __init__(self, func, units):
+        super(TechnicalFunction, self).__init__(func, units);
+        
+        self._stockA = ""
+        self._stockB = ""
+        
+        self.validA = False
+        self.validB = False
+
+    def isValid(self):
+        return (self.validA and self.validB) 
+        
+    def isAValid(self):
+        return self.validA
+    
+    def setAValid(self, valid):
+        self.validA = valid
+        
+    def isBValid(self):
+        return self.validB
+    
+    def setBValid(self, valid):
+        self.validB = valid;
+    
+    def setStockA(self, stock):
+        self._stockA = stock
+        
+    def setStockB(self, stock):
+        self._stockB = stock
+    
+    def stockA(self):
+        return self._stockA; 
+    
+    def stockB(self):
+        return self._stockB
+        
+    def getExpression(self):
+        return TechnicalExpression(self.func, self._stockA, self._stockB)
+
 """A simple function which only has a stock name parameter"""
 class SimpleFunction(Function):
     def __init__(self, func, units):
@@ -132,9 +195,3 @@ class DummyFunction(Function):
     def getExpression(self):
         return Expression(self.func, self.val);
     
-"""A function that takes date and stock parameters"""
-class DateFunction(SimpleFunction):
-    def __init__(self, func, units):
-        super(DateFunction, self).__init__(func, units);
-        
-        self.date = "";

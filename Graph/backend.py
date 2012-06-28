@@ -273,7 +273,7 @@ class Evaluator:
 		self.portfolio = parser.build_portfolio()
 
 
-	def run(data):
+	def run(self,data):
 		self.portfoliio.run(data)
 
 
