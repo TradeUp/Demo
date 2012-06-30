@@ -13,14 +13,14 @@ class GUI(QtGui.QMainWindow):
         
     def initUI(self): 
         print "starting to run..2"
-        try:
+        """try:
             yfinance.get_price('aapl')
         except:
             error = QtGui.QErrorMessage()
             error.showMessage('Error Establishing Internet Connection')
             error.exec_()
             self.destroy()
-            return 
+            return """
         print "starting to run..3"
         tabs = Tabs.Tabs()
         self.setCentralWidget(tabs)

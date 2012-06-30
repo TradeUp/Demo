@@ -91,12 +91,20 @@ class Expression:
 class TechnicalExpression:
 
 	def __init__(self,func=None,valA=None,valB=None,typ=None):
+		print 'even getting here???'
 		func_data = getattr(exprfuncs,'exprfunc_data')
+		print func_data
 		self.func = getattr(exprfuncs,func)
+		print self.func
 		self.funcName = func
+		print self.funcName
 		self.valA = valA
+		print self.valA
 		self.valB = valB 
+		print self.valB
 		self.status = func_data()[func]
+		print self.status
+		print 'complete init of technical expr'
 		
 	# these are just for debugging
 	def __unicode__(self):
@@ -184,6 +192,7 @@ class Recipe(BackendObj):
 		self.status = 'ALL'
 		for r in self.rows:
 			if r.status == 'REALTIME': self.status = 'REALTIME'
+		print 'got to end of here.'
 		
 
 	def __eq__(self,other):
@@ -341,6 +350,7 @@ class Parser:
 			# build the recipe from the data
 			rows = []
 			print 'whats in here ',self.data
+			print 'blah'
 			for row in self.data['rows']:
 				rows.append(self.getrow(row))
 			return Recipe(trigger=Trigger(oncall=self.data['trigger']['oncall'],amount=self.data['trigger']['amount'],amount_type=self.data['trigger']['amount_type'],ticker=self.data['trigger']['ticker']),rows=rows,name=self.data['name'])
@@ -348,19 +358,46 @@ class Parser:
 
 	def expr_a(self,data):
 		print 'expr a: ',data['expr_a']['func']
-		return Expression(func=str(data['expr_a']['func']),
-		val=data['expr_a']['val'])
+		funcName = str(data['expr_a']['func'])
+		if self.istechnical(funcName):
+			print 'expr a is technical'
+			toRet = TechnicalExpression(func=funcName, valA=data['expr_a']['valA'],valB=data['expr_a']['valB']) 
+			print 'got it...'
+			return toRet
+		else:
+			return Expression(func=funcName, val=data['expr_a']['val'])
 
 	def expr_b(self,data):
-		print data
-		return Expression(func=str(data['expr_b']['func']),
-		val=data['expr_b']['val'])
+		print 'parsing expr b',data
+		funcName = str(data['expr_b']['func'])
+		if self.istechnical(funcName):
+			print 'expr b is technical!'
+			return TechnicalExpression(func=funcName, valA=data['expr_b']['valA'],valB=data['expr_b']['valB']) 
+		else:
+			return Expression(func=funcName, val=data['expr_b']['val'])
+
+	def istechnical(self, funcName):
+		if funcName == 'correlation_10_day':
+			return True
+		if funcName == 'correlation_30_day':
+			return True
+		if funcName == 'covariance_10_day':
+			return True
+		if funcName == 'covariance_30_day':
+			return True
+		else:
+			return False
 
 	def operator(self,data):
 		return data['operator']
 
 	def getrow(self,data):
-		return RecipeRow(a=self.expr_a(data),b=self.expr_b(data),c=self.operator(data))
+		print 'getting expr a'
+		a=self.expr_a(data)
+		print 'got expr a'
+		b=self.expr_b(data)
+		c=self.operator(data)
+		return RecipeRow(a,b,c)
 
 
 ####

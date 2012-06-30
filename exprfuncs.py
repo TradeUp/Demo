@@ -69,8 +69,7 @@ def mean(tick, d, days=10.0):
 	price_sum = 0.0
 	for i in xrange(1,int(days) + 1):
 		price_sum += float(get_price_expr(tick, end - datetime.timedelta(i))) 
-	mean = price_sum/days
-	return mean
+	return price_sum/days
 
 def mean_10_day(tick,d): 
 	return mean(tick, d, 10.0)
@@ -97,13 +96,13 @@ def std_dev_30_days(tick,d):
 def variance(tick, d, days=10.0):
 	end = datetime.date.today()
 	summand = 0.0
-	mean = mean(tick, d, days)
+	the_mean = mean(tick, d, days)
 	sum_squares = 0.0
 	for i in xrange(1, int(days) + 1): 
 		price = float(get_price_expr(tick, end - datetime.timedelta(i)))
 		sum_squares += price * price
 		summand += price
-	variance = (sum_squares - (summand * mean))/(days - 1)
+	variance = (sum_squares - (summand * the_mean))/(days - 1)
 	return variance
 	
 def variance_10_day(tick,d):
